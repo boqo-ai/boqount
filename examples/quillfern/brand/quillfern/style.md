@@ -65,7 +65,8 @@ motion: smooth
 - **The end:** the payoff or the first picture again; never a call, a logo or a link. Here the plant is back where
   frame 0 found it, a few days drier, so the loop is the story. Source: the human (2026-11-11).
 - **Caption grammar:** line 1 is the hook as it reads on screen; one or two plain sentences that add a fact the film
-  had no room for; three hashtags, the plant's name first; a credit line for outside material last. Source:
+  had no room for; a credit line for outside material as the last line of words; then three hashtags, the plant's
+  name first. Source:
   `notes-style.md` §2 (read 2026-11-10).
 
 ## Devices

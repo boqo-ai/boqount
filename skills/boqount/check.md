@@ -147,9 +147,10 @@ owed` once the human confirms the platform shows its AI label on the test post, 
    - The brand's own material is listed in `brand/<slug>/assets.md` → Material. Material that is not the brand's has
      the person's word for that source, with the terms read and the date, in `brand/<slug>/brand-book.md` → Do and
      don't.
-   - Each channel's caption ends on a line that credits each outside source. The file-name branch with `hook` carries
-     line 1 only, so it cannot: that channel is held, and one question goes to the person, into `state.md` → Open
-     questions: "Switch <slug> on <channel> to a caption written by the agent, or drop its outside material?"
+   - Each channel's caption has, as its last line of words, a line that credits each outside source; a hashtag line
+     may follow it. The file-name branch with `hook` carries line 1 only, so it cannot: that channel is held, and one
+     question goes to the person, into `state.md` → Open questions: "Switch <slug> on <channel> to a caption written
+     by the agent, or drop its outside material?"
    - **An ad post:** each outside source also needs the person's word for ad use, given after what the terms of whoever
      holds its rights say about advertising was put to them (`brand/<slug>/brand-book.md` → Do and don't, its `Ad use` column). Without
      it, the ad cut carries none of that source.

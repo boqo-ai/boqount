@@ -63,8 +63,8 @@ The record (status `planned`, its Layer and its cost estimate) exists before any
    reason; a fix is rendered and looked at again.
 10. **The caption,** for each channel, after reading `brand/<slug>/style.md` → Language: line 1 restates the hook (as a loss; a `niche` film's restates its hook), one
     line of the film's proof, at most 5 hashtags, within the platform's limit (`posting.md` → How a post goes out).
-    It asks for nothing; a `niche` film's caption names no product; a film with outside material ends on its credit
-    line. `check.md` judges it.
+    It asks for nothing; a `niche` film's caption names no product; a film with outside material has its credit as
+    the caption's last line of words, and the hashtag line, if there is one, comes after it. `check.md` judges it.
 11. **Update the record** (`production.md` → A film from scratch): the feed file, the actual cost and hours, the AI
     label line. The film then enters at the check.
 
@@ -291,7 +291,8 @@ beat), under the film's own voice or text.
   source's music often belongs to a third owner, and that platforms match sound automatically, so a post can be muted
   or blocked. A source's song is never the film's bed. The build writes each such shot into the record's Posting as
   `- Outside sound: <file> <from>–<to> s`, or `- Outside sound: none`.
-- **The credit** is the caption's last line, naming the source. No credit text goes on screen.
+- **The credit** is the caption's last line of words, on a line of its own, naming the source; the hashtag line, if
+  there is one, comes after it. No credit text goes on screen.
 - **An ad cut** carries a source only on the person's word for ad use too (`check.md` item 6).
 - **Never, whatever the person says:** another person's face, name or channel without their written permission;
   leaked or pre-release material.
