@@ -1,0 +1,417 @@
+{
+  "_": "Every visible action has its sound, from the 16 names of the kit (tools/sfx-kit.mjs). `at` is seconds, or \"line.word\" (the start of that word in cues.json) plus `offset`. Written from the anchors of src/films/starter/timeline.ts: when an anchor moves, move its hit.",
+  "loop": true,
+  "hits": [
+    {
+      "sfx": "tick",
+      "at": 0.54,
+      "gain": -25,
+      "_": "the count rolls to 7 (a night passes)"
+    },
+    {
+      "sfx": "tick",
+      "at": 0.65,
+      "gain": -29,
+      "_": "the dry soil cracks open"
+    },
+    {
+      "sfx": "tick",
+      "at": 0.85,
+      "gain": -30,
+      "_": "another crack"
+    },
+    {
+      "sfx": "tick",
+      "at": 1.05,
+      "gain": -31,
+      "_": "another crack"
+    },
+    {
+      "sfx": "tick",
+      "at": 1.291,
+      "gain": -25,
+      "_": "the count rolls to 8 (a night passes)"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 1.783,
+      "gain": -26,
+      "_": "the title leaves"
+    },
+    {
+      "sfx": "tap",
+      "at": "stake.0",
+      "gain": -24,
+      "_": "\"It\" rises"
+    },
+    {
+      "sfx": "tap",
+      "at": "stake.1",
+      "gain": -24,
+      "_": "\"can't\" rises"
+    },
+    {
+      "sfx": "tap",
+      "at": "stake.2",
+      "gain": -24,
+      "_": "\"tell\" rises"
+    },
+    {
+      "sfx": "blip",
+      "at": 2.517,
+      "gain": -24,
+      "_": "the drooping leaf shivers"
+    },
+    {
+      "sfx": "tap",
+      "at": "stake.3",
+      "gain": -24,
+      "_": "\"you.\" rises"
+    },
+    {
+      "sfx": "tick",
+      "at": 2.783,
+      "gain": -25,
+      "_": "the count rolls to 9 (a night passes)"
+    },
+    {
+      "sfx": "drop",
+      "at": 2.783,
+      "gain": -14,
+      "_": "hit 1: the leaf lets go"
+    },
+    {
+      "sfx": "error",
+      "at": 2.817,
+      "gain": -20,
+      "_": "hit 1: the red vignette"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 3.083,
+      "gain": -26,
+      "_": "the camera tilts down after the falling leaf"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 3.6,
+      "gain": -26,
+      "_": "line 2 leaves"
+    },
+    {
+      "sfx": "blip",
+      "at": 3.667,
+      "gain": -20,
+      "_": "the phone's screen wakes, its light on the sill"
+    },
+    {
+      "sfx": "whoosh_big",
+      "at": 3.767,
+      "gain": -19,
+      "_": "the reminder slides in; the camera pushes in on it"
+    },
+    {
+      "sfx": "pop_hi",
+      "at": "turn.0",
+      "gain": -20,
+      "_": "\"Quillfern\" rises"
+    },
+    {
+      "sfx": "lock",
+      "at": 3.9,
+      "gain": -19,
+      "_": "the phone buzzes"
+    },
+    {
+      "sfx": "ding",
+      "at": 3.95,
+      "gain": -16,
+      "_": "the reminder's icon rings"
+    },
+    {
+      "sfx": "lock",
+      "at": 4.133,
+      "gain": -21,
+      "_": "the phone buzzes again"
+    },
+    {
+      "sfx": "pop",
+      "at": "turn.1",
+      "gain": -22,
+      "_": "\"remembers.\" rises"
+    },
+    {
+      "sfx": "pop",
+      "at": 4.583,
+      "gain": -27,
+      "_": "the Done disc pulses"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 5.183,
+      "gain": -26,
+      "_": "line 3 leaves"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 5.35,
+      "gain": -28,
+      "_": "the camera pushes onto Done; the finger comes in"
+    },
+    {
+      "sfx": "tap",
+      "at": "payoff.0",
+      "gain": -25,
+      "_": "\"You\" rises"
+    },
+    {
+      "sfx": "tap",
+      "at": "payoff.1",
+      "gain": -25,
+      "_": "\"water\" rises"
+    },
+    {
+      "sfx": "tap",
+      "at": "payoff.2",
+      "gain": -25,
+      "_": "\"it\" rises"
+    },
+    {
+      "sfx": "tap",
+      "at": 5.9,
+      "gain": -14,
+      "_": "the finger taps Done"
+    },
+    {
+      "sfx": "toggle",
+      "at": 5.95,
+      "gain": -16,
+      "_": "the check draws"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.009,
+      "gain": -27,
+      "_": "the count rolls back to 8"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.044,
+      "gain": -27,
+      "_": "the count rolls back to 7"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.06,
+      "gain": -27,
+      "_": "the count rolls back to 6"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.072,
+      "gain": -27,
+      "_": "the count rolls back to 5"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.082,
+      "gain": -27,
+      "_": "the count rolls back to 4"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.091,
+      "gain": -27,
+      "_": "the count rolls back to 3"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.101,
+      "gain": -27,
+      "_": "the count rolls back to 2"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.115,
+      "gain": -27,
+      "_": "the count rolls back to 1"
+    },
+    {
+      "sfx": "tick",
+      "at": 6.139,
+      "gain": -27,
+      "_": "the count rolls back to 0"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 6.167,
+      "gain": -20,
+      "_": "the drop is flicked toward the pot, the camera follows"
+    },
+    {
+      "sfx": "tap",
+      "at": "payoff.3",
+      "gain": -25,
+      "_": "\"on\" rises"
+    },
+    {
+      "sfx": "drop",
+      "at": 6.5,
+      "gain": -12,
+      "_": "hit 2: the water lands on \"time.\""
+    },
+    {
+      "sfx": "rise",
+      "at": 6.55,
+      "gain": -18,
+      "_": "the wet patch spreads through the soil"
+    },
+    {
+      "sfx": "pop",
+      "at": 6.633,
+      "gain": -23,
+      "_": "leaf 1 lifts"
+    },
+    {
+      "sfx": "pop_hi",
+      "at": 6.75,
+      "gain": -23,
+      "_": "leaf 2 lifts"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 6.767,
+      "gain": -28,
+      "_": "the camera pulls out to the whole plant"
+    },
+    {
+      "sfx": "pop",
+      "at": 6.867,
+      "gain": -23,
+      "_": "leaf 3 lifts"
+    },
+    {
+      "sfx": "pop_hi",
+      "at": 6.983,
+      "gain": -23,
+      "_": "leaf 4 lifts"
+    },
+    {
+      "sfx": "pop_hi",
+      "at": 7.2,
+      "gain": -20,
+      "_": "the new leaf starts to unfurl"
+    },
+    {
+      "sfx": "sparkle",
+      "at": 7.5,
+      "gain": -14,
+      "_": "hit 3: the new leaf opens, the burst"
+    },
+    {
+      "sfx": "toggle",
+      "at": 8.333,
+      "gain": -30,
+      "_": "the phone's screen goes back to sleep"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 8.583,
+      "gain": -26,
+      "_": "line 4 leaves"
+    },
+    {
+      "sfx": "drop",
+      "at": 8.7,
+      "gain": -30,
+      "_": "a bead drips from a leaf onto the sill"
+    },
+    {
+      "sfx": "tap",
+      "at": "seam.0",
+      "gain": -24,
+      "_": "\"A\" rises"
+    },
+    {
+      "sfx": "tap",
+      "at": "seam.1",
+      "gain": -24,
+      "_": "\"week\" rises"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 9.35,
+      "gain": -27,
+      "_": "the camera pushes in on the count"
+    },
+    {
+      "sfx": "tap",
+      "at": "seam.2",
+      "gain": -24,
+      "_": "\"later…\" rises"
+    },
+    {
+      "sfx": "tick",
+      "at": 9.714,
+      "gain": -25,
+      "_": "the count rolls to 1 (a night passes)"
+    },
+    {
+      "sfx": "tick",
+      "at": 10.097,
+      "gain": -25,
+      "_": "the count rolls to 2 (a night passes)"
+    },
+    {
+      "sfx": "tick",
+      "at": 10.503,
+      "gain": -25,
+      "_": "the count rolls to 3 (a night passes)"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 10.75,
+      "gain": -27,
+      "_": "the camera sets off toward the soil"
+    },
+    {
+      "sfx": "tick",
+      "at": 10.938,
+      "gain": -25,
+      "_": "the count rolls to 4 (a night passes)"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 11.267,
+      "gain": -24,
+      "_": "\"A week later…\" leaves upward"
+    },
+    {
+      "sfx": "tick",
+      "at": 11.411,
+      "gain": -25,
+      "_": "the count rolls to 5 (a night passes)"
+    },
+    {
+      "sfx": "whoosh",
+      "at": 11.567,
+      "gain": -22,
+      "_": "the title rises"
+    },
+    {
+      "sfx": "pop",
+      "at": 11.833,
+      "gain": -20,
+      "_": "\"thirsty.\" lands: the title is whole on frame 0"
+    },
+    {
+      "sfx": "tick",
+      "at": 11.936,
+      "gain": -25,
+      "_": "the count rolls to 6 (a night passes)"
+    }
+  ],
+  "music": {
+    "segments": []
+  }
+}

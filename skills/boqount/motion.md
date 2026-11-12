@@ -1,0 +1,152 @@
+# Motion: what every film is built and checked against
+
+Read before the storyboard and before building a scene. The director at Gate 2 (`film.md` → The gates) reports each
+bold rule below as `<rule> ✓` or `<rule> ✗ (<time>)`.
+
+The look is the brand's: `brand/<slug>/style.md` → Look and Devices say what the picture is made of and what repeats
+from film to film; `node <skill>/tools/film.mjs theme` puts its Tokens into the project. The starter film
+(`films/starter/STORYBOARD.md`, its scenes in `films/project/src/films/starter/`) is the worked example of every rule
+here.
+
+## Film-level structure
+
+1. **One carried object** across the whole film, transformed by the story (the starter: one plant with its count and
+   its moisture gauge). The hook frame shows it; the payoff shows it fixed; the last scene's last frames rebuild
+   frame 0.
+2. **Three full-frame hits, no more** (`Hit`), each on the strongest beat: the loss lands (with `shake`, in
+   `danger`), the turn, the payoff (the film's one `Burst`, aimed clear of any number). Everything else moves only its
+   own element.
+3. **Two worlds.** The problem in a tense bed or a muted palette; the music drops out on the turning line, and the
+   groove lands on the first line of the answer.
+4. **No cuts.** One continuous piece: every storyboard row inherits an object from the row before and hands one to
+   the row after. A cell grows into a phone; a bar opens into a card; one card's rectangle is carried into the next
+   (`mixR`); many things fold into a point and the next object grows out of it. No hard cut, no whip-cut, no push-out
+   and push-in, no panel slid away for the next. Text changes through word masks only (`Headline`); a whole picture
+   never fades or slides into another. The loop back to frame 0 is a transformation too.
+5. **Handoffs.** Never two scenes above about 30 % opacity at once, unless an element is carried across in the same
+   position, size and pose on both sides.
+6. **The loop, by construction.** The film's template draws its hook layer (`Hook.tsx`) twice (`Scenes.tsx`): at the
+   head, and over the tail from `SEAM0` with `shift={-DURATION}`, where it reads negative frames. The last frame is
+   then the hook's frame −1. Write the hook's negative half as the last scene's object turning into frame 0's
+   objects, with the title rising so it is whole on frame 0. Draw the carried object from story time alone (a pure
+   function defined over the whole loop, in `timeline.ts`), so the stage and the hook layer draw the same picture
+   where they hand over. **Check:** the step from the last frame to frame 0 is no bigger than an ordinary step
+   between two neighbouring frames: take the last two frames and the first two as stills
+   (`npm run still -- <Id> --frame=<n>`) and compare them, on the feed file too, because that is the file the
+   platforms loop.
+
+**Reviewing a no-cuts film.** A critic who sees sheets of stills reports carried transitions as swaps, and judges text
+drawn at sheet size as smaller than it is. Its brief says both, and a "cut" it reports is checked at the exact frames
+(stills 0.05 s apart: `--frame=<n>`, `<n+6>`, `<n+12>`…, since `n` counts 120ths of a second) before acting on it.
+
+## Scene recipe
+
+Each storyboard row answers: **what object appears, what it does on which word, and how it leaves**, plus the thing
+its line names (Illustrative first), its camera and its demonstration (Rich motion), and what it inherits and hands on.
+One distinct idea per row: two rows that share an idea are merged, or one is reinvented.
+
+- **Text is never the only thing moving.** A row that is words on a background is not finished.
+- **Every anchor is a cue** (`cueAt(<line>, <word>)` in the film's `timeline.ts`), never a bare frame number, so a
+  re-timed line moves everything with it. Reveals land on their words, never all in a scene's first quarter.
+- **Rest.** What matters (a number, a verdict, the payoff) rests about 1 s after it lands, or as long as the line
+  allows. Exits start late.
+- **Acceleration, not speed.** No uniform linear motion. A batch entrance gets faster element by element, then holds.
+- **Human speed.** Typing, tapping and toggling run at a person's speed; the `Cursor` crosses the frame in about half
+  a second, on a `curve`, never in a straight line.
+- **Hold, never drift.** Nothing idles in a slow wander.
+- **Deterministic.** Every value is a pure function of the frame (`useF`, `p`, `lerp`, seeded `rnd`): no CSS
+  transition or keyframe, no `Math.random`. Easing comes from the style's preset (`M.in`, `M.out`, `M.move`); a
+  landing is a `slam`.
+
+## The kit
+
+In `films/project/src/kit/`, drawn only from the style's tokens. Sizes are pixels of the 1080×1920 frame; times are
+frames of the 60-unit base (`lib/cues.ts`). A piece the film needs and the kit lacks is drawn in the film's own scene
+folder, from the tokens.
+
+| Piece | File | Use for |
+|---|---|---|
+| `Headline`, `words`, `headlineExit` | `Kit.tsx` | Every headline: each word rises out of its own mask on its cue and is set plain, tinted (`tone`) or highlighted (`hl`: the one word or number that carries the line, on a fill of the accent that wipes in with the word, the word in the canvas colour; once a line at most), `out` for the exit upward word by word (the scene lasts `headlineExit(<words>)` past `out`). Shrinks to fit the safe width |
+| `SeriesMark` | `Kit.tsx` | An episode of a series: `<Series> · <NN>` in a small line above the headline, at the top of the safe zone, from frame 0 to the last frame; the headlines move to `L.headTopMarked` under it |
+| `SourceLine` | `Kit.tsx` | The source of an outside fact on screen, `Source: <who>, <date read>`, in a small line under the thing it belongs to, inside the safe zone and never smaller than a label |
+| `Label` | `Kit.tsx` | A capsule label; `tone` fills it |
+| `Card` | `Kit.tsx` | A panel at a rectangle |
+| `Stat` | `Kit.tsx` | A number with its unit, rolling |
+| `Progress` | `Kit.tsx` | A bar filled 0 to 1 |
+| `Done` | `Kit.tsx` | A disc whose check draws on |
+| `Row` | `Kit.tsx` | A list row: icon, title, quieter line, something on the right |
+| `Device` | `Kit.tsx` | A phone holding the brand's screenshot or screen recording (muted), or drawn children |
+| `Still`, `Shot` | `Media.tsx` | A picture, or a few seconds of footage, of the real thing, cropped into a frame, with a slow camera `move` and a caption. Files from `films/<slug>/media/`, or `brand` for `brand/<slug>/media/` (`film.md` → Outside material) |
+| `Odo` | `Fx.tsx` | Every number on screen: a carry-chain odometer, never a plain interpolated number |
+| `Draw`, `CHECK` | `Fx.tsx` | Strokes drawn on: checks, underlines, arrows, a circle round a word |
+| `slam` | `Fx.tsx` | A fall into place with no overshoot and a two-frame squash |
+| `DirBlur`, `speed` | `Fx.tsx` | Blur along the axis of motion, from the real velocity |
+| `Burst` | `Fx.tsx` | The film's one seeded burst |
+| `Hit` | `Fx.tsx` | A full-frame hit; three per film at most |
+| `Cursor`, `curve` | `Cursor.tsx` | A pointer that taps real controls, on a hand's curved path |
+| `Logo`, `hasLogo` | `Logo.tsx` | The brand's own logo file, or nothing: never a stand-in mark |
+| the kit's `Camera` | `kit/` | The one travelling camera of Rich motion |
+
+The theme (`lib/theme.ts`): `T` the tokens, `F` the font stacks, `L` the frame, the safe area and the headline slot,
+`M` the motion preset, `D` the derived shades, `HL` the highlighter's fill and ink, and `alpha`, `mixColor`,
+`onTone`. **No colour literal** in a scene: a
+shade that is not a token is derived from one. The clock (`lib/cues.ts`, `lib/scene.tsx`): `Scene` (`from`, `to`,
+`shift`), `useF`, `DURATION`. Motion helpers (`lib/anim.ts`): `p`, `lerp`, `mix`, `rnd`, `shake`, `bump`, `mixR`,
+`box`.
+
+## Illustrative first
+
+The picture shows **the thing the line names**: a place, a screen, an object in a hand. An abstract tile, a bare
+number or a label standing in for the thing is the shape to drop. The thing is drawn with the kit, or shown with
+`Still`, `Shot` and `Device`, inside the no-cuts chain. In the storyboard every row names the thing its line talks
+about and what on screen shows it. How this applies to the brand is in `brand/<slug>/style.md` → Look; material that
+is not the brand's follows `film.md` → Outside material.
+
+## Rich motion
+
+Every film, in every layer:
+
+- **One camera, one world.** The film is one continuous move of one travelling camera (the kit's `Camera`) through one
+  world. It pushes in on the thing a line names until its detail fills the frame, and pulls out to show the whole
+  again. A push or a pull is a move of that camera, never a cut.
+- **Demonstrations, not labels.** What a line says happens is shown happening, step by step, each step a small exact
+  animation the eye can follow (the reminder arriving, the tap that marks it done, the gauge filling as the water
+  lands).
+- **Detail that rewards a second look:** small live things wherever they are true (a counter rolling as an odometer, a
+  dot pulsing, light from a picture spilling onto its frame, parallax between layers during a move). Nothing
+  invented: no made-up number, name or comment.
+- **Something new for the eye about every second**, on the word being said or shown, and never so busy that the line
+  cannot be read. The three full-frame hits stay the loudest moments.
+- **Not finished:** a film whose camera never moves, or whose rows are labels changing in place.
+
+## Layout
+
+- **Frame 0** is a finished picture: a readable hook and one subject, already moving within 0.2 s.
+- **One subject in the opening**, with one complete move.
+- **Safe area.** The platforms draw their own interface over the top 14 % of the frame, the bottom 35 % and 6 % of
+  each side, so what a viewer must read (text, numbers, labels) stays inside `L`: on 1080×1920, below y 270, above
+  y 1248 (the bottom 672 px are covered) and 65 px from each side (x 65 to 1015). The picture itself may run to the
+  frame's edges; nothing that must be read does. Check a still with `npm run still -- <Id> --frame=<n> --safe`.
+- **Readable on a phone.** Headlines at least 100 px, other text at least 32 px, labels and chips at least 44 px. Text
+  that cannot reach that is texture, or it is cut: nothing is meant to be read and can't be.
+- **Land in a slot.** Anything that flies in lands in a real place in the layout: a slot, a list row.
+- **Numbers agree** with the words, every frame. A state that contradicts them is greyed or struck until it updates.
+- **Effects once.** No glint or sweep on every card; one burst per film at most, never over a number to read.
+- **Real labels.** The product's interface uses its real labels and controls. Other apps and sites appear as plain
+  windows with text titles, never with their logos.
+- **Flashes:** no more than three in any second.
+
+## Sound follows the picture
+
+- **Every visible action has its sound**, pinned to the cue word it lands on in `audio/sfx-cues.json`
+  (`"at": "<line id>.<word index>"`, plus `offset`), with its purpose in `"_"`.
+- **Real-world sounds:** a tap sounds like a tap, a stamp like a stamp. Foley over decoration: never a bed of
+  whooshes.
+- **The kit's sixteen** (`films/sfx/`): `tap` a word rising or a touch, `tick` one step of a count, `typing`, `toggle`
+  a switch, `pop` and `pop_hi` a thing appearing, `lock` a thing seating, `ding` a notification, `blip` a small state
+  change, `stamp`, `drop` a fall, `error` a loss, `whoosh` and `whoosh_big` a carry or an exit, `rise` the riser into
+  the seam, `sparkle` the burst.
+- **Re-pin after any re-time:** when the cues move, every hit and the music's placement are checked again.
+- A sound the kit lacks is the film's own file in `films/<slug>/audio/sfx/`. A generated one
+  (`node <skill>/tools/eleven.mjs sfx "<prompt>" <out.mp3>`) is a paid call: reserved in the budget first, one request
+  at a time.

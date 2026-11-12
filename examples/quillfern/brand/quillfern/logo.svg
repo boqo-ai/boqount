@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Quillfern (invented for the boqount example)</title>
+  <path d="M50 8C30 10 16 26 14 50l4 2C22 32 34 18 50 8z" fill="#6CC59A"/>
+  <path d="M14 50 8 58" stroke="#6CC59A" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M22 40l-6-4M27 32l-8-5M33 25l-8-6M40 18l-7-6M26 40l8-1M31 33l9-2M37 26l8-3" stroke="#1A1714" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

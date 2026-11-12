@@ -1,0 +1,5 @@
+# Generated, never committed: renders, the films' sound, the synthesized sound kit.
+*/out/
+*.wav
+*.mp4
+sfx/

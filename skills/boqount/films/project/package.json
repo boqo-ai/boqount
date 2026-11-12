@@ -1,0 +1,39 @@
+{
+  "name": "boqount-films",
+  "version": "1.0.0",
+  "description": "Short looping vertical films, rendered from code with Remotion",
+  "private": true,
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.543",
+    "@remotion/fonts": "4.0.543",
+    "@remotion/layout-utils": "4.0.543",
+    "@remotion/media": "4.0.543",
+    "@remotion/motion-blur": "4.0.543",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.543"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.543",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "10.12.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "sync": "node scripts/run.mjs sync",
+    "dev": "node scripts/run.mjs dev",
+    "lint": "node scripts/run.mjs lint",
+    "still": "node scripts/run.mjs still",
+    "draft": "node scripts/run.mjs draft",
+    "render": "node scripts/run.mjs render",
+    "feed": "node scripts/run.mjs feed"
+  },
+  "allowScripts": {
+    "esbuild": false
+  }
+}

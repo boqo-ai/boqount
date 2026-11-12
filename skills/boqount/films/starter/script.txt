@@ -1,0 +1,12 @@
+Starter — 9:16 film for Quillfern (a plant-care app that reminds you when to water). Voice-free: the words are on screen. Looping, no call to action.
+Frame 0 on screen: "Your plant / is thirsty." over the wilting plant on its windowsill, the camera already pushing in on its dry soil, the phone beside it rolling its "Days since water" count.
+Look: the style tokens (dark canvas, light ink, accent = the healthy green and the water, accent2 = thirst and the window's light, danger = the loss). One drawn world (a windowsill: the plant, a phone, a small cactus, a window), no footage, one travelling camera, no cuts.
+Structure: Layer: product — warm-up 1, stake 2, bridge 3, payoff 4, seam 5
+
+ 1. Your plant is thirsty.
+ 2. It can't tell you.
+ 3. Quillfern remembers.
+ 4. You water it on time.
+ 5. A week later…                                [seam: ↺ line 1 finishes it]
+
+Words: 17 · on screen at reading speed (about 3–4 words a second, each line held until it has been read) · 12.0 s.

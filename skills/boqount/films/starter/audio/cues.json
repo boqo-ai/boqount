@@ -1,0 +1,135 @@
+{
+  "duration": 12.0,
+  "lines": [
+    {
+      "id": "hook",
+      "text": "Your plant is thirsty.",
+      "start": 0.0,
+      "end": 1.3,
+      "words": [
+        {
+          "word": "Your",
+          "start": 0.0,
+          "end": 0.2
+        },
+        {
+          "word": "plant",
+          "start": 0.2,
+          "end": 0.48
+        },
+        {
+          "word": "is",
+          "start": 0.48,
+          "end": 0.62
+        },
+        {
+          "word": "thirsty.",
+          "start": 0.62,
+          "end": 1.3
+        }
+      ]
+    },
+    {
+      "id": "stake",
+      "text": "It can't tell you.",
+      "start": 2.05,
+      "end": 3.2,
+      "words": [
+        {
+          "word": "It",
+          "start": 2.05,
+          "end": 2.2
+        },
+        {
+          "word": "can't",
+          "start": 2.2,
+          "end": 2.48
+        },
+        {
+          "word": "tell",
+          "start": 2.48,
+          "end": 2.72
+        },
+        {
+          "word": "you.",
+          "start": 2.72,
+          "end": 3.2
+        }
+      ]
+    },
+    {
+      "id": "turn",
+      "text": "Quillfern remembers.",
+      "start": 3.9,
+      "end": 5.2,
+      "words": [
+        {
+          "word": "Quillfern",
+          "start": 3.9,
+          "end": 4.5
+        },
+        {
+          "word": "remembers.",
+          "start": 4.55,
+          "end": 5.2
+        }
+      ]
+    },
+    {
+      "id": "payoff",
+      "text": "You water it on time.",
+      "start": 5.45,
+      "end": 7.0,
+      "words": [
+        {
+          "word": "You",
+          "start": 5.45,
+          "end": 5.6
+        },
+        {
+          "word": "water",
+          "start": 5.6,
+          "end": 5.9
+        },
+        {
+          "word": "it",
+          "start": 5.9,
+          "end": 6.02
+        },
+        {
+          "word": "on",
+          "start": 6.25,
+          "end": 6.4
+        },
+        {
+          "word": "time.",
+          "start": 6.4,
+          "end": 7.0
+        }
+      ]
+    },
+    {
+      "id": "seam",
+      "text": "A week later…",
+      "start": 9.25,
+      "end": 10.3,
+      "words": [
+        {
+          "word": "A",
+          "start": 9.25,
+          "end": 9.35
+        },
+        {
+          "word": "week",
+          "start": 9.35,
+          "end": 9.62
+        },
+        {
+          "word": "later…",
+          "start": 9.62,
+          "end": 10.3
+        }
+      ]
+    }
+  ]
+}

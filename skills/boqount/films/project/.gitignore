@@ -1,0 +1,11 @@
+node_modules
+dist
+out
+.DS_Store
+.env
+
+# Written by scripts/sync-assets.mjs before every npm script (fonts, the brand's logo, each film's sound and cues).
+/public/
+/src/films/*/cues.json
+# The template's empty cue sheet is its own, not synced: `film.mjs new` copies it as the new film's first one.
+!/src/films/_template/cues.json

@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: npm test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+      - run: npm test
+
+  films-lint:
+    name: film project lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/boqount/films/project
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: skills/boqount/films/project/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan the tree
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 dir /repo --no-banner --redact --exit-code 1

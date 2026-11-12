@@ -1,0 +1,17 @@
+node_modules/
+.DS_Store
+
+# Keys and secrets, never committed.
+.env*
+*.key
+
+# Rendered output and generated media. skills/boqount/films/.gitignore and films/project/.gitignore name the
+# film project's own (renders, the films' sound, the synthesized kit, the synced public/ folder).
+out/
+*.mp4
+*.mov
+*.wav
+*.mp3
+
+# Upload replies of an account run inside this folder (signed URLs).
+.boqo-upload/

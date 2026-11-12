@@ -1,0 +1,311 @@
+#!/usr/bin/env node
+// Sets up the film project in an account and adds films to it (the skill's films/ folder holds the Remotion project).
+//
+//   node <skill>/tools/film.mjs init  [--dir <account>] [--from <films-dir>]   copy <skill>/films/ to <account>/films/ (never over an existing films/project), generate films/sfx/, apply the theme; prints the one command left as {"next": {"cwd", "command": [...]}}
+//   node <skill>/tools/film.mjs theme [--dir <account>]                        brand/<slug>/style.md's ```tokens block → films/project/src/lib/tokens.json
+//   node <skill>/tools/film.mjs new <slug> [--dir <account>]                   films/<slug>/ (script, storyboard, audio skeletons), the scenes in films/project/src/films/<slug>/, registered in src/films/index.ts
+//
+// --dir defaults to the current folder: the account's files live where the agent was started, not beside this tool.
+// --from defaults to the skill's own films/ folder, found relative to this file (../films).
+//
+// init never overwrites a file that is already under <account>/films/, and leaves out what is generated or installed:
+// node_modules, the project's public/ and out/, rendered output, .wav files and a film's audio/sfx/.
+//
+// theme reads the slug from the `brand:` line of marketing/config.md, then the ```tokens block of brand/<slug>/style.md:
+// `key: value` lines (# starts a comment line) with the keys of tokens.json: canvas panel ink muted accent accent2 danger
+// (hex colours: #rgb or #rrggbb, written as #RRGGBB; a colour with alpha is refused), font_display font_text (a CSS
+// family name, quotes optional), radius (a number of px), motion (snappy, smooth or bouncy). The keys it sets replace those in tokens.json; the others keep their value. No style.md, or no
+// block in it, leaves the tokens as they are and says so. An unknown key or a bad value is an error naming the line,
+// and nothing is written.
+//
+// new refuses a slug that exists or is not made of a-z, 0-9 and single hyphens, and an id (the slug in PascalCase)
+// another film already has. The new film's scenes start as a copy of src/films/_template/ (a neutral skeleton that is
+// never registered itself), with its id "Template" and slug "_template" renamed wherever they are quoted. The starter
+// is only the worked example: new reads its script and storyboard for their headings when it is there, and works
+// without it.
+//
+// Prints one JSON line and exits 0, or exits 1 with {"error": …}. The tests are tests/film.test.mjs.
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, copyFileSync, realpathSync } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
+import { basename, dirname, join, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { run as runKit } from "./sfx-kit.mjs";
+
+const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--dir <account>]";
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+// Folders under films/ that are not a film's: a slug may not take their name.
+const RESERVED_SLUGS = ["project", "sfx", "starter"];
+const COLOR_KEYS = ["canvas", "panel", "ink", "muted", "accent", "accent2", "danger"];
+const FONT_KEYS = ["font_display", "font_text"];
+const TOKEN_KEYS = [...COLOR_KEYS, ...FONT_KEYS, "radius", "motion"];
+const MOTIONS = ["snappy", "smooth", "bouncy"];
+const HEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const HEX_ALPHA = /^#(?:[0-9a-fA-F]{4}|[0-9a-fA-F]{8})$/;
+/** The folder `new` copies, and the id and slug it renames there. */
+const TEMPLATE = { dir: "_template", id: "Template", slug: "_template" };
+const RESERVED_WORDS = new Set(
+  "break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof let new null package private protected public return static super switch this throw true try typeof var void while with yield await interface implements".split(" "),
+);
+const MARKERS = { importsEnd: "// films:end", listEnd: "// films:list:end", importsStart: "// films:start", listStart: "// films:list:start" };
+
+const ok = (value) => ({ code: 0, line: JSON.stringify(value) });
+const fail = (message) => ({ code: 1, line: JSON.stringify({ error: message }) });
+const isDir = (path) => existsSync(path) && statSync(path).isDirectory();
+const readOptional = (path) => (existsSync(path) ? readFileSync(path, "utf8") : null);
+
+// ---------------------------------------------------------------- arguments
+
+function parseArgs(argv) {
+  const [command, ...rest] = argv;
+  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir"] }[command];
+  if (!allowed) throw new Error(USAGE);
+  const flags = {};
+  const positional = [];
+  for (let i = 0; i < rest.length; i++) {
+    if (rest[i].startsWith("--")) {
+      if (!allowed.includes(rest[i]) || rest[i + 1] === undefined || flags[rest[i]] !== undefined) throw new Error(USAGE);
+      flags[rest[i]] = rest[++i];
+    } else positional.push(rest[i]);
+  }
+  if (positional.length !== (command === "new" ? 1 : 0)) {
+    if (command === "new" && positional.length === 0) throw new Error(`new needs a slug. ${USAGE}`);
+    throw new Error(USAGE);
+  }
+  return { command, flags, slug: positional[0] };
+}
+
+// ---------------------------------------------------------------- theme
+
+/** The brand slug of the account, or null. */
+function brandSlug(account) {
+  const text = readOptional(join(account, "marketing/config.md"));
+  if (text === null) return null;
+  const block = /^```config[ \t]*\r?\n([\s\S]*?)^```[ \t]*$/m.exec(text);
+  const m = /^brand:[ \t]*(.*?)[ \t]*$/m.exec(block ? block[1] : text);
+  return m && SLUG.test(m[1]) ? m[1] : null;
+}
+
+/** One token line's value, checked against its key. Throws with the problem, without the line number. */
+function tokenValue(key, raw) {
+  if (raw === "") throw new Error(`${key} has no value`);
+  if (COLOR_KEYS.includes(key)) {
+    if (HEX_ALPHA.test(raw)) throw new Error(`${key} must be an opaque colour: ${JSON.stringify(raw)} has alpha; write it as #rrggbb`);
+    if (!HEX.test(raw)) throw new Error(`${key} must be a hex colour such as #3f8f5b, got ${JSON.stringify(raw)}`);
+    // The film's colour arithmetic (theme.ts) reads #RRGGBB: #abc is written out in full.
+    const digits = raw.length === 4 ? [...raw.slice(1)].map((c) => c + c).join("") : raw.slice(1);
+    return `#${digits.toUpperCase()}`;
+  }
+  if (FONT_KEYS.includes(key)) {
+    const family = raw.replace(/^(["'])(.*)\1$/, "$2");
+    // The family ends up in a CSS font stack: a name, with spaces, dots, commas and hyphens, and nothing that could close it.
+    if (!/^[A-Za-z0-9 _.,-]+$/.test(family)) throw new Error(`${key} must be a font family name (letters, digits, spaces, . , _ -), got ${JSON.stringify(raw)}`);
+    return family;
+  }
+  if (key === "radius") {
+    if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error(`radius must be a number of px, got ${JSON.stringify(raw)}`);
+    return Number(raw);
+  }
+  if (!MOTIONS.includes(raw)) throw new Error(`motion must be one of ${MOTIONS.join(", ")}, got ${JSON.stringify(raw)}`);
+  return raw;
+}
+
+/**
+ * What the account's brand style asks for: { slug, applied: false, note } when it asks for nothing, else
+ * { slug, applied: true, tokens } (only the keys the block sets). Throws, naming the line, on a bad line.
+ */
+function readTheme(account) {
+  const slug = brandSlug(account);
+  if (!slug) return { slug: null, applied: false, note: "no brand slug in marketing/config.md (brand:); default tokens kept" };
+  const path = `brand/${slug}/style.md`;
+  const text = readOptional(join(account, path));
+  if (text === null) return { slug, applied: false, note: `no ${path}; default tokens kept` };
+  const block = /^```tokens[ \t]*\r?\n([\s\S]*?)^```[ \t]*$/m.exec(text);
+  if (!block) return { slug, applied: false, note: `${path} has no \`\`\`tokens block; default tokens kept` };
+  const first = text.slice(0, block.index).split("\n").length + 1; // the file's line number of the block's first line
+  const tokens = {};
+  block[1].split(/\r?\n/).forEach((line, i) => {
+    if (line.trim() === "" || line.trim().startsWith("#")) return;
+    const where = `${path} line ${first + i}`;
+    const colon = line.indexOf(":");
+    if (colon < 1) throw new Error(`${where}: ${JSON.stringify(line.trim())} is not "key: value"`);
+    const key = line.slice(0, colon).trim();
+    if (!TOKEN_KEYS.includes(key)) throw new Error(`${where}: unknown key ${JSON.stringify(key)} (the keys are ${TOKEN_KEYS.join(", ")})`);
+    if (key in tokens) throw new Error(`${where}: ${key} is set twice`);
+    try {
+      tokens[key] = tokenValue(key, line.slice(colon + 1).trim());
+    } catch (e) {
+      throw new Error(`${where}: ${e.message}`);
+    }
+  });
+  return { slug, applied: true, tokens };
+}
+
+const tokensPath = (account) => join(account, "films/project/src/lib/tokens.json");
+const needInit = (account) => new Error(`no films/project in ${account}: run film.mjs init first`);
+
+function applyTheme(account, theme) {
+  if (!theme.applied) return { slug: theme.slug, applied: false, note: theme.note };
+  const file = tokensPath(account);
+  const next = { ...JSON.parse(readFileSync(file, "utf8")), ...theme.tokens };
+  writeFileSync(file, JSON.stringify(next, null, 2) + "\n");
+  return { slug: theme.slug, applied: true, set: Object.keys(theme.tokens) };
+}
+
+// ---------------------------------------------------------------- init
+
+/** True for what init leaves out: installed, built, rendered or generated. `rel` is relative to the films/ folder. */
+function generated(rel) {
+  const parts = rel.split("/");
+  return (
+    parts.includes("node_modules") ||
+    basename(rel) === ".DS_Store" ||
+    rel === "project/public" ||
+    (parts.length === 2 && parts[1] === "out") ||
+    /\.wav$/i.test(rel) ||
+    /(^|\/)audio\/sfx$/.test(rel)
+  );
+}
+
+/** Copies `from` into `to`, skipping generated files and never replacing a file that exists. Returns the files written. */
+function copyTree(from, to, root = from, written = []) {
+  mkdirSync(to, { recursive: true });
+  for (const entry of readdirSync(from, { withFileTypes: true })) {
+    const src = join(from, entry.name);
+    if (generated(relative(root, src).split("\\").join("/"))) continue;
+    const dest = join(to, entry.name);
+    if (entry.isDirectory()) copyTree(src, dest, root, written);
+    else if (!existsSync(dest)) {
+      copyFileSync(src, dest);
+      written.push(dest);
+    }
+  }
+  return written;
+}
+
+async function init(account, from) {
+  if (!isDir(join(from, "project"))) throw new Error(`${from} has no project/ folder: that is not the skill's films/ folder`);
+  if (!existsSync(join(from, "project/src/lib/tokens.json"))) throw new Error(`${from}/project has no src/lib/tokens.json`);
+  const films = join(account, "films");
+  if (existsSync(join(films, "project"))) {
+    throw new Error(`${films}/project already exists: init never goes over it. To start again, move it away first`);
+  }
+  const theme = readTheme(account); // a bad style.md stops here, before anything is written
+  copyTree(from, films);
+  const kit = await runKit(["--out", join(films, "sfx")], { mkdir, writeFile });
+  const sfx = JSON.parse(kit.line);
+  if (kit.code !== 0) throw new Error(`the sound kit: ${sfx.error}`);
+  return {
+    command: "init",
+    dir: account,
+    films,
+    sfx: { out: sfx.out, files: sfx.files.length },
+    theme: applyTheme(account, theme),
+    next: { cwd: join(films, "project"), command: ["npm", "install"] },
+  };
+}
+
+// ---------------------------------------------------------------- new
+
+const cap = (s) => s[0].toUpperCase() + s.slice(1);
+const pascal = (slug) => slug.split("-").map(cap).join("");
+/** A valid JS name for the film's import: camelCase of the slug, `film` + PascalCase when that is not a name. */
+function importName(slug, taken) {
+  const [head, ...tail] = slug.split("-");
+  let name = head + tail.map(cap).join("");
+  if (/^\d/.test(name) || RESERVED_WORDS.has(name)) name = `film${pascal(slug)}`;
+  while (taken.has(name)) name += "_";
+  return name;
+}
+// The starter's skeletons when its files are gone: the same headings and labels.
+const STORYBOARD_HEADINGS = "# Starter — storyboard (9:16)\n## The locked-format points\n## The chain\n## Sound\n";
+const SCRIPT_LABELS = "Structure:\n";
+const headingsOnly = (text, slug) =>
+  text.split("\n").filter((l) => /^#{1,6}\s/.test(l)).map((l) => l.replace(/starter/gi, slug)).join("\n\n") + "\n";
+/** A script's skeleton: one numbered line, and each label (`Structure:`) with its text removed. */
+const scriptSkeleton = (text) =>
+  ["1.", "", ...text.split("\n").map((l) => /^[A-Za-z][A-Za-z ]*:/.exec(l)?.[0]).filter(Boolean)].join("\n") + "\n";
+/** The template's id and slug, quoted in its code, become the new film's. */
+const QUOTED = (word) => new RegExp(`(["'])${word}\\1`, "g");
+const renamed = (text, id, slug) => text.replace(QUOTED(TEMPLATE.id), `$1${id}$1`).replace(QUOTED(TEMPLATE.slug), `$1${slug}$1`);
+
+async function newFilm(account, slug) {
+  if (!slug || !SLUG.test(slug)) throw new Error(`${JSON.stringify(slug ?? "")} is not a slug: use a-z, 0-9 and single hyphens, e.g. dry-spell`);
+  if (RESERVED_SLUGS.includes(slug)) throw new Error(`${slug} is a folder of the film project, not a film: choose another slug`);
+  const project = join(account, "films/project");
+  const indexPath = join(project, "src/films/index.ts");
+  const template = join(project, "src/films", TEMPLATE.dir);
+  const starterFilm = join(account, "films/starter");
+  if (!existsSync(indexPath) || !isDir(template)) throw needInit(account);
+  const filmDir = join(account, "films", slug);
+  const scenesDir = join(project, "src/films", slug);
+  if (existsSync(filmDir) || existsSync(scenesDir)) throw new Error(`the film ${slug} already exists (${existsSync(filmDir) ? filmDir : scenesDir})`);
+
+  const id = pascal(slug);
+  for (const dir of readdirSync(join(project, "src/films"), { withFileTypes: true }).filter((e) => e.isDirectory() && !e.name.startsWith("_"))) {
+    const other = /\bid:\s*["']([^"']+)["']/.exec(readOptional(join(project, "src/films", dir.name, "index.ts")) ?? "")?.[1];
+    if (other === id) throw new Error(`the id ${id} is already the film ${dir.name}'s: choose another slug`);
+  }
+  const templateIndex = readOptional(join(template, "index.ts")) ?? "";
+  const ID = new RegExp(`\\bid:\\s*(["'])${TEMPLATE.id}\\1`);
+  const SLUG_PROP = new RegExp(`\\bslug:\\s*(["'])${TEMPLATE.slug}\\1`);
+  if (!ID.test(templateIndex) || !SLUG_PROP.test(templateIndex)) throw new Error(`${template}/index.ts has no id: "${TEMPLATE.id}" and slug: "${TEMPLATE.slug}" to rename`);
+
+  const lines = readFileSync(indexPath, "utf8").split("\n");
+  const at = Object.fromEntries(Object.entries(MARKERS).map(([name, marker]) => [name, lines.flatMap((l, i) => (l.trim() === marker ? [i] : []))]));
+  for (const [name, marker] of Object.entries(MARKERS)) {
+    if (at[name].length !== 1) throw new Error(`${indexPath} must have the line ${marker} exactly once`);
+  }
+  if (!(at.importsStart[0] < at.importsEnd[0] && at.importsEnd[0] < at.listStart[0] && at.listStart[0] < at.listEnd[0])) {
+    throw new Error(`${indexPath}: the marker lines are out of order`);
+  }
+  if (lines.some((l) => l.includes(`from './${slug}'`))) throw new Error(`${slug} is already registered in ${indexPath}`);
+  const taken = new Set([...lines.join("\n").matchAll(/\bas\s+(\w+)\s*\}/g)].map((m) => m[1]));
+  const name = importName(slug, taken);
+
+  try {
+    mkdirSync(join(filmDir, "audio"), { recursive: true });
+    writeFileSync(join(filmDir, "script.txt"), scriptSkeleton(readOptional(join(starterFilm, "script.txt")) ?? SCRIPT_LABELS));
+    writeFileSync(join(filmDir, "STORYBOARD.md"), headingsOnly(readOptional(join(starterFilm, "STORYBOARD.md")) ?? STORYBOARD_HEADINGS, slug));
+    writeFileSync(join(filmDir, "audio/cues.json"), JSON.stringify({ duration: 0, lines: [] }, null, 2) + "\n");
+    writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ loop: true, hits: [], music: { segments: [] } }, null, 2) + "\n");
+    for (const file of copyTree(template, scenesDir)) {
+      if (/\.(ts|tsx)$/.test(file)) writeFileSync(file, renamed(readFileSync(file, "utf8"), id, slug));
+    }
+    const indent = /^\s*/.exec(lines[at.listEnd[0]])[0];
+    lines.splice(at.listEnd[0], 0, `${indent}${name},`);
+    lines.splice(at.importsEnd[0], 0, `import {film as ${name}} from './${slug}';`);
+    writeFileSync(indexPath, lines.join("\n"));
+  } catch (e) {
+    rmSync(filmDir, { recursive: true, force: true });
+    rmSync(scenesDir, { recursive: true, force: true });
+    throw e;
+  }
+  return { command: "new", slug, id, film: `films/${slug}`, scenes: `films/project/src/films/${slug}`, registered: true };
+}
+
+// ---------------------------------------------------------------- the command
+
+/** `deps`: { cwd, films } (the folder the command runs in; the skill's films/ folder). Returns { code, line }. */
+export async function run(argv, deps) {
+  try {
+    const { command, flags, slug } = parseArgs(argv);
+    const account = resolve(deps.cwd, flags["--dir"] ?? ".");
+    if (command === "init") {
+      const from = flags["--from"] === undefined ? deps.films : resolve(deps.cwd, flags["--from"]);
+      return ok(await init(account, from));
+    }
+    if (command === "new") return ok(await newFilm(account, slug));
+    if (!existsSync(tokensPath(account))) throw needInit(account);
+    return ok({ command: "theme", ...applyTheme(account, readTheme(account)) });
+  } catch (e) {
+    return fail(e.message);
+  }
+}
+
+// Run as a command, but stay importable for the tests.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
+  const films = resolve(dirname(fileURLToPath(import.meta.url)), "../films");
+  const { code, line } = await run(process.argv.slice(2), { cwd: process.cwd(), films });
+  console.log(line);
+  process.exit(code);
+}
