@@ -1,0 +1,21 @@
+{
+  "_": "The story's clock, in seconds (an Instagram Story: film.md → Stories). Story.tsx animates from these beats and `film.mjs sfx <slug>` puts each beat's `sound` on it in audio/sfx-cues.json, so moving a beat moves both. A `text` beat rises over 0.3 s: every one starts by 0.7 s, so all the words are on screen within the first second. After 1 s only a `decor` beat moves (the highlighter sweep). Two or three sounds at most, no music, no voice: one sound for the whole burst of words, never one per line. A sound from the library is `<group>/<name>`; `fallback` is the kit sound used while the library has no take of it.",
+  "format": "ig-story",
+  "duration": 10,
+  "lines": [],
+  "link": true,
+  "beats": {
+    "pill": {"t": 0.0, "kind": "text"},
+    "burst": {"t": 0.0, "kind": "sound", "sound": "ui/chat-flurry", "fallback": "kit/typing", "under": 10, "until": 1.05},
+    "head1": {"t": 0.08, "kind": "text"},
+    "head2": {"t": 0.16, "kind": "text"},
+    "card": {"t": 0.26, "kind": "text"},
+    "status": {"t": 0.34, "kind": "text"},
+    "line1": {"t": 0.4, "kind": "text"},
+    "line2": {"t": 0.48, "kind": "text"},
+    "ask": {"t": 0.56, "kind": "text"},
+    "tap": {"t": 0.62, "kind": "text"},
+    "arrow": {"t": 0.68, "kind": "text"},
+    "hl": {"t": 1.15, "kind": "decor", "sound": "foley/marker", "fallback": "kit/whoosh", "align": "sync", "under": 14}
+  }
+}

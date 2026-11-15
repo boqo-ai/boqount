@@ -11,3 +11,5 @@ out
 /src/films/*/props.json
 # The template's empty cue sheet is its own, not synced: `film.mjs new` copies it as the new film's first one.
 !/src/films/_template/cues.json
+!/src/films/_story/cues.json
+!/src/films/_ig-story/cues.json
