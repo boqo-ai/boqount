@@ -88,7 +88,7 @@ export const W8App: React.FC = () => {
         )}
       </Camera>
       {/* the name, large on its word, then docked into the header (over the camera: it stays put) */}
-      <div style={{position: 'absolute', left: nameX, top: nameY, translate: `${mix(-50, 0, dock)}% 0`, display: 'flex', alignItems: 'center', gap: nameSize * 0.25, opacity: p(f, name - 4, 8), scale: `${bump(f, name + 2, 0.05)}`, transformOrigin: '0 50%'}}>
+      <div style={{position: 'absolute', left: nameX, top: nameY, translate: `${mix(-50, 0, dock)}% 0`, display: 'flex', alignItems: 'center', gap: nameSize * 0.25, opacity: p(f, a - 20, 8), scale: `${bump(f, name + 2, 0.05)}`, transformOrigin: '0 50%'}}>
         {hasLogo() && <Logo height={nameSize * 1.05} />}
         <span style={{fontFamily: F.display, fontWeight: 800, fontSize: nameSize, letterSpacing: '-0.035em', color: T.ink, whiteSpace: 'nowrap'}}>Quillfern</span>
       </div>

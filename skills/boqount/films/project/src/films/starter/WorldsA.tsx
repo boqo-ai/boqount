@@ -40,7 +40,7 @@ export const W1Number: React.FC = () => {
   return (
     <>
       <Backdrop a={T.accent2} b={T.accent} />
-      <Camera keys={[at(0, 540, 760, 1), at(cue('twist', 0), 540, 760, 1.02), at(WORLD.number[1], 540, 820, 1.12)]} aim={[540, 760]}>
+      <Camera keys={[at(0, 540, 760, 1), at(cue('twist', 0), 540, 760, 1.02), at(WORLD.number[1], 540, 820, 1.08)]} aim={[540, 760]}>
         <Board y={BAR.base} x0={0} x1={1080} />
         {[0, 1, 2, 3, 4].map((i) => (
           <Pot key={i} x={190 + i * 175} y={BAR.base + 4} s={0.5} kind={(['fern', 'leafy', 'cactus', 'snake', 'leafy'] as Kind[])[i]} style={{opacity: stay, translate: `0 ${(1 - stay) * 40}px`}} />
@@ -63,8 +63,8 @@ export const W1Number: React.FC = () => {
             />
           );
         })}
-        <div style={{position: 'absolute', left: 70, width: 940, top: WEEK_Y, height: 0, borderTop: `4px dashed ${alpha(T.ink, 0.6)}`, opacity: mark}} />
-        <div style={{position: 'absolute', left: 70, top: WEEK_Y - 52, fontFamily: F.text, fontWeight: 700, fontSize: 36, color: T.ink, whiteSpace: 'nowrap', opacity: mark}}>1 week</div>
+        <div style={{position: 'absolute', left: 120, width: 880, top: WEEK_Y, height: 0, borderTop: `4px dashed ${alpha(T.ink, 0.6)}`, opacity: mark}} />
+        <div style={{position: 'absolute', left: 120, top: WEEK_Y - 52, fontFamily: F.text, fontWeight: 700, fontSize: 36, color: T.ink, whiteSpace: 'nowrap', opacity: mark}}>1 week</div>
       </Camera>
       <div style={{position: 'absolute', top: 290, left: L.left, right: L.W - L.right, display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 24}}>
         <Odo value={v} size={210} color={T.accent2} weight={800} />
@@ -98,7 +98,7 @@ export const W2Shelf: React.FC = () => {
         {SHELF.map((kind, i) => {
           const x = 195 + (i % 4) * 230;
           const y = 602 + Math.floor(i / 4) * 172;
-          const t0 = mix(count0, count1, i / 12);
+          const t0 = i === 0 ? a : mix(count0, count1, i / 12);
           const pop = p(f, t0, 12, EXPO);
           const tag = p(f, six + (i % 6) * 3, 12, EXPO);
           return (

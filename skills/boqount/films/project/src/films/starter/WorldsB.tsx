@@ -32,11 +32,11 @@ export const W4Notes: React.FC = () => {
   return (
     <>
       <Backdrop a={T.muted} b={T.accent2} hi={0.16} />
-      <Camera keys={[at(a, 540, 610, 1.06), at(WORLD.notes[1], 540, 620, 1)]} aim={[540, 610]}>
+      <Camera keys={[at(a, 540, 610, 1.03), at(WORLD.notes[1], 540, 620, 1)]} aim={[540, 610]}>
         {NOTES.map((n, i) => {
           const col = i % 2;
           const row = Math.floor(i / 2);
-          const slap = p(f, mix(t0, t1, i / NOTES.length), 10, EXPO);
+          const slap = p(f, i === 0 ? a : mix(t0, t1, i / NOTES.length), 10, EXPO);
           const drop = i === 3 ? fall : 0;
           const rot = rnd(`nr${i}`, -5, 5) + drop * 30;
           const q = lerp(f, [guess - 2, guess + 6, guess + 30], [0, 1, 0.6]);
@@ -134,8 +134,8 @@ export const W5Sill: React.FC = () => {
 // ───────────── 6. what most do: everything the morning they leave ─────────────
 
 const AWAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const BIG = {x: 85, y: 300, w: 380, h: 630};
-const SMALL = {x: 505, y: 300, w: 510, h: 82, gap: 9};
+const BIG = {x: 110, y: 300, w: 360, h: 630};
+const SMALL = {x: 500, y: 300, w: 470, h: 82, gap: 9};
 
 export const W6Week: React.FC = () => {
   const f = useF();
@@ -143,11 +143,11 @@ export const W6Week: React.FC = () => {
   const t0 = cue('sunday', 1);
   const t1 = cue('sunday', 4);
   const leave = cue('sunday', 6);
-  const big = p(f, a + 4, 14, EXPO);
+  const big = p(f, a - 20, 14, EXPO);
   return (
     <>
       <Backdrop a={T.accent2} b={T.muted} hi={0.16} />
-      <Camera keys={[at(a, 540, 620, 1.04), at(t0, 300, 640, 1.08), at(leave, 540, 620, 1), at(WORLD.week[1], 760, 640, 1.06)]} aim={[540, 610]}>
+      <Camera keys={[at(a, 540, 620, 1), at(t0, 540, 630, 1.04), at(leave, 540, 620, 1), at(WORLD.week[1], 540, 630, 1.03)]} aim={[540, 610]}>
         {/* the one day: all the water goes in here */}
         <div style={{position: 'absolute', left: BIG.x, top: BIG.y, width: BIG.w, height: BIG.h, borderRadius: 28, background: alpha(T.accent2, 0.1), boxShadow: `inset 0 0 0 4px ${alpha(T.accent2, 0.7)}`, opacity: big, scale: `${mix(0.9, 1, big)}`}}>
           <div style={{position: 'absolute', left: 30, top: 24, fontFamily: F.text, fontWeight: 800, fontSize: 52, color: T.ink}}>Sat</div>
@@ -162,7 +162,7 @@ export const W6Week: React.FC = () => {
         })}
         {/* then a week away: no water on any of its days */}
         {AWAY.map((d, i) => {
-          const show = p(f, a + 10 + i * 3, 12, EXPO);
+          const show = p(f, a - 20 + i * 3, 12, EXPO);
           const pass = p(f, leave + 4 + i * 5, 10);
           return (
             <div key={d} style={{position: 'absolute', left: SMALL.x, top: SMALL.y + i * (SMALL.h + SMALL.gap), width: SMALL.w, height: SMALL.h, borderRadius: 18, background: D.track, opacity: show, translate: `${(1 - show) * 40}px 0`, display: 'flex', alignItems: 'center', padding: '0 26px', boxSizing: 'border-box', fontFamily: F.text}}>
@@ -201,7 +201,7 @@ export const W7Pair: React.FC = () => {
   return (
     <>
       <Backdrop a={T.danger} b={T.accent} hi={0.18} />
-      <Camera keys={[at(a, 540, 700, 1.04), at(cue('result', 4), 360, 700, 1.1), at(cue('result', 9), 720, 700, 1.1), at(cue('turn', 0), 540, 680, 1), at(WORLD.pair[1], 540, 680, 1.02)]} aim={[540, 680]}>
+      <Camera keys={[at(a, 540, 700, 1), at(cue('turn', 0), 540, 700, 1.05), at(WORLD.pair[1], 540, 690, 1.02)]} aim={[540, 680]}>
         <Board y={924} x0={0} x1={1080} />
         <Pot x={300} y={920} s={1.15} kind="fern" dry={fernDry} />
         <Pot x={780} y={920} s={1.15} kind="cactus" water={water} />

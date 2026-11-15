@@ -38,10 +38,16 @@ const TRACK = -0.035; // em
 const GAP = 0.26; // em, between words
 const WEIGHT = 900;
 
-/** Every line split into phrases of at most `max` words, breaking after a word that ends a clause (. , ; : ? !) and
- * never leaving one word alone when two can share. `keys` names, per line id, the word indexes to set in the accent. */
-export const phrasesOf = (lines: Line[], keys: Record<string, number[]> = {}, max = 3): Phrase[] => {
+/** Capitals as a caption sets them: quotes and a trailing comma or full stop dropped, ? ! … kept. */
+const capWord = (w: string) => w.replace(/[“”"]/g, '').replace(/[.,;:]+$/, '').toUpperCase();
+
+/** Every line split into phrases of at most `max` words and `chars` characters (so a phrase holds its design size
+ * inside CAPTION.width instead of shrinking far: heavy capitals run about 0.7 em a letter), breaking after a word that
+ * ends a clause (. , ; : ? !) and never leaving one word alone when two can share. `keys` names, per line id, the
+ * word indexes to set in the accent. */
+export const phrasesOf = (lines: Line[], keys: Record<string, number[]> = {}, max = 3, chars = 13): Phrase[] => {
   const out: Phrase[] = [];
+  const len = (l: Line, a: number, b: number) => l.words.slice(a, b + 1).reduce((n, w) => n + capWord(w.word).length + 1, -1);
   for (const l of lines) {
     const n = l.words.length;
     let a = 0;
@@ -53,8 +59,10 @@ export const phrasesOf = (lines: Line[], keys: Record<string, number[]> = {}, ma
           break;
         }
       }
-      // a single word left over at the end of the line joins its neighbour when that keeps the phrase within max + 1
-      if (b === n - 2 && b - a + 1 < max) b = n - 1;
+      while (b > a && len(l, a, b) > chars) b--;
+      // a single word left over at the end of the line joins its neighbour when that keeps the phrase within max
+      // words and the characters allowed
+      if (b === n - 2 && b - a + 1 < max && len(l, a, n - 1) <= chars) b = n - 1;
       const k = (keys[l.id] ?? []).filter((i) => i >= a && i <= b);
       out.push({line: l.id, a, b, keys: k});
       a = b + 1;
@@ -63,8 +71,6 @@ export const phrasesOf = (lines: Line[], keys: Record<string, number[]> = {}, ma
   return out;
 };
 
-/** Capitals as a caption sets them: quotes and a trailing comma or full stop dropped, ? ! … kept. */
-const capWord = (w: string) => w.replace(/[“”"]/g, '').replace(/[.,;:]+$/, '').toUpperCase();
 
 export const Captions: React.FC<{
   phrases: Phrase[];

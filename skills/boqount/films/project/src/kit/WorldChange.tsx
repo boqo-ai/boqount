@@ -1,44 +1,48 @@
 // Worlds that change on a spoken word: the story format's scenes (film.md → The story format). Each world runs over
 // [from, to) film frames; the change into it is a designed move of at most 0.4 s, or a hard cut on the word.
 //
-//   push  the old world grows toward the eye and goes as the new one settles in from slightly larger (a push through)
-//   pull  the old world shrinks away and goes as the new one settles in from slightly larger (a pull-out into it)
+//   push  a pan: the old world travels out to the left as the new one travels in from the right, edge to edge
+//   pull  the pan the other way: the old world travels out to the right as the new one comes in from the left
+//
+// Both are sideways: a world never passes through the caption band (kit/Captions.tsx CAPTION) on its way in.
 //   cut   a hard cut on the word: the new world is simply there
 //
-// Neither move fades through black or white, and nothing washes the whole frame, so a change never flashes (motion.md
-// → Nothing flashes). Inside a world the old rules hold: one camera, things carried and transformed, no jump.
+// In a move both worlds are opaque and side by side, never one over the other: two worlds' words are never seen at
+// once, and nothing fades, so a change never passes through black or white and never flashes (motion.md → Nothing
+// flashes). Inside a world the old rules hold: one camera, things carried and transformed, no jump. The captions
+// (kit/Captions.tsx) are drawn over every world and do not move with it.
 //
 //   const S = spans([0, cue('proof', 0) - 4, cue('catch', 0) - 4, DURATION]);   // where each world starts and ends
 //   <World name="1 The number" span={S[0]} out="push"> … </World>
 //   <World name="2 The proof" span={S[1]} inn="push" out="pull"> … </World>
 import React from 'react';
-import {EXIT, clamp01, mix, p} from '../lib/anim';
+import {INOUT, p} from '../lib/anim';
+import {L} from '../lib/theme';
 import {Scene, useF} from '../lib/scene';
 
 export type Change = 'push' | 'pull' | 'cut';
 
-/** Frames (BASE, 60 a second) a move takes on each side of its word: 0.2 s out of the old world, 0.23 s into the new. */
-export const CHANGE = {out: 12, inn: 14} as const;
+/** Frames (BASE, 60 a second) a move takes: 0.27 s, ending on its mark, the old world leaving as the new one arrives. */
+const MOVE = 16;
+export const CHANGE = {out: MOVE, inn: MOVE} as const;
 
 /** Each world's [from, to) from the frames its changes fall on (the first 0, the last DURATION): a world that arrives
- * by a move starts CHANGE.inn frames before its word, so for that long it draws over the world before. */
+ * by a move starts CHANGE.inn frames before its mark, travelling in beside the world before as that one leaves. */
 export const spans = (marks: number[], moves: Change[] = []): (readonly [number, number])[] =>
   marks.slice(0, -1).map((m, i) => {
     const inn = i > 0 && (moves[i - 1] ?? 'push') !== 'cut' ? CHANGE.inn : 0;
     return [Math.max(0, m - inn), marks[i + 1]] as const;
   });
 
-/** How a world sits at film frame f: its scale and opacity, from the move that brings it in and the one that takes it
- * out. A world that is fully in returns null (drawn as it is). */
-const pose = (f: number, from: number, to: number, inn: Change, out: Change) => {
-  const tin = inn === 'cut' ? 1 : p(f, from, CHANGE.inn);
-  const tout = out === 'cut' ? 0 : p(f, to - CHANGE.out, CHANGE.out, EXIT);
+/** Where a world sits at film frame f: its offset (frame px), from the move that brings it in and the one that takes
+ * it out. Both halves of a move run over the same frames with the same curve, so the two worlds stay edge to edge. A
+ * world that is fully in returns null (drawn as it is). */
+const offset = (f: number, from: number, to: number, inn: Change, out: Change) => {
+  const tin = inn === 'cut' ? 1 : p(f, from, MOVE, INOUT);
+  const tout = out === 'cut' ? 0 : p(f, to - MOVE, MOVE, INOUT);
   if (tin >= 1 && tout <= 0) return null;
-  // the new world comes up over the last two thirds of its move, so the old one is seen moving first
-  const up = inn === 'cut' ? 1 : clamp01(((f - from) / CHANGE.inn - 0.3) / 0.6);
-  const sIn = mix(1.12, 1, tin);
-  const sOut = out === 'pull' ? mix(1, 0.78, tout) : mix(1, 1.45, tout);
-  return {scale: sIn * sOut, opacity: up * (1 - tout)};
+  const side = (c: Change) => (c === 'push' ? 1 : c === 'pull' ? -1 : 0);
+  return {x: side(inn) * (1 - tin) * L.W - side(out) * tout * L.W, y: 0};
 };
 
 /** One world of a story film, over [span[0], span[1]) film frames, brought in by `inn` and taken out by `out`. Pass
@@ -53,7 +57,7 @@ export const World: React.FC<{name: string; span: readonly [number, number]; inn
 
 const Moved: React.FC<{from: number; to: number; inn: Change; out: Change; children: React.ReactNode}> = ({from, to, inn, out, children}) => {
   const f = useF();
-  const ps = pose(f, from, to, inn, out);
-  if (!ps) return <div style={{position: 'absolute', inset: 0}}>{children}</div>;
-  return <div style={{position: 'absolute', inset: 0, opacity: ps.opacity, scale: `${ps.scale}`, transformOrigin: '50% 34%'}}>{children}</div>;
+  const o = offset(f, from, to, inn, out);
+  if (!o) return <div style={{position: 'absolute', inset: 0}}>{children}</div>;
+  return <div style={{position: 'absolute', inset: 0, translate: `${o.x}px ${o.y}px`}}>{children}</div>;
 };
