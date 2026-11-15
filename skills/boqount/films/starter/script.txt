@@ -1,12 +1,28 @@
-Starter — 9:16 film for Quillfern (a plant-care app that reminds you when to water). Voice-free: the words are on screen. Looping, no call to action.
-Frame 0 on screen: "Your plant / is thirsty." over the wilting plant on its windowsill, the camera already pushing in on its dry soil, the phone beside it rolling its "Days since water" count.
-Look: the style tokens (dark canvas, light ink, accent = the healthy green and the water, accent2 = thirst and the window's light, danger = the loss). One drawn world (a windowsill: the plant, a phone, a small cactus, a window), no footage, one travelling camera, no cuts.
-Structure: Layer: product — warm-up 1, stake 2, bridge 3, payoff 4, seam 5
+Starter — 9:16 film for Quillfern (a plant-care app that reminds you when to water), in the story format (film.md → The story format): ten parts, one world each, the scenes change, it does not loop, and it ends on one call. Voice-free as it ships: the captions carry every word at speaking pace, so it reads on mute; a voice can be added later (The voice) and moves every cue with it.
+Frame 0 on screen: a large counter already rolling up to "9 in 10" over ten bars of summer trips crossing a "1 week" line; the source line under it by 0.5 s; the caption "NINE IN TEN".
+The hook's number and its survey are invented, like everything in the Quillfern example: a real film's hook is a number anyone can open at its source, with the date it was read.
+Look: the style tokens; each world its own two colours; drawn shapes only, no footage. The product is named once, in part 8.
+Structure: Layer: product, the story format · Hook 1–2 · Proof 3 · Catch 4–6 · Who is left 7–8 · Where you come in 9–10 · What most do 11–13 · Turn 14 · Product at work 15–17 · Payoff 18 · Call 19 · no seam
+The call: code word FERN (brand/quillfern/accounts.md → DM automation: the person answers each comment by hand).
 
- 1. Your plant is thirsty.
- 2. It can't tell you.
- 3. Quillfern remembers.
- 4. You water it on time.
- 5. A week later…                                [seam: ↺ line 1 finishes it]
+ 1. Nine in ten summer trips last a week or longer.               [counter rolls to 9 from frame 0; source line by 0.5 s]
+ 2. Your plants aren't coming.
+ 3. The same survey counted twelve plants in the average home, on six different schedules.  [same source line]
+ 4. But here's the catch.
+ 5. A plant can't tell you it's thirsty.
+ 6. By the time a leaf droops, the soil has been dry for days.
+ 7. So whoever waters them while you're away keeps track by memory.
+ 8. Plenty of them just guess.
+ 9. If your windowsill is full, that's you.
+10. Twelve plants means twelve water days you're carrying in your head.
+11. But most people do the same thing.
+12. They water everything the morning they leave.
+13. A week later, the fern is dry, and the cactus is sitting in water.
+14. So stop watering on a schedule that isn't theirs.
+15. Quillfern keeps one schedule for each plant.                  [the name, large, then the app's plant list]
+16. It sends one reminder on the day a plant needs water, and none on the days it does not.
+17. Tap Done, and its count starts again.
+18. Twelve plants, and not one water day left in your head.
+19. Comment FERN, and I’ll send you the link.                     [FERN typed and sent; the reply "Here's your link" arrives; held 1.2 s]
 
-Words: 17 · on screen at reading speed (about 3–4 words a second, each line held until it has been read) · 12.0 s.
+Words: 175 · captions at speaking pace (about 2.75 words a second) · 69.24 s.

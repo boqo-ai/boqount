@@ -32,6 +32,12 @@ const TEMPLATE_SCENES = `// The Template film's scenes.
 export const ID = 'Template';
 export const SLUG = "_template";
 `;
+const STORY_INDEX = `export const film = {id: 'Story', slug: '_story', component: Film, durationInFrames: 480};
+`;
+const STORY_SCENES = `// The Story film's scenes: ten worlds, no loop.
+export const ID = 'Story';
+export const SLUG = "_story";
+`;
 const SCRIPT = `1. Water it when the soil is dry.
 2. Quillfern reminds you.
 Structure: hook, reminder, loop
@@ -85,6 +91,9 @@ function skillFilms() {
   put("project/src/films/_template/Film.tsx", "export const Film = () => 'template';\n");
   put("project/src/films/_template/Scenes.tsx", TEMPLATE_SCENES);
   put("project/src/films/_template/cues.json", '{ "duration": 0, "lines": [] }\n');
+  put("project/src/films/_story/index.ts", STORY_INDEX);
+  put("project/src/films/_story/Scenes.tsx", STORY_SCENES);
+  put("project/src/films/_story/cues.json", '{ "duration": 0, "lines": [] }\n');
   put("project/node_modules/left-pad/index.js", "module.exports = 1;\n");
   put("project/public/audio/starter/mix.wav", "RIFF");
   put("project/out/starter.mp4", "mp4");
@@ -286,11 +295,36 @@ test("new creates the film's folder: emptied script and storyboard, audio skelet
   assert.match(script, /^Structure:\s*$/m);
   assert.doesNotMatch(script, /soil|reminds|hook/);
   const board = read(dir, "films/dry-spell/STORYBOARD.md");
-  assert.deepEqual(board.split("\n").filter((l) => l.trim()), ["# Starter storyboard", "## Locked format", "## Chain", "## Sound"].map((h) => h.replace("Starter storyboard", "dry-spell storyboard")));
+  // A looping film takes the locked format's headings; the starter is a story film, so its own are not a loop's.
+  assert.deepEqual(board.split("\n").filter((l) => l.trim()), ["# dry-spell — storyboard (9:16)", "## The locked-format points", "## The chain", "## Sound"]);
   assert.doesNotMatch(board, /plant|Frame 0|pop for/);
   assert.deepEqual(JSON.parse(read(dir, "films/dry-spell/audio/cues.json")), { duration: 0, lines: [] });
   assert.deepEqual(JSON.parse(read(dir, "films/dry-spell/audio/sfx-cues.json")), { loop: true, hits: [], music: { segments: [] } });
   assert.deepEqual(readdirSync(join(dir, "films/dry-spell/audio")).sort(), ["cues.json", "sfx-cues.json"]);
+});
+
+test("new --story builds from _story: its scenes renamed, a sheet that does not loop, the starter's headings", async () => {
+  const { dir } = await initialized();
+  const r = await film(["new", "dry-spell", "--story", "--dir", dir]);
+  assert.equal(r.code, 0, JSON.stringify(r.out));
+  assert.equal(r.out.format, "story");
+  const scenes = "films/project/src/films/dry-spell";
+  assert.deepEqual(readdirSync(join(dir, scenes)).sort(), readdirSync(join(dir, "films/project/src/films/_story")).sort());
+  assert.match(read(dir, `${scenes}/index.ts`), /id: 'DrySpell', slug: 'dry-spell'/);
+  assert.match(read(dir, `${scenes}/Scenes.tsx`), /ID = 'DrySpell';\nexport const SLUG = "dry-spell";/);
+  assert.match(read(dir, `${scenes}/Scenes.tsx`), /The Story film's scenes/, "only quoted names are renamed");
+  assert.equal(JSON.parse(read(dir, "films/dry-spell/audio/sfx-cues.json")).loop, false);
+  const board = read(dir, "films/dry-spell/STORYBOARD.md");
+  assert.deepEqual(board.split("\n").filter((l) => l.trim()), ["# dry-spell storyboard", "## Locked format", "## Chain", "## Sound"], "the starter's headings");
+  assert.doesNotMatch(read(dir, "films/project/src/films/index.ts"), /_story/, "the template is never registered");
+  assert.equal(read(dir, "films/project/src/films/_story/index.ts"), STORY_INDEX, "the template is untouched");
+  // the flag once only, and only for new
+  assert.equal((await film(["new", "wet-week", "--story", "--story", "--dir", dir])).code, 1);
+  assert.equal((await film(["theme", "--story", "--dir", dir])).code, 1);
+  // without the starter, a story film still gets the story format's headings
+  rmSync(join(dir, "films/starter"), { recursive: true });
+  assert.equal((await film(["new", "wet-week", "--story", "--dir", dir])).code, 0);
+  assert.match(read(dir, "films/wet-week/STORYBOARD.md"), /^## The story-format points$/m);
 });
 
 test("new copies the template's scenes with the id and slug renamed, and registers the film between the markers", async () => {
@@ -346,7 +380,7 @@ test("new refuses a slug that exists or is not a-z, 0-9 and hyphens, and writes 
   }
   assert.equal(read(dir, "films/project/src/films/index.ts"), before);
   assert.deepEqual(readdirSync(join(dir, "films")).sort(), ["dry-spell", "project", "sfx", "starter"]);
-  assert.deepEqual(readdirSync(join(dir, "films/project/src/films")).sort(), ["_template", "dry-spell", "index.ts", "starter"]);
+  assert.deepEqual(readdirSync(join(dir, "films/project/src/films")).sort(), ["_story", "_template", "dry-spell", "index.ts", "starter"]);
 });
 
 test("new refuses an id another film already has", async () => {
