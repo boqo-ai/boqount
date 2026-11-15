@@ -75,6 +75,14 @@ Windows WSL or Git Bash).
 - **The pull fails** (local changes, a branch that has moved, no network): tell the person the command and the
   error's first line, and stop. Never delete, move or reset `~/.boqount`.
 
+## A team on one account
+
+Several people running one account from their own machines share it through one git remote (the lock:
+`<skills>/boqount/SKILL.md` → Rules) and share the service keys encrypted in it, each opened with the SSH key they
+already push with: an admin who holds the keys runs `bash ~/.boqount/skills/boqount/tools/keys.sh add <github-login>`
+in the account's folder and commits `secrets/`; the new admin pulls and runs `keys.sh unlock`. It needs `age`
+(`brew install age`). One person on one machine needs none of this.
+
 ## Updating
 
 ```sh

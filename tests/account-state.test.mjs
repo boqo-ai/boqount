@@ -1287,9 +1287,9 @@ test("calibration does not count a handed post", () => {
 
 test("parseConfig types publish_via, git_push and signups_source and refuses other values", () => {
   const empty = cfg();
-  assert.deepEqual([empty.publish_via, empty.git_push, empty.issues_repo, empty.signups_source, empty.signups_command, empty.link_must_have, empty.link_must_not_have], ["auto", "off", null, "none", null, null, null]);
-  const set = cfg({ publish_via: "boqo-only", git_push: "on", issues_repo: "quillfern/site", signups_source: "command", signups_command: "node ./signups.mjs --days 28", link_must_have: "Start free", link_must_not_have: "Sign in to continue" });
-  assert.deepEqual([set.publish_via, set.git_push, set.issues_repo, set.signups_source, set.signups_command, set.link_must_have, set.link_must_not_have], ["boqo-only", "on", "quillfern/site", "command", "node ./signups.mjs --days 28", "Start free", "Sign in to continue"]);
+  assert.deepEqual([empty.publish_via, empty.git_push, empty.issues_repo, empty.signups_source, empty.signups_command, empty.link_must_have, empty.link_must_not_have, empty.dm_command], ["auto", "off", null, "none", null, null, null, null]);
+  const set = cfg({ publish_via: "boqo-only", git_push: "on", issues_repo: "quillfern/site", signups_source: "command", signups_command: "node ./signups.mjs --days 28", dm_command: "node ./dm.mjs set {code} {channel} {link}", link_must_have: "Start free", link_must_not_have: "Sign in to continue" });
+  assert.deepEqual([set.publish_via, set.git_push, set.issues_repo, set.signups_source, set.signups_command, set.link_must_have, set.link_must_not_have, set.dm_command], ["boqo-only", "on", "quillfern/site", "command", "node ./signups.mjs --days 28", "Start free", "Sign in to continue", "node ./dm.mjs set {code} {channel} {link}"]);
   assert.equal(cfg({ publish_via: "manual" }).publish_via, "manual");
   assert.equal(cfg({ signups_source: "manual" }).signups_source, "manual");
   assert.throws(() => cfg({ publish_via: "carrier-pigeon" }), /^Error: config publish_via: "carrier-pigeon" is not one of auto, manual, boqo-only$/);

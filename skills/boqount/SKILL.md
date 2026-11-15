@@ -195,7 +195,10 @@ the holder in its report when someone holds it.
   Outside material). A brief for a film-building agent that is meant to be reused goes to `marketing/agent-briefs/` and is
   committed, so a run on another machine has it (`.boqo-upload/` is never committed).
 - **Secrets** live in mode-600 files under `~/.config/boqount/` and are never printed. Check one with
-  `test -s <file>`.
+  `test -s <file>`. A team running one account from several machines shares them encrypted in the account's
+  repository: `bash <skill>/tools/keys.sh unlock|lock|add <login>|remove <login>|check` (each admin's GitHub SSH key
+  decrypts; `secrets/` is committed, the key files never are; a removed admin's keys are rotated). Adding or removing
+  an admin is the human's step.
 - Nothing outside the account's folder is deleted.
 - Every judgement call becomes a log line: `Ruling: <what> — <why> — <cost if wrong>`.
 - **The human approves brand kit v1** (`state.md` Open question): copy the draft over `brand/<slug>/`, set its
