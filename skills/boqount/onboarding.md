@@ -244,6 +244,9 @@ On a yes, check and name each requirement before anything is installed:
 | about 1 GB of disk for the project's dependencies and its browser | `df -h .` |
 | Remotion's licence: free for individuals and companies of up to three people, paid for larger companies | tell them to check its current terms (remotion.dev/license) |
 
+`node <skill>/tools/doctor.mjs` checks the tools at once (it installs nothing) and names the optional ones (whisper-cli
+for a file's words, RIFE for footage) with what a step does without them.
+
 A missing one is named with how to get it, never installed for them. Then one question: the requirements, the licence,
 and "May I set up the film project and run `npm install` (about 1 GB)?" Only on their yes:
 `node <skill>/tools/film.mjs init`, then `npm install` in `films/project` (the command `init` prints as `next`), then

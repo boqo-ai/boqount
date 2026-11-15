@@ -16,9 +16,14 @@ export type CuesJson = {duration: number; lines: Line[]};
 /** Seconds → the nearest BASE frame. */
 export const sec = (s: number) => Math.round(s * BASE);
 
+/** When each word has been said, in seconds, by line id: ../<slug>/audio/said.json (`vo-check.mjs said`), copied
+ * beside cues.json by `npm run sync`. */
+export type SaidJson = Record<string, number[]>;
+
 /** A film's cue functions. `Id` is the union of its line ids, so a typo is a type error:
- * `makeCues<'hook' | 'turn' | 'seam'>(cues)`. */
-export const makeCues = <Id extends string = string>(json: {duration: number; lines: {id: string; text: string; start: number; end: number; words: Word[]}[]}) => {
+ * `makeCues<'hook' | 'turn' | 'seam'>(cues)`. A voiced film that times exits by the voice also passes its said.json:
+ * `makeCues(cues, said)` (import said from './said.json'). */
+export const makeCues = <Id extends string = string>(json: {duration: number; lines: {id: string; text: string; start: number; end: number; words: Word[]}[]}, said?: SaidJson) => {
   const lines = json.lines as Line[];
   const byId = new Map(lines.map((l) => [l.id, l]));
 
@@ -38,6 +43,13 @@ export const makeCues = <Id extends string = string>(json: {duration: number; li
   /** Frame at which word `i` of line `id` ends. */
   const cueEnd = (id: Id, i: number, offsetSec = 0) => sec(word(id, i).end + offsetSec);
   const wordText = (id: Id, i: number) => word(id, i).word;
+  /** Frame by which word `i` of line `id` has been SAID: where the voice falls silent after it, or the next word
+   * starts. An aligned end can run up to 0.5 s past the voice, so a headline leaves at `saidAt` of its last word,
+   * never at its cueEnd. Without said.json (or with no entry for the word), its cueEnd. */
+  const saidAt = (id: Id, i: number, offsetSec = 0) => {
+    const t = said?.[id]?.[i];
+    return typeof t === 'number' ? sec(t + offsetSec) : cueEnd(id, i, offsetSec);
+  };
 
   // A whole number of 30 fps frames, rounded up (an even count of BASE frames). TikTok re-encodes to 30 fps and pads
   // a length that falls between two of its frames, which stalls the loop. The mix uses the same rounding.
@@ -48,5 +60,5 @@ export const makeCues = <Id extends string = string>(json: {duration: number; li
   const starts = lines.map((l, i) => (i === 0 ? 0 : sec((l.words[0]?.start ?? l.start) - 0.15)));
   const SCENES = Object.fromEntries(lines.map((l, i) => [l.id, [starts[i], i + 1 < lines.length ? starts[i + 1] : DURATION] as const])) as Record<Id, readonly [number, number]>;
 
-  return {cue, cueEnd, sec, wordText, DURATION, SCENES};
+  return {cue, cueEnd, saidAt, sec, wordText, DURATION, SCENES};
 };

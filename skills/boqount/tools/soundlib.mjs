@@ -7,7 +7,7 @@
 //   node <skill>/tools/soundlib.mjs list  [--films <dir>]                           the manifest as a table
 //   node <skill>/tools/soundlib.mjs audition [<audio-dir>] [--films <dir>]          a page with every take, for a person's ear
 //   node <skill>/tools/soundlib.mjs tone  <audio-dir> <root> [minor|major]          the tonal set, synthesized, $0
-//   node <skill>/tools/soundlib.mjs key   <music-file>                              the music's likely key, for `tone`
+//   node <skill>/tools/soundlib.mjs key   <music-file>                              the music's likely key, for `tone`, and its tempo
 //
 // <films> is the account's films folder (default ./films). The library is <films>/sounds/: `spec.json` (what is asked
 // for: copied in by `film.mjs init`), `.raw/` (the takes as they came), `library/<group>/<name>-<n>.flac` and
@@ -414,6 +414,85 @@ export function keysOf(c) {
   }
   return out.sort((a, b) => b.r - a.r);
 }
+/** The music's tempo, in beats a minute, the way librosa's beat_track reads it (the private tool this replaces): the
+ * onset envelope (the rise of 64 mel bands in dB, 23 ms hops), its tempogram, and the lag that scores best weighted
+ * toward 120 bpm (a log-normal of one octave, how a listener's sense of the beat leans), read between whole lags.
+ * On ten beds it agreed with librosa on eight; the two others were beatless drones. Returns { bpm, alt }: `alt`
+ * is the half, double, two-thirds or three-halves tempo that scored next, since a beat can be felt at any of them. */
+export function tempo(m, rate) {
+  const N = 2048, HOP = 512, BANDS = 64;
+  const frames = Math.floor((m.length - N) / HOP) + 1;
+  if (frames < 64) return null;
+  // 64 bands evenly spaced in mels from 30 Hz to 8 kHz, each band's power in dB, as an ear weighs the spectrum
+  const mel = (f) => 2595 * Math.log10(1 + f / 700);
+  const hz = (v) => 700 * (10 ** (v / 2595) - 1);
+  const edges = Array.from({ length: BANDS + 1 }, (_, i) => hz(mel(30) + ((mel(8000) - mel(30)) * i) / BANDS));
+  let prev = null;
+  const flux = new Float64Array(frames);
+  for (let f = 0; f < frames; f++) {
+    const { power, freq } = spectrum(m.subarray(f * HOP, f * HOP + N), rate);
+    const band = new Float64Array(BANDS);
+    let b = 0;
+    for (let i = 1; i < power.length && b < BANDS; i++) {
+      while (b < BANDS && freq[i] >= edges[b + 1]) b++;
+      if (b < BANDS && freq[i] >= edges[b]) band[b] += power[i];
+    }
+    const db = band.map((p) => 10 * Math.log10(p + 1e-10));
+    if (prev) {
+      let s = 0;
+      for (let i = 0; i < BANDS; i++) s += Math.max(0, db[i] - prev[i]);
+      flux[f] = s / BANDS;
+    }
+    prev = db;
+  }
+  // a tempogram: the envelope's autocorrelation in 8.9 s windows (Hann), each scaled to its own peak, averaged over
+  // the music; then the lag that scores best under the prior.
+  const WIN = 384, STEP = 16;
+  const hann = Float64Array.from({ length: WIN }, (_, i) => 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / WIN));
+  const tg = new Float64Array(WIN);
+  let windows = 0;
+  for (let c = 0; c < frames; c += STEP) {
+    const w = new Float64Array(WIN);
+    for (let i = 0; i < WIN; i++) {
+      const j = c - WIN / 2 + i;
+      w[i] = j >= 0 && j < frames ? flux[j] * hann[i] : 0;
+    }
+    const ac = new Float64Array(WIN);
+    for (let lag = 0; lag < WIN; lag++) {
+      let s2 = 0;
+      for (let i = 0; i + lag < WIN; i++) s2 += w[i] * w[i + lag];
+      ac[lag] = s2;
+    }
+    const peak = Math.max(...ac);
+    if (!(peak > 0)) continue;
+    for (let lag = 0; lag < WIN; lag++) tg[lag] += ac[lag] / peak;
+    windows++;
+  }
+  if (!windows) return null;
+  const fps = rate / HOP;
+  const scored = [];
+  for (let lag = 1; lag < WIN; lag++) {
+    const bpm = (60 * fps) / lag;
+    if (bpm < 30 || bpm > 320) continue;
+    scored.push({ bpm, s: (tg[lag] / windows) * Math.exp(-0.5 * Math.log2(bpm / 120) ** 2) });
+  }
+  const peaks = scored.filter((x, i) => (i === 0 || x.s >= scored[i - 1].s) && (i === scored.length - 1 || x.s >= scored[i + 1].s)).sort((a, b) => b.s - a.s);
+  if (!peaks.length || !(peaks[0].s > 0)) return null;
+  const r1 = (v) => Math.round(v * 10) / 10;
+  // the peak between two whole lags (a parabola through the lag and its neighbours), so 120 is not read as 117.5
+  const refine = (bpm) => {
+    const lag = Math.round((60 * fps) / bpm);
+    const [a, b, c] = [tg[lag - 1], tg[lag], tg[lag + 1]];
+    const d = a - 2 * b + c;
+    const off = d < 0 ? Math.max(-0.5, Math.min(0.5, (0.5 * (a - c)) / d)) : 0;
+    return (60 * fps) / (lag + off);
+  };
+  const best = refine(peaks[0].bpm);
+  const alt = peaks.slice(1).find((p) => [best / 2, best * 2, (best * 2) / 3, (best * 3) / 2].some((t) => Math.abs(p.bpm - t) / t < 0.04))?.bpm;
+  const altBpm = alt ? refine(alt) : null;
+  return { bpm: r1(best), alt: altBpm ? r1(altBpm) : null };
+}
+
 export function key(args) {
   const [file] = positional(args);
   if (!file) throw new Error("usage: soundlib.mjs key <music-file>");
@@ -421,7 +500,8 @@ export function key(args) {
   const { stdout } = ffmpeg(["-v", "error", "-i", resolve(file), "-ac", "1", "-ar", String(rate), "-f", "f32le", "-"]);
   const m = new Float32Array(stdout.buffer.slice(stdout.byteOffset, stdout.byteOffset + stdout.length));
   const best = keysOf(chroma(m, rate)).slice(0, 3);
-  return `key: ${best.map((k) => `${k.key} (${k.r.toFixed(2)})`).join(", ")}   <- a major and the minor a third under it share notes: take the root the music's listing names, or the one that sounds like home\ntempo: not measured here; read it from the music's listing`;
+  const beat = tempo(m, rate);
+  return `key: ${best.map((k) => `${k.key} (${k.r.toFixed(2)})`).join(", ")}   <- a major and the minor a third under it share notes: take the root the music's listing names, or the one that sounds like home\ntempo: ${beat ? `${beat.bpm} bpm${beat.alt ? ` (or ${beat.alt}: the same music counted ${beat.alt > beat.bpm ? "faster" : "slower"}; check against the bar length)` : ""}   <- where the music's listing names a tempo, its figure wins` : "not measured: the file is too short or has no beat"}`;
 }
 
 // ---------------------------------------------------------------- command line

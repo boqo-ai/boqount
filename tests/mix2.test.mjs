@@ -1,9 +1,9 @@
 // tools/mix2.mjs (a version-2 cue sheet, handed over by mix.mjs) and tools/soundcheck.mjs, on generated sounds.
-// Each of the mixer's four lessons has its test here. Needs ffmpeg; each test skips cleanly without it.
+// Each of the mixer's five lessons has its test here. Needs ffmpeg; each test skips cleanly without it.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -216,4 +216,19 @@ t("soundcheck passes a film whose hits keep to the rules", () => {
   const r = spawnSync("node", [join(tools, "soundcheck.mjs"), audio], { encoding: "utf8" });
   assert.equal(r.status, 0, r.stdout);
   assert.match(r.stdout, /all rules pass/);
+});
+
+t("a stalled ffmpeg run is killed and run again, and the report says so", () => {
+  const { acct, audio } = account({ sheet: { hits: [{ sound: "kit/pop", at: "hook.0", under: 12 }] } });
+  // an ffmpeg in front of the real one: the first mixing run (-nostdin -v error -y …) hangs, every other runs
+  const real = execFileSync("sh", ["-c", "command -v ffmpeg"], { encoding: "utf8" }).trim();
+  const bin = join(acct, "bin");
+  mkdirSync(bin);
+  writeFileSync(join(bin, "ffmpeg"), `#!/bin/sh\nif [ "$4" = "-y" ] && [ ! -e "${join(acct, "stalled")}" ]; then : > "${join(acct, "stalled")}"; exec sleep 30; fi\nexec "${real}" "$@"\n`);
+  chmodSync(join(bin, "ffmpeg"), 0o755);
+  const r = spawnSync("node", [join(tools, "mix.mjs"), audio], { encoding: "utf8", timeout: 120_000, env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, BOQOUNT_MIX_STALL_S: "2" } });
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(existsSync(join(acct, "stalled")), "the stand-in hung once");
+  assert.match(r.stdout, /1 ffmpeg run stalled past 2 s and ran again/);
+  assert.ok(existsSync(join(audio, "mix.wav")));
 });
