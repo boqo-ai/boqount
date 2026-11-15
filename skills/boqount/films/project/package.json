@@ -31,7 +31,8 @@
     "still": "node scripts/run.mjs still",
     "draft": "node scripts/run.mjs draft",
     "render": "node scripts/run.mjs render",
-    "feed": "node scripts/run.mjs feed"
+    "feed": "node scripts/run.mjs feed",
+    "slides": "node scripts/slides.mjs"
   },
   "allowScripts": {
     "esbuild": false

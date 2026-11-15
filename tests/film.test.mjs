@@ -38,6 +38,21 @@ const STORY_SCENES = `// The Story film's scenes: ten worlds, no loop.
 export const ID = 'Story';
 export const SLUG = "_story";
 `;
+const IG_STORY_INDEX = `export const film = {id: 'IgStory', slug: '_ig-story', component: Film, durationInFrames: 1200};
+`;
+const IG_STORY_CUES = {
+  format: "ig-story",
+  duration: 10,
+  lines: [],
+  link: true,
+  beats: {
+    head: { t: 0, kind: "text" },
+    burst: { t: 0, kind: "sound", sound: "ui/chat-flurry", fallback: "kit/typing", under: 10, until: 1.05 },
+    hl: { t: 1.15, kind: "decor", sound: "foley/marker", fallback: "kit/whoosh", align: "sync", under: 14 },
+  },
+};
+const CAROUSEL_INDEX = `export const film = {id: 'Carousel', slug: '_carousel', component: Carousel, durationInFrames: SLIDES.length, width: 1080, height: 1440};
+`;
 const SCRIPT = `1. Water it when the soil is dry.
 2. Quillfern reminds you.
 Structure: hook, reminder, loop
@@ -94,6 +109,11 @@ function skillFilms() {
   put("project/src/films/_story/index.ts", STORY_INDEX);
   put("project/src/films/_story/Scenes.tsx", STORY_SCENES);
   put("project/src/films/_story/cues.json", '{ "duration": 0, "lines": [] }\n');
+  put("project/src/films/_ig-story/index.ts", IG_STORY_INDEX);
+  put("project/src/films/_ig-story/Story.tsx", "export const SLUG = '_ig-story';\n");
+  put("project/src/films/_ig-story/cues.json", JSON.stringify(IG_STORY_CUES, null, 2) + "\n");
+  put("project/src/films/_carousel/index.ts", CAROUSEL_INDEX);
+  put("project/src/films/_carousel/slides.ts", "export const SLIDES = [{kind: 'cover', lines: ['A']}];\n");
   put("project/node_modules/left-pad/index.js", "module.exports = 1;\n");
   put("project/public/audio/starter/mix.wav", "RIFF");
   put("project/out/starter.mp4", "mp4");
@@ -380,7 +400,7 @@ test("new refuses a slug that exists or is not a-z, 0-9 and hyphens, and writes 
   }
   assert.equal(read(dir, "films/project/src/films/index.ts"), before);
   assert.deepEqual(readdirSync(join(dir, "films")).sort(), ["dry-spell", "project", "sfx", "starter"]);
-  assert.deepEqual(readdirSync(join(dir, "films/project/src/films")).sort(), ["_story", "_template", "dry-spell", "index.ts", "starter"]);
+  assert.deepEqual(readdirSync(join(dir, "films/project/src/films")).sort(), ["_carousel", "_ig-story", "_story", "_template", "dry-spell", "index.ts", "starter"]);
 });
 
 test("new refuses an id another film already has", async () => {
@@ -691,4 +711,100 @@ test("new refuses glimpse as a slug: it is the first look's folder", async () =>
   const r = await film(["new", "glimpse", "--dir", dir]);
   assert.equal(r.code, 1);
   assert.match(r.out.error, /glimpse is a folder of the film project/);
+});
+
+// ---------------------------------------------------------------- new --ig-story, new --carousel, sfx
+
+test("new --ig-story copies the story skeleton, moves its clock to the film's audio and writes its sound from the beats", async () => {
+  const { dir } = await initialized();
+  const { code, out } = await film(["new", "thank-you", "--ig-story", "--dir", dir]);
+  assert.equal(code, 0, JSON.stringify(out));
+  assert.equal(out.format, "ig-story");
+  assert.equal(out.id, "ThankYou");
+  assert.match(read(dir, "films/project/src/films/thank-you/index.ts"), /id: 'ThankYou', slug: 'thank-you'/);
+  assert.equal(JSON.parse(read(dir, "films/thank-you/audio/cues.json")).format, "ig-story");
+  assert.equal(existsSync(join(dir, "films/thank-you/words.md")), true);
+  assert.equal(existsSync(join(dir, "films/thank-you/script.txt")), false);
+  const sheet = JSON.parse(read(dir, "films/thank-you/audio/sfx-cues.json"));
+  assert.equal(sheet.version, 2);
+  assert.equal(sheet.loop, false);
+  assert.deepEqual(sheet.target, { I: -24, TP: -6 });
+  // no library yet: each sound falls back to its kit sound, and the answer says so
+  assert.deepEqual(sheet.hits.map((h) => [h.beat, h.sound, h.at]), [["burst", "kit/typing", 0], ["hl", "kit/whoosh", 1.15]]);
+  assert.equal(sheet.hits[0].until, 1.05);
+  assert.equal(out.sound.fallback.length, 2);
+  assert.match(read(dir, "films/project/src/films/index.ts"), /import \{film as thankYou\} from '\.\/thank-you';/);
+});
+
+test("new --carousel copies the carousel skeleton, with sources and a caption instead of a script and audio", async () => {
+  const { dir } = await initialized();
+  const { code, out } = await film(["new", "why-it-dies", "--carousel", "--dir", dir]);
+  assert.equal(code, 0, JSON.stringify(out));
+  assert.equal(out.format, "carousel");
+  assert.match(read(dir, "films/project/src/films/why-it-dies/index.ts"), /id: 'WhyItDies', slug: 'why-it-dies'.*width: 1080, height: 1440/);
+  assert.match(read(dir, "films/why-it-dies/sources.md"), /^# why-it-dies: sources/);
+  assert.equal(existsSync(join(dir, "films/why-it-dies/caption.txt")), true);
+  assert.equal(existsSync(join(dir, "films/why-it-dies/audio")), false);
+  assert.match(out.next, /npm run slides -- WhyItDies/);
+});
+
+test("new takes one kind at most", async () => {
+  const { dir } = await initialized();
+  const r = await film(["new", "both", "--story", "--carousel", "--dir", dir]);
+  assert.equal(r.code, 1);
+  assert.match(r.out.error, /one of --story, --ig-story and --carousel/);
+  assert.equal(existsSync(join(dir, "films/both")), false);
+});
+
+test("sfx plays the library's take when there is one, and keeps the sheet's own hits and beds", async () => {
+  const { dir } = await initialized();
+  await film(["new", "thank-you", "--ig-story", "--dir", dir]);
+  mkdirSync(join(dir, "films/sounds"), { recursive: true });
+  writeFileSync(join(dir, "films/sounds/library.json"), JSON.stringify({ sounds: { "ui/chat-flurry": { variants: [{ file: "library/ui/chat-flurry-1.flac" }] } } }));
+  const path = "films/thank-you/audio/sfx-cues.json";
+  const sheet = JSON.parse(read(dir, path));
+  sheet.hits.push({ sound: "kit/pop", at: 3 });
+  sheet.beds = [{ sound: "tone/pad", at: 0, until: "end", under: 20 }];
+  writeFileSync(join(dir, path), JSON.stringify(sheet));
+  const { code, out } = await film(["sfx", "thank-you", "--dir", dir]);
+  assert.equal(code, 0, JSON.stringify(out));
+  const again = JSON.parse(read(dir, path));
+  assert.deepEqual(again.hits.map((h) => h.sound), ["ui/chat-flurry", "kit/whoosh", "kit/pop"]);
+  assert.equal(again.beds.length, 1);
+  assert.deepEqual(out.fallback, [{ beat: "hl", wanted: "foley/marker", plays: "kit/whoosh" }]);
+});
+
+test("sfx holds a story to its rules: every word in by 1 s, 8 to 15 s, three sounds at most, no music", async () => {
+  const { dir } = await initialized();
+  await film(["new", "thank-you", "--ig-story", "--dir", dir]);
+  const path = "films/thank-you/audio/cues.json";
+  const base = JSON.parse(read(dir, path));
+  const bad = [
+    [{ ...base, beats: { ...base.beats, late: { t: 0.9, kind: "text" } } }, /late starts at 0.9 s/],
+    [{ ...base, duration: 20 }, /8 to 15 s/],
+    [{ ...base, beats: { ...base.beats, a: { t: 2, sound: "kit/pop" }, b: { t: 3, sound: "kit/tap" } } }, /three sounds at most, this one has 4/],
+    [{ ...base, beats: { bed: { t: 0, sound: "music/lofi" } } }, /no music and no voice/],
+  ];
+  for (const [cues, why] of bad) {
+    writeFileSync(join(dir, path), JSON.stringify(cues));
+    const r = await film(["sfx", "thank-you", "--dir", dir]);
+    assert.equal(r.code, 1, JSON.stringify(cues));
+    assert.match(r.out.error, why);
+  }
+});
+
+test("sfx refuses a library sound with no take and no fallback, and a cue sheet with no beats", async () => {
+  const { dir } = await initialized();
+  await film(["new", "thank-you", "--ig-story", "--dir", dir]);
+  const path = "films/thank-you/audio/cues.json";
+  const cues = JSON.parse(read(dir, path));
+  delete cues.beats.burst.fallback;
+  writeFileSync(join(dir, path), JSON.stringify(cues));
+  const r = await film(["sfx", "thank-you", "--dir", dir]);
+  assert.equal(r.code, 1);
+  assert.match(r.out.error, /ui\/chat-flurry.*no fallback/);
+  await film(["new", "plain", "--dir", dir]);
+  const none = await film(["sfx", "plain", "--dir", dir]);
+  assert.equal(none.code, 1);
+  assert.match(none.out.error, /has no beats/);
 });

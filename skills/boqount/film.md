@@ -19,6 +19,9 @@ a poster; no numbered list in the voice or on screen (`script.md` rules 11 and 1
 
 Two things carry a film: a hook that bites (`hooks.md`) and motion where every scene is its own idea (`motion.md`).
 The words follow `script.md`; a `product` or `offer` film follows `story.md` too. Read each when its step comes.
+A film with one of the brand's recurring characters reads their bible and memory first (`characters.md`). The kit's
+interface parts (`kit/Parts.tsx`: a pill, a toggle, an app window, a run of steps) and the brand's mark as a lit 3D
+object (`kit/Logo3D.tsx`; a PNG logo is traced first with `node <skill>/tools/trace-png.mjs`) are there to draw with.
 
 ## The locked format
 

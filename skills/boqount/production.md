@@ -21,7 +21,7 @@ slideshow's files go to `marketing/media/<slug>/`.
 - The record's field is `Kind`. The ledger's `tier` column holds the kind, and so does the queue's `tier` column; a
   queue row's layer goes in its `layer` column, never in `note`. The queue's columns, in order: `slug | stage | type |
   rubric | tier | for | file | note | layer` (`templates/queue.md`).
-- **A post is a video file.** A carousel goes out only as a `slideshow`.
+- **A post is a video file.** A carousel goes out only as a `slideshow` (its slides are made by `carousel.md`).
 - A trend is an idea for a `film`: it carries the trend's mechanism, never its original subject or its sound (A
   trend, below).
 - **A flagship film** is a `film` with the record's `Flagship: yes` (A flagship film, below): opt-in, about one a
