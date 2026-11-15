@@ -91,9 +91,21 @@ changes: `node <skill>/tools/film.mjs theme`.
 
 **The first look** (`films/glimpse/`, composition `Glimpse`) is onboarding's draft of the brand moving, made from the
 deep read's notes before any kit or style exists (`onboarding.md` → 2. Say it back, and show it): `films/glimpse/glimpse.json` holds its words,
-colours, face and logo, each with a source, `node <skill>/tools/film.mjs glimpse` checks it and prints its render, and
-it draws in its own palette, not the style's tokens. It is never a post and never posted; `glimpse` is not a slug a
-film may take.
+pictures, colours, face and logo, each with a source, `node <skill>/tools/film.mjs glimpse` checks it, writes its sound
+and prints its render, and it draws in its own palette, not the style's tokens. It is never a post and never posted;
+`glimpse` is not a slug a film may take. What goes in it:
+- **The opening** is the product's own line with an action or a number in it: what it does to something ("Pick your
+  snap areas", "One reminder on the day a plant needs water") or a figure from their pages. Never a tagline of
+  qualities or terms ("Free and Open Source", "Simple. Fast. Private."): those read as a label, not a hook. With no
+  such line short enough, leave the opening out and the promise opens.
+- **Pictures show the product doing what a line says,** in this order of preference: a demo clip of that action (a
+  README GIF turned into a clip, `ffmpeg -i demo.gif -movflags +faststart -pix_fmt yuv420p -vf
+  "scale=trunc(iw/2)*2:trunc(ih/2)*2" demo.mp4`, or a video on their site, at most 5 s, always muted), then the frames
+  of that action, then screenshots of the product in use from the README, docs or site. Each takes the `line` it
+  shows. The icon or logo is never a picture: it is the name's world. With no picture of the product at work, there
+  are no pictures and the words carry the middle.
+- **On screen, a credit, never a path:** the words show the short human name of where they are from
+  ("rectangleapp.com", "the README"); the name and the logo show none; the full source stays in the JSON.
 
 **Per film:** `node <skill>/tools/film.mjs new <slug>` makes `films/<slug>/` (`script.txt`, `STORYBOARD.md`,
 `audio/`; `media/` and `out/` come later) and the scenes in `films/project/src/films/<slug>/`, from a neutral template
@@ -248,7 +260,8 @@ message) and what to watch for.
 - **Gate 2's stills**, from the feed file:
   `<skill>/tools/stills.sh films/<slug>/out/<slug>-feed.mp4 films/<slug>/out/gate2 films/<slug>/audio/cues.json --every 1.5`.
 - **What the builder checks on the stills:** nothing that must be read in the top 14 %, the bottom 35 % or within
-  6 % of a side (`--safe` stills: `motion.md` → Layout); the frame still full; text at its size; the loop's step no
+  6 % of a side (`--safe` stills: `motion.md` → Layout); no word, icon or picture cut by an edge of the frame, a card
+  or a mask in any still, an arrival or a camera move included; no file path drawn anywhere; the frame still full; text at its size; the loop's step no
   bigger than its neighbours' (a `niche` film); no single-frame pop; nothing flashes (`motion.md` → Nothing flashes:
   where a run of moments passes, stills of every frame across it, each run read for a large area going dark and
   bright and back; and measured on the feed file: `node <skill>/tools/flashes.mjs films/<slug>/out/<slug>-feed.mp4`,

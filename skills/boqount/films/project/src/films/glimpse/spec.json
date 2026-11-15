@@ -1,15 +1,44 @@
 {
   "_": "The first look's words, colours, face and logo, each from the person's own files with its source (onboarding.md → 2. Say it back, and show it). The agent writes this file from the deep read's notes; `film.mjs glimpse` checks it. This copy is the Quillfern example's: every source is invented.",
-  "name": {"text": "Quillfern", "source": "README.md:1"},
-  "opening": {"text": "One message", "source": "quillfern.example, the home page's headline"},
+  "name": {
+    "text": "Quillfern",
+    "source": "README.md:1",
+    "credit": null
+  },
+  "opening": {
+    "text": "One message",
+    "source": "quillfern.example, the home page's headline",
+    "credit": "quillfern.example"
+  },
   "lines": [
-    {"text": "Water reminders for every plant you own.", "source": "quillfern.example, the home page"},
-    {"text": "One reminder on the day a plant needs water, and none on the days it does not.", "source": "README.md:25"},
-    {"text": "Share the plants, and the reminder goes to your neighbour.", "source": "README.md:31"},
-    {"text": "Add your first plant.", "source": "src/strings/en.json:12 (the empty state)"}
+    {
+      "text": "Water reminders for every plant you own.",
+      "source": "quillfern.example, the home page",
+      "credit": "quillfern.example"
+    },
+    {
+      "text": "One reminder on the day a plant needs water, and none on the days it does not.",
+      "source": "README.md:25",
+      "credit": "the README"
+    },
+    {
+      "text": "Share the plants, and the reminder goes to your neighbour.",
+      "source": "README.md:31",
+      "credit": "the README"
+    },
+    {
+      "text": "Add your first plant.",
+      "source": "src/strings/en.json:12 (the empty state)",
+      "credit": "the app"
+    }
   ],
   "pictures": null,
-  "colors": {"canvas": "#17140F", "ink": "#F4EEE2", "accent": "#6CC59A", "source": "src/styles/theme.css:3-5"},
+  "colors": {
+    "canvas": "#17140F",
+    "ink": "#F4EEE2",
+    "accent": "#6CC59A",
+    "source": "src/styles/theme.css:3-5"
+  },
   "font": null,
   "logo": null
 }

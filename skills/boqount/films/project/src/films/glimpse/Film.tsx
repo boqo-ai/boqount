@@ -15,7 +15,7 @@
 // for the eye about every second (motion.md → Rich motion); nothing flashes.
 import React, {useEffect, useMemo, useState} from 'react';
 import {AbsoluteFill, continueRender, delayRender, getStaticFiles, Img, staticFile} from 'remotion';
-import {Audio} from '@remotion/media';
+import {Audio, Video} from '@remotion/media';
 import {measureText} from '@remotion/layout-utils';
 import {EXPO, INOUT, clamp01, lerp, mix, p} from '../../lib/anim';
 import {useFontsLoaded} from '../../lib/fonts';
@@ -25,8 +25,12 @@ import {World, spans, Change} from '../../kit/WorldChange';
 import spec from './spec.json';
 import timeline from './timeline.json';
 
-export type Said = {text: string; source: string};
-export type Picture = {file: string; source: string; frame?: 'window' | 'phone' | 'none'; crop?: [number, number, number, number]; focus?: [number, number]};
+/** Words of theirs: `source` is where they are (kept in the record, never drawn); `credit` is the short, human name of
+ * that place shown under them ("rectangleapp.com", "the README"), never a file path. */
+export type Said = {text: string; source: string; credit?: string | null};
+/** A real picture of the product at work: a screenshot or a short clip (.mp4/.webm, `clip` [from, to] s, at most 5 s,
+ * muted). `line` is the index of one of the lines it shows happening, set above it; `caption` a short human credit. */
+export type Picture = {file: string; source: string; caption?: string | null; line?: number | null; clip?: [number, number] | null; frame?: 'window' | 'phone' | 'none'; crop?: [number, number, number, number]; focus?: [number, number]};
 export type Spec = {
   name: Said;
   opening?: Said | null;
@@ -155,13 +159,14 @@ const Backdrop: React.FC<{glow: [number, number]}> = ({glow}) => {
 };
 
 /** A source, small and quiet, under (or over) what it backs. */
-const Source: React.FC<{said: {source: string}; y: number; at: number; plate?: boolean}> = ({said, y, at, plate = false}) => {
+const Source: React.FC<{said: {credit?: string | null}; y: number; at: number; plate?: boolean}> = ({said, y, at, plate = false}) => {
   const f = useF();
   const o = p(f, at, 24, EXPO);
+  if (!said.credit) return null;
   return (
     <div style={{position: 'absolute', left: L.left, width: W, top: y, display: 'flex', justifyContent: 'center', opacity: o, transform: `translateY(${(1 - o) * 14}px)`}}>
       <div style={{maxWidth: W, fontFamily: TEXT, fontSize: 32, fontWeight: 500, color: plate ? C.ink : C.muted, letterSpacing: '0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', ...(plate ? {background: C.deep, padding: '8px 22px', borderRadius: 26} : {})}}>
-        {said.source}
+        {said.credit}
       </div>
     </div>
   );
@@ -174,12 +179,12 @@ const Rise: React.FC<{set: Set; top: number; at: number; step?: number; weight?:
   return (
     <div style={{position: 'absolute', left: L.left, width: W, top, textAlign: 'center', fontFamily: FACE, fontWeight: weight, fontSize: set.size, lineHeight: 1.04, letterSpacing: '-0.03em', color}}>
       {set.lines.map((ln, li) => (
-        <div key={li} style={{overflow: 'hidden', paddingBottom: set.size * 0.08, whiteSpace: 'nowrap'}}>
+        <div key={li} style={{paddingBottom: set.size * 0.08, whiteSpace: 'nowrap'}}>
           {ln.split(' ').map((w, wi) => {
             const k = n++;
             const t = p(f, at + k * step, 26, EXPO);
             return (
-              <span key={wi} style={{display: 'inline-block', transform: `translateY(${(1 - t) * 100}%)`, opacity: clamp01(t * 1.8), color: k === key0 ? C.mark : undefined, marginLeft: wi > 0 ? `${GAP}em` : 0}}>
+              <span key={wi} style={{display: 'inline-block', transform: `translateY(${(1 - t) * 0.35}em)`, opacity: clamp01(t * 1.4), filter: `blur(${(1 - t) * 8}px)`, color: k === key0 ? C.mark : undefined, marginLeft: wi > 0 ? `${GAP}em` : 0}}>
                 {w}
               </span>
             );
@@ -213,7 +218,8 @@ const Opening: React.FC = () => {
   const f = useF();
   const said = SPEC.opening ?? SPEC.lines[0];
   const short = !!SPEC.opening;
-  const set = useSet(said.text, W, short ? 2 : 4, short ? 360 : 220, short ? 120 : 84, short ? 900 : 850);
+  // set for the width it has at the end of the push, so the push never takes a letter past the side margin
+  const set = useSet(said.text, W / 1.1, short ? 2 : 4, short ? 360 : 220, short ? 120 : 84, short ? 900 : 850);
   const h = set.lines.length * set.size * 1.12;
   const top = (L.top + L.bottom) / 2 - h / 2 - 60;
   const push = lerp(f, [0, S[0][1]], [1, 1.1], [INOUT]);
@@ -275,50 +281,65 @@ const Name: React.FC = () => {
           ))}
         </div>
         <div style={{position: 'absolute', left: L.W / 2 - 170, top: nameTop + h + 24, width: 340, height: 12, borderRadius: 6, background: C.mark, transform: `scaleX(${p(f, at + 40, 40, EXPO)})`}} />
-        <Source said={SPEC.name} y={nameTop + h + 66} at={at + 60} />
       </AbsoluteFill>
     </AbsoluteFill>
   );
 };
 
-/** The picture's own width and height, read once before the frame is drawn. */
-const usePictureSize = (src: string) => {
+const VIDEO = /\.(mp4|webm|mov)$/i;
+
+/** The picture's (or clip's) own width and height, read once before the frame is drawn. */
+const usePictureSize = (src: string, video: boolean) => {
   const [size, setSize] = useState<[number, number] | null>(null);
   const [handle] = useState(() => delayRender(`the size of ${src}`));
   useEffect(() => {
+    const done = (w: number, h: number) => {
+      setSize([w || 16, h || 10]);
+      continueRender(handle);
+    };
+    if (video) {
+      const v = document.createElement('video');
+      v.preload = 'metadata';
+      v.onloadedmetadata = () => done(v.videoWidth, v.videoHeight);
+      v.onerror = () => done(16, 10);
+      v.src = src;
+      return;
+    }
     const im = new Image();
-    im.onload = () => {
-      setSize([im.naturalWidth, im.naturalHeight]);
-      continueRender(handle);
-    };
-    im.onerror = () => {
-      setSize([16, 10]);
-      continueRender(handle);
-    };
+    im.onload = () => done(im.naturalWidth, im.naturalHeight);
+    im.onerror = () => done(16, 10);
     im.src = src;
-  }, [src, handle]);
+  }, [src, video, handle]);
   return size;
 };
 
-/** A real picture of the product, large: in a window or a phone when it is a bare screen, as it is when it already
- * has its frame; it arrives tilted, settles, then the camera pushes in on its focus, where a ring draws round the
- * detail. Its source sits above it. */
+/** A real picture of the product at work, large: a screenshot, or a short muted clip of it doing the thing. In a
+ * window or a phone when it is a bare screen, as it is when it already has its frame. The line it shows happening is
+ * set above it, with its credit; the picture arrives tilted, settles, then the camera pushes in on its focus, where a
+ * ring draws round the detail. The whole picture always stays inside the frame: the push never takes an edge out. */
 const PictureWorld: React.FC<{pic: Picture; n: number; end: number}> = ({pic, n, end}) => {
   const f = useF();
   const start = useStart();
+  const video = VIDEO.test(pic.file);
   const src = staticFile(`glimpse/pictures/${pic.file.split('/').pop()}`);
-  const size = usePictureSize(src);
+  const size = usePictureSize(src, video);
+  const said = pic.line != null ? SPEC.lines[pic.line] : null;
+  const head = useSet(said?.text ?? ' ', W, 3, 76, 50, 820);
+  const headH = said ? head.lines.length * head.size * 1.12 : 0;
   const [cx, cy, cw, ch] = pic.crop ?? [0, 0, 1, 1];
   const [fx, fy] = pic.focus ?? [0.5, 0.45];
   const frame = pic.frame ?? 'none';
   const bar = frame === 'window' ? 64 : 0;
   const bezel = frame === 'phone' ? 22 : 0;
-  // the shown region's aspect, and a box as large as the frame allows (the picture may reach into the lower band)
+  // the region under the headline, down into the lower band (a picture may go there; words may not)
+  const roomTop = L.top + 30 + (said ? headH + 70 : 60);
+  const roomBottom = 1780;
   const aspect = size ? (size[0] * cw) / (size[1] * ch) : 1;
-  const maxW = 960;
-  const maxH = 1200;
-  let bw = maxW;
+  const PUSH = 1.22;
+  const MARGIN = 24;
+  let bw = Math.min(820, (L.W - 2 * MARGIN) / PUSH - bezel * 2);
   let bh = bw / aspect;
+  const maxH = (roomBottom - roomTop) / PUSH - bar - bezel * 2;
   if (bh > maxH) {
     bh = maxH;
     bw = bh * aspect;
@@ -326,25 +347,30 @@ const PictureWorld: React.FC<{pic: Picture; n: number; end: number}> = ({pic, n,
   const boxW = bw + bezel * 2;
   const boxH = bh + bar + bezel * 2;
   const left = (L.W - boxW) / 2;
-  const top = 400 + Math.max(0, (1250 - boxH) / 2) * 0.5;
+  const top = roomTop + Math.max(0, (roomBottom - roomTop - boxH * PUSH) / 2) * 0.4;
   const settle = p(f, start, 50, EXPO);
-  // the camera: the picture grows toward its focus and the focus travels toward the frame's centre, so the detail
-  // ends large and in the middle, never pushed off the side
   const k = lerp(f, [start + 50, end], [0, 1], [INOUT]);
-  const push = 1 + 0.32 * k;
+  const push = 1 + (PUSH - 1) * k;
   const ox = bezel + fx * bw;
   const oy = bar + bezel + fy * bh;
-  // the picture's top never rises above the source chip's bottom: the top band keeps the draft mark and the chip clear
-  const CLEAR = L.top + 100;
-  const ty = Math.max((760 - (top + oy)) * 0.55 * k, CLEAR - (top + oy - oy * push));
+  // where the scaled box would sit, and the shift that keeps it whole inside the frame and under the headline
+  const sl = left + ox - ox * push;
+  const sr = sl + boxW * push;
+  const st = top + oy - oy * push;
+  const sb = st + boxH * push;
+  const wantX = (L.W / 2 - (left + ox)) * 0.5 * k;
+  const tx = Math.min(Math.max(wantX, MARGIN - sl), L.W - MARGIN - sr);
+  const ty = Math.min(Math.max(0, roomTop - st), roomBottom - sb + 0);
   const ring = p(f, start + 80, 40, EXPO);
   const imgW = bw / cw;
   const imgH = bh / ch;
   const radius = frame === 'phone' ? 70 : 28;
+  const clip = pic.clip ?? [0, 5];
   return (
     <AbsoluteFill>
       <Backdrop glow={[n % 2 ? 300 : 780, 700]} />
-      <div style={{position: 'absolute', left, top, width: boxW, height: boxH, perspective: 1600, transform: `translate(${(L.W / 2 - (left + ox)) * 0.55 * k}px, ${ty}px)`}}>
+      {said && <Rise set={head} top={L.top + 30} at={start + 6} step={3} weight={820} />}
+      <div style={{position: 'absolute', left, top, width: boxW, height: boxH, perspective: 1600, transform: `translate(${tx}px, ${ty}px)`}}>
         <div
           style={{
             position: 'absolute',
@@ -365,20 +391,23 @@ const PictureWorld: React.FC<{pic: Picture; n: number; end: number}> = ({pic, n,
             </div>
           )}
           <div style={{position: 'absolute', left: bezel, top: bar + bezel, width: bw, height: bh, overflow: 'hidden', borderRadius: frame === 'phone' ? 50 : frame === 'none' ? radius : 0}}>
-            {size && <Img src={src} style={{position: 'absolute', left: -cx * imgW, top: -cy * imgH, width: imgW, height: imgH}} />}
+            {size && !video && <Img src={src} style={{position: 'absolute', left: -cx * imgW, top: -cy * imgH, width: imgW, height: imgH}} />}
+            {size && video && <Video src={src} muted trimBefore={Math.round(clip[0] * 120)} trimAfter={Math.round(clip[1] * 120)} style={{position: 'absolute', left: -cx * imgW, top: -cy * imgH, width: imgW, height: imgH}} />}
           </div>
           <svg width={boxW} height={boxH} style={{position: 'absolute', inset: 0}}>
-            <rect x={ox - 230} y={oy - 110} width={460} height={220} rx={40} fill="none" stroke={C.mark} strokeWidth={6} pathLength={1} strokeDasharray={1} strokeDashoffset={1 - ring} opacity={0.95} />
+            <rect x={ox - 200} y={oy - 100} width={400} height={200} rx={40} fill="none" stroke={C.mark} strokeWidth={6} pathLength={1} strokeDasharray={1} strokeDashoffset={1 - ring} opacity={0.95} />
           </svg>
         </div>
       </div>
-      <Source said={pic} y={L.top + 40} at={start + 20} plate />
+      <Source said={{credit: pic.caption ?? (said ? said.credit : null)}} y={L.top - 6 + (said ? headH + 30 : 0)} at={start + 20} plate />
     </AbsoluteFill>
   );
 };
 
 /** The lines the real things show: all but the promise, up to three (the promise alone when it is the only one). */
-const THINGS = SPEC.lines.slice(1, 4).length ? SPEC.lines.slice(1, 4) : [SPEC.lines[0]];
+const SHOWN = new Set(PICTURES.map((pic) => pic.line).filter((i): i is number => i != null));
+const REST = SPEC.lines.slice(1).filter((_, i) => !SHOWN.has(i + 1)).slice(0, 3);
+const THINGS = REST.length ? REST : [SPEC.lines[0]];
 
 /** The product's real things, its own words, card after card from alternate sides while the camera drifts in. */
 const Things: React.FC = () => {
@@ -395,7 +424,7 @@ const Things: React.FC = () => {
   const room: [number, number] = [L.top + 90, L.bottom - 20];
   const top0 = Math.max(room[0], (room[0] + room[1]) / 2 - total / 2);
   const every = Math.min(62, (end - start - 140) / Math.max(1, items.length - 1));
-  const cam = lerp(f, [start, end], [1, 1.08], [INOUT]);
+  const cam = lerp(f, [start, end], [1, 1.04], [INOUT]);
   const tops = hs.map((_, i) => top0 + hs.slice(0, i).reduce((a, b) => a + b + gap, 0));
   // once all are in, each card in turn steps forward, about every 1.2 s: the eye always has something new
   const allIn = start + 6 + (items.length - 1) * every + 40;
@@ -424,7 +453,7 @@ const Things: React.FC = () => {
                   <div key={li} style={{whiteSpace: 'nowrap'}}>{ln}</div>
                 ))}
               </div>
-              <div style={{position: 'absolute', left: pad, bottom: pad - 14, width: W - pad * 2, fontFamily: TEXT, fontSize: 32, fontWeight: 500, color: C.muted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{s.source}</div>
+              <div style={{position: 'absolute', left: pad, bottom: pad - 14, width: W - pad * 2, fontFamily: TEXT, fontSize: 32, fontWeight: 500, color: C.muted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>{s.credit ?? ""}</div>
             </div>
           );
         })}
@@ -438,7 +467,7 @@ const Promise_: React.FC = () => {
   const f = useF();
   const start = useStart();
   const said = SPEC.lines[0];
-  const set = useSet(said.text, W, 5, 140, 72, 850);
+  const set = useSet(said.text, W / 1.08, 5, 140, 72, 850);
   const h = set.lines.length * set.size * 1.12;
   const top = (L.top + L.bottom) / 2 - h / 2;
   const at = start + 12;

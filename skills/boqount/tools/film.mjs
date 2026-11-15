@@ -31,10 +31,16 @@
 //   {"name": {"text", "source"}, "opening": {"text", "source"} | null, "lines": [{"text", "source"}, …2 to 4],
 //    "pictures": [{"file", "source", "frame", "crop", "focus"}, …0 to 2] | null,
 //    "colors": {"canvas", "ink", "accent", "source"} | null, "font": {"family", "source"} | null, "logo": {"source"} | null}
-// A picture is a real picture of the product from their files or pages (a screenshot, the site's image, the app icon
-// large), copied to films/glimpse/assets/pictures/: `file` is its path there; `frame` is "window" or "phone" for a bare
-// screen the film frames, "none" for one that has its frame already; `crop` [x, y, w, h] and `focus` [x, y] are
-// fractions of it (the part shown, and the detail the camera pushes in on). Then it writes films/glimpse/audio/:
+// Words carry `credit` besides `source`: `source` is where they are (for the record, never drawn), `credit` the short,
+// human name of that place the frame shows under them ("rectangleapp.com", "the README"); the opening and every line
+// need one, the name none. A credit or caption that reads like a path (a slash, a file's extension, a line number, a
+// URL's scheme) is refused: no file path is ever drawn.
+// A picture is the product at work, from their files or pages: a screenshot, or a short clip (.mp4, .webm or .mov, a
+// GIF turned into one with ffmpeg, `clip` [from, to] in seconds, at most 5 s, always muted), copied to
+// films/glimpse/assets/pictures/: `file` is its path there; `line` the index of the line it shows happening (set above
+// it); `caption` a short human credit when there is no line; `frame` "window" or "phone" for a bare screen the film
+// frames, "none" for one that has its frame already; `crop` [x, y, w, h] and `focus` [x, y] are fractions of it (the
+// part shown, and the detail the camera pushes in on). An icon or a logo is not a picture: it is the name's world. Then it writes films/glimpse/audio/:
 // cues.json and the sound sheet (sfx-cues.json, version 2) from the film's own clock
 // (films/project/src/films/glimpse/timeline.json): a soft bed under it all, a pass on each change of world, a mark when
 // the name lands and when the promise does; kit and tonal sounds only, $0. Its answer gives the sound commands, in
@@ -316,6 +322,13 @@ async function newFilm(account, slug, story = false) {
 
 const LIMITS = { name: 40, opening: 24, line: 90 };
 const FRAMES = ["window", "phone", "none"];
+const PATHLIKE = /https?:\/\/|[\w.~-]*\/[\w.~-]+|\.(md|mdx|json|ya?ml|png|jpe?g|gif|svg|webp|mp4|webm|mov|swift|tsx?|jsx?|mjs|css|scss|html?|xcstrings|strings|plist|txt|icon)\b|:\d+\b/i;
+function shown(value, where) {
+  if (value == null) return;
+  if (typeof value !== "string" || !value.trim()) throw new Error(`${where} is empty: leave it out, or give the place's short name`);
+  if (value.length > 40) throw new Error(`${where} is ${value.length} characters, at most 40: the place's short name, such as "rectangleapp.com" or "the README"`);
+  if (PATHLIKE.test(value)) throw new Error(`${where} ${JSON.stringify(value)} reads like a path: the frame shows a place's short human name ("rectangleapp.com", "the README", "the app"), never a file path; the path stays in source`);
+}
 const fractions = (v, n) => Array.isArray(v) && v.length === n && v.every((x) => typeof x === "number" && x >= 0 && x <= 1);
 const FONT_EXT = ["ttf", "otf", "woff2"];
 
@@ -333,11 +346,13 @@ export function contrast(a, b) {
   return (x + 0.05) / (y + 0.05);
 }
 
-function said(value, where, limit) {
+function said(value, where, limit, credited = true) {
   if (!value || typeof value !== "object") throw new Error(`${where} must be {"text", "source"}`);
   if (typeof value.text !== "string" || !value.text.trim()) throw new Error(`${where}.text is empty`);
   if (typeof value.source !== "string" || !value.source.trim()) throw new Error(`${where} has no source: a word on screen comes from the product's own files or pages, with where`);
   if (value.text.length > limit) throw new Error(`${where}.text is ${value.text.length} characters, at most ${limit}: pick a shorter phrase of theirs, never a rewrite`);
+  if (credited && !value.credit) throw new Error(`${where} has no credit: words on screen carry the short name of where they are from ("rectangleapp.com", "the README")`);
+  shown(value.credit, `${where}.credit`);
 }
 
 function glimpse(account) {
@@ -352,7 +367,7 @@ function glimpse(account) {
   } catch (e) {
     throw new Error(`films/glimpse/glimpse.json is not JSON: ${e.message}`);
   }
-  said(spec.name, "name", LIMITS.name);
+  said(spec.name, "name", LIMITS.name, false);
   if (spec.opening != null) said(spec.opening, "opening", LIMITS.opening);
   if (!Array.isArray(spec.lines) || spec.lines.length < 2 || spec.lines.length > 4) throw new Error("lines must hold 2 to 4 of the product's own lines");
   spec.lines.forEach((l, i) => said(l, `lines[${i}]`, LIMITS.line));
@@ -363,7 +378,14 @@ function glimpse(account) {
     const at = `pictures[${i}]`;
     if (!pic || typeof pic.file !== "string" || !pic.file.trim()) throw new Error(`${at}.file is empty`);
     if (typeof pic.source !== "string" || !pic.source.trim()) throw new Error(`${at} has no source: where in their files or pages the picture is`);
-    if (!/^assets\/pictures\/[^/]+\.(png|jpe?g|webp)$/i.test(pic.file)) throw new Error(`${at}.file must be assets/pictures/<name>.png, .jpg or .webp, got ${JSON.stringify(pic.file)}`);
+    if (!/^assets\/pictures\/[^/]+\.(png|jpe?g|webp|mp4|webm|mov)$/i.test(pic.file)) throw new Error(`${at}.file must be assets/pictures/<name>.png, .jpg, .webp, or a clip .mp4, .webm or .mov, got ${JSON.stringify(pic.file)}`);
+    if (/icon|logo/i.test(pic.file) || /\bapp ?icon\b|appiconset|\.icon\b|\blogo\b/i.test(pic.source)) throw new Error(`${at} is an icon or a logo: that is the name's world (logo), not a picture of the product at work; take a screenshot or a demo instead, or leave pictures out`);
+    shown(pic.caption, `${at}.caption`);
+    if (pic.line != null && !(Number.isInteger(pic.line) && pic.line >= 0 && pic.line < spec.lines.length)) throw new Error(`${at}.line is the index of one of the lines, 0 to ${spec.lines.length - 1}`);
+    if (/\.(mp4|webm|mov)$/i.test(pic.file)) {
+      const c = pic.clip;
+      if (!(Array.isArray(c) && c.length === 2 && c.every((x) => typeof x === "number" && x >= 0) && c[1] > c[0] && c[1] - c[0] <= 5)) throw new Error(`${at} is a clip: clip is [from, to] in seconds, at most 5 s of it`);
+    }
     if (!existsSync(join(dir, pic.file))) throw new Error(`${at} has no file: copy it to films/glimpse/${pic.file}`);
     if (pic.frame != null && !FRAMES.includes(pic.frame)) throw new Error(`${at}.frame is one of ${FRAMES.join(", ")}`);
     if (pic.crop != null && !(fractions(pic.crop, 4) && pic.crop[0] + pic.crop[2] <= 1 && pic.crop[1] + pic.crop[3] <= 1 && pic.crop[2] > 0 && pic.crop[3] > 0)) throw new Error(`${at}.crop is [x, y, w, h], fractions of the picture that stay inside it`);

@@ -80,23 +80,30 @@ Read everything that describes the product, then its public side, one note per a
 
 ## 2. Say it back, and show it
 
+While the readers work and the first look renders, say nothing: no "still reading" or "the readers are working"
+lines. The next thing the person reads is the message below, whole.
+
 **The first look.** With the film project set up (the opening's films yes), make it before the message, from the
 notes only: write `films/glimpse/glimpse.json` (`<skill>/tools/film.mjs` → glimpse: the product's name; two to four
-of its own lines, the first its promise, quoted exactly, each at most 90 characters; an optional short word or number
-from its own pages, at most 24; its colours, `canvas`, `ink` and `accent`, when `look` found them, with the ink
+of its own lines, the first its promise, quoted exactly, each at most 90 characters; the opening, at most 24
+characters, chosen by `film.md` → The first look; each line and the opening with its `source` (for the record) and its
+`credit`, the short human name of where it is from ("rectangleapp.com", "the README"), which is all the frame shows:
+never a file path on screen; its colours, `canvas`, `ink` and `accent`, when `look` found them, with the ink
 reading on the canvas; its face when a font file is in the folder, copied to `films/glimpse/assets/fonts/<family>.ttf`
-(or .otf, .woff2); its logo or app icon, copied to `films/glimpse/assets/logo.svg` or `.png`; **up to two real pictures of the product**,
-the strongest lever of the first look: a screenshot from the README or docs, the site's own product image or
-og:image, the app icon at its largest, a frame of its demo, copied to `films/glimpse/assets/pictures/`, each with
-`frame` (`window` or `phone` for a bare screen, `none` for one already framed), a `crop` to the product itself when it
-sits on a margin, and the `focus` the camera pushes in on; each with its source). With pictures, the film shows them
-large in the middle; with none, the words carry it. Then `node <skill>/tools/film.mjs glimpse`, which also writes the
+(or .otf, .woff2); its logo or app icon, copied to `films/glimpse/assets/logo.svg` or `.png` (the name's world: the
+only place an icon goes); **up to two real pictures of the product at work**, the strongest lever of the first look,
+chosen by `film.md` → The first look (a demo clip or the frames of the action a line promises first, then screenshots
+of the product in use; never the icon), copied to `films/glimpse/assets/pictures/`, each with `line` (the line it
+shows happening) or a short `caption`, `frame`, a `crop` to the product itself when it sits on a margin, and the
+`focus` the camera pushes in on; each with its source). With pictures, the film shows them large in the middle; with
+none, the words carry it. Then `node <skill>/tools/film.mjs glimpse`, which also writes the
 film's sound sheet ($0: a soft bed, a pass on each change of world, a mark as the name and the promise land), the two
 sound commands it prints under `sound` in order (the tonal set, then the mix), the render it prints as `next` (about
 half a minute; the first render after `npm install` also downloads the renderer's browser, about a minute more), and
 its stills
 (`<skill>/tools/stills.sh films/glimpse/out/glimpse-draft.mp4 films/glimpse/out/stills --every 1`), which you look
-at before you show it: nothing over anything, no word cut at an edge, no empty world; and
+at before you show it: nothing over anything, no word or picture cut by an edge of the frame, a card or a mask, no
+file path anywhere, no empty world; and
 `node <skill>/tools/soundcheck.mjs films/glimpse/audio` and `node <skill>/tools/flashes.mjs
 films/glimpse/out/glimpse-draft.mp4`, each passing. Nobody has heard it: say so. A number appears only when a
 page of theirs says it; nothing on screen is invented, and what the notes do not have is left out (no colours: the
@@ -123,11 +130,13 @@ too (its JSON, then the render again). Nothing is written from the notes before 
 
 ## 3. Ask only what no file could say
 
-**One message, one round.** Every question carries a proposed answer, so a "yes" answers it: from the notes where
-they have one ("Instagram @quillfern and TikTok @quillfern.app: these two?"), else a sensible default you name
-("posting 18:00–21:00 in your time zone, America/New_York from your files: yes?", "code word FERN for the reminders:
-yes?", "approve the first 10 posts yourself: yes?"). A question is never asked open when a proposal can be made, and
-"all yes" is a complete answer. There is no second round, unless an answer opened a question that did not exist
+**One message, one round, in two parts.** First, only what they must type, each with a proposed value wherever one
+can be made: the handles on each channel ("@quillfern on Instagram and TikTok?"), the folder of material they have
+the rights to, the time zone ("America/New_York, from your files?"); at most three. Then everything else as one
+numbered list of proposals, each answerable with a yes, ending on "Say yes to all, or name the numbers to change":
+from the notes where they have one, else a sensible default you name ("2. posting 18:00–21:00 your time: yes?",
+"3. code word FERN for the reminders: yes?", "4. you approve the first 10 posts yourself: yes?"). A question is never
+asked open when a proposal can be made, and "yes to all" is a complete answer to the list. There is no second round, unless an answer opened a question that did not exist
 before (then that one question alone). The code words of step 4 and the posting windows of step 6 are proposed here
 too, so those steps only write what was agreed.
 

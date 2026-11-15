@@ -467,10 +467,10 @@ test("the CLI prints one JSON line, exits 1 with an error line, and finds the sk
 
 const GLIMPSE = {
   name: { text: "Quillfern", source: "README.md:1" },
-  opening: { text: "One message", source: "site/index.html:12" },
+  opening: { text: "One message", source: "site/index.html:12", credit: "quillfern.example" },
   lines: [
-    { text: "Water reminders for every plant you own.", source: "site/index.html:14" },
-    { text: "One reminder on the day a plant needs water.", source: "README.md:25" },
+    { text: "Water reminders for every plant you own.", source: "site/index.html:14", credit: "quillfern.example" },
+    { text: "One reminder on the day a plant needs water.", source: "README.md:25", credit: "the README" },
   ],
   colors: { canvas: "#17140f", ink: "#f4eee2", accent: "#6cc59a", source: "src/theme.css:3-5" },
   font: null,
@@ -550,13 +550,49 @@ test("glimpse refuses a word with no source, a rewrite that is too long, and too
     [{ ...GLIMPSE, opening: { text: "Water reminders for every plant", source: "x" } }, /opening\.text is 31 characters, at most 24/],
     [{ ...GLIMPSE, lines: [GLIMPSE.lines[0]] }, /2 to 4/],
     [{ ...GLIMPSE, lines: [...GLIMPSE.lines, ...GLIMPSE.lines, GLIMPSE.lines[0]] }, /2 to 4/],
-    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0], { text: "Fast.", source: " " }] }, /lines\[1\] has no source/],
+    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0], { text: "Fast.", source: " ", credit: "the README" }] }, /lines\[1\] has no source/],
   ];
   for (const [spec, re] of cases) {
     const { r } = await withGlimpse(spec);
     assert.equal(r.code, 1);
     assert.match(r.out.error, re);
   }
+});
+
+test("glimpse draws no file path: words need a short human credit, and a credit or caption like a path is refused", async () => {
+  const cases = [
+    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0], { text: "Fast.", source: "README.md:3" }] }, /lines\[1\] has no credit/],
+    [{ ...GLIMPSE, opening: { ...GLIMPSE.opening, credit: "README.md:42" } }, /reads like a path/],
+    [{ ...GLIMPSE, lines: [{ ...GLIMPSE.lines[0], credit: "Rectangle/Assets.xcassets/AppIcon" }, GLIMPSE.lines[1]] }, /reads like a path/],
+    [{ ...GLIMPSE, lines: [{ ...GLIMPSE.lines[0], credit: "https://quillfern.example" }, GLIMPSE.lines[1]] }, /reads like a path/],
+  ];
+  for (const [spec, re] of cases) {
+    const { r } = await withGlimpse(spec);
+    assert.equal(r.code, 1, JSON.stringify(spec));
+    assert.match(r.out.error, re);
+  }
+  const { r } = await withGlimpse({ ...GLIMPSE, name: { text: "Quillfern", source: "README.md:1" } });
+  assert.equal(r.code, 0, "the name needs no credit");
+});
+
+test("a picture is the product at work: never an icon or a logo; a clip is at most 5 s; a line it shows is one of the lines", async () => {
+  const shot = { "films/glimpse/assets/pictures/settings.png": "png", "films/glimpse/assets/pictures/icon.png": "png", "films/glimpse/assets/pictures/demo.mp4": "mp4" };
+  const pic = { file: "assets/pictures/settings.png", source: "the site's screenshot", frame: "none", line: 1 };
+  const cases = [
+    [{ ...pic, file: "assets/pictures/icon.png" }, /icon or a logo/],
+    [{ ...pic, source: "Rectangle/Assets.xcassets/AppIcon.appiconset/mac512.png" }, /icon or a logo/],
+    [{ ...pic, caption: "docs/shot.png" }, /reads like a path/],
+    [{ ...pic, line: 5 }, /line is the index/],
+    [{ ...pic, file: "assets/pictures/demo.mp4" }, /clip is \[from, to\]/],
+    [{ ...pic, file: "assets/pictures/demo.mp4", clip: [1, 8] }, /at most 5 s/],
+  ];
+  for (const [p, re] of cases) {
+    const { r } = await withGlimpse({ ...GLIMPSE, pictures: [p] }, shot);
+    assert.equal(r.code, 1, JSON.stringify(p));
+    assert.match(r.out.error, re);
+  }
+  const { r } = await withGlimpse({ ...GLIMPSE, pictures: [pic, { ...pic, file: "assets/pictures/demo.mp4", clip: [0.5, 4.5], caption: "the demo" }] }, shot);
+  assert.equal(r.code, 0, JSON.stringify(r.out));
 });
 
 test("glimpse refuses colours that are not hex or whose ink does not read on the canvas, and takes none as neutral", async () => {
