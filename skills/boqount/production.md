@@ -24,9 +24,12 @@ slideshow's files go to `marketing/media/<slug>/`.
 - **Every post has a layer**, whatever its kind (`niche`, `product` or `offer`, in the record's Layer field). A
   `file`, a clip or a slideshow takes the layer its content is: one that names or shows the product anywhere is not
   `niche`.
-- **Material for $0** is only what is already on disk: the kit's sounds (`films/sfx/`), stills, the brand's media,
-  and music only from a file the person saved, with its licence, to `marketing/media/sound/`. With none saved, a post
-  has no music. Every proposal names the existing path of its material.
+- **Material for $0** is only what is already on disk: the kit's sounds (`films/sfx/`), the account's sound library
+  once it is made (`films/sounds/`), a film's tonal set, stills, the brand's media, and music only from a file the
+  person saved, with its licence, to `marketing/media/sound/`. With none saved, a post has no music. Every proposal
+  names the existing path of its material.
+- **A film's mix** is -14 LUFS integrated, at most -1 dBTP (`film.md` → Sound); its sound check's output goes into
+  the film's checks.
 - No `films/project` (the person wants no films made here, or it is not set up yet): a day that needs a film asks
   once whether to set it up (`onboarding.md` step 9, run alone on a yes), makes another kind meanwhile, and the report
   names the film project under Not built.
@@ -114,11 +117,13 @@ kept or not.
 | Service | What | Price | Source | Read |
 |---|---|---|---|---|
 | ElevenLabs | text to speech (`eleven.mjs tts`, `tts-lines`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
-| ElevenLabs | sound effects (`eleven.mjs sfx`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
+| ElevenLabs | sound effects: the library's takes (`soundlib.mjs gen`, through `eleven.mjs sfx`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
 | ElevenLabs | music (`eleven.mjs music`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
 | boqo | `create_clips` (a boqo channel only) | credits: the balance and what is left of this connection's daily cap, read with `get_account`; the card's cost is the difference after it | boqo's `get_account` | <date> |
 
-The kit's sounds are generated on this machine and cost $0.
+The kit's sounds and a film's tonal set are made on this machine and cost $0. The library costs once, when its takes
+are generated (`soundlib.mjs gen` says how many seconds it would ask for before it asks anything), and $0 a film after
+that. Without an ElevenLabs key, every film's sound is the kit and the tonal set, at $0.
 
 ## A film from scratch
 

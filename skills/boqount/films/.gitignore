@@ -3,3 +3,7 @@
 *.wav
 *.mp4
 sfx/
+# The sound library stays on the machine that made it (ElevenLabs' terms forbid passing its sound effects on as files
+# or as a library): only what it asks for is kept. soundlib.mjs gen and build make the rest again.
+sounds/*
+!sounds/spec.json

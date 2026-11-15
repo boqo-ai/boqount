@@ -117,20 +117,86 @@ probes it (`check.md`).
 
 ## Sound
 
-In `films/<slug>/audio/`:
+How a film's sound is chosen and levelled is `motion.md` → Sound follows the picture; the standards behind its numbers
+and the library are `sound.md`. Here: the files, the sheet, the mix and the checks. In `films/<slug>/audio/`:
 
 - **`cues.json`:** `{"duration": <s>, "lines": [{"id", "text", "start", "end", "words": [{"word", "start",
   "end"}]}]}`, times in seconds. Voiced, `vo-assemble.mjs` writes it (The voice). Voice-free, write it from the
   on-screen text, each word timed at reading speed (`script.md` → Mechanics). Every scene and every hit cues from it.
-- **`sfx-cues.json`:** `"loop": true`; `hits`, each `{"sfx", "at", "offset", "gain", "_"}`, a hit for every visible
-  action (`motion.md` → Sound follows the picture); `music.segments`, empty when the film has no music.
+- **`sfx-cues.json`, the sheet (version 2):**
+
+  ```
+  {"version": 2, "loop": false, "target": {"I": -14, "TP": -1}, "sfxDuck": 3, "bedDuck": 6,
+   "music": {"gain": -18, "duckDb": 4, "segments": [{"file": "bed.mp3", "at": 0, "from": 1.2, "until": "end"}],
+             "dips": [{"at": "turn.3", "offset": -0.25, "len": 0.25, "db": 14, "_": "the hit stands alone"}]},
+   "beds": [{"sound": "amb/night", "at": "asleep.0", "until": "morning.0", "untilOffset": -0.1, "under": 20,
+             "_": "the bedroom at night"}],
+   "hits": [{"sound": "hit/slam", "at": "turn.3", "under": 7, "_": "the door slams shut"},
+            {"sound": "move/riser", "at": "turn.3", "align": "sync", "under": 14, "_": "the build into the slam"},
+            {"sound": "tone/pluck-3", "at": "list.2", "under": 18, "_": "the third tag lands"}]}
+  ```
+
+  - `loop`: `true` for a film that loops (`hooks.md` → Rules): what sounds past the end is folded onto the head.
+  - A hit names **`sound`**, an id: `<group>/<name>` from the account's library, `kit/<name>` from the synthesized
+    kit, `tone/<name>` from the film's tonal set; or **`sfx`**, the name of a file of the film's own in `audio/sfx/`
+    (a recording the person made or licensed, listed in `brand/<slug>/assets.md` → Sounds).
+  - **`at`** is seconds, `"end"`, or a cue `"<line id>.<word index>"` (that word's start), plus **`offset`**.
+  - **`under`**: how many dB under the voice's typical level, by tier (`motion.md` → Sound follows the picture). The
+    mixer sets each take by its own loudness as a phone plays it, so every take of a sound lands alike. **`gain`**
+    instead fixes the level in dB: for a film's own file, or a voice-free film that keeps its hits' balance by hand.
+  - **`"_"`** says what the hit is the sound of. A hit with no event in its `"_"` does not go in.
+  - **`align: "sync"`** puts a build's peak on the cue instead of its start: a riser, a suck-in, a whoosh that passes.
+  - **`until`** (a cue, seconds or `"end"`, plus `untilOffset`) cuts the sound there with a 12 ms fade, or `fade`
+    seconds: a sound ends when its thing leaves the frame. **`from`** skips the file's first seconds.
+  - **`var`** picks take n of a library sound (by default the takes rotate, and a take that comes round again moves
+    a little in pitch); **`pitch`** in semitones; **`pan`** from -0.6 to 0.6 (a phone held upright is one speaker);
+    **`hp`**, **`lp`** filter it; **`fadeIn`**; **`duck: false`**: the voice does not push it down (a loop's riser
+    under the hanging last line).
+  - **`beds`**: backgrounds, looped from `at` to `until` with `fadeIn`/`fadeOut` (0.3 s), one per world that has a sound
+    of place. **`music.dips`**: the music drops by `db` for `len` seconds (`fade` 0.06 s), so a hit or a word stands
+    alone. `sfxDuck`, `bedDuck` and `music.duckDb` set how hard the voice pushes each bus down while it speaks.
+  - A sheet with no `version` is the first one (`{"sfx", "at", "offset", "gain"}` hits from the kit only): it still
+    mixes as it did; a new film's sheet (`film.mjs new`) is version 2.
+- **Where the sounds come from.** The account's **library** in `films/sounds/`: `spec.json` lists what to ask for,
+  `node <skill>/tools/soundlib.mjs gen` asks ElevenLabs for the takes with the person's own key (a paid call per
+  take, reserved in the budget first and run with `--yes` only on the person's word: `production.md` → Prices),
+  `node <skill>/tools/soundlib.mjs build` trims, levels and measures them into `library.json`, and
+  `node <skill>/tools/soundlib.mjs audition` writes a page where the person hears every take and says which go
+  (`soundlib.mjs drop <id> <n>`). The library is made once and then costs nothing a film; it never leaves the machine
+  (git-ignored: ElevenLabs' terms forbid passing its sound effects on as files or as a library). **Without a key**,
+  the kit's sixteen synthesized sounds (`films/sfx/`, `kit/<name>`) and the tonal set carry every film. A sound the
+  library lacks is a new entry in `spec.json`, then `gen --only <id>` and `build --only <id>`: it goes into the
+  library, never into one film's folder.
+- **The tonal set:** pitched marks in the key of the film's music, synthesized for $0:
+  `node <skill>/tools/soundlib.mjs key audio/music/<file>` reads the music's likely key, then
+  `node <skill>/tools/soundlib.mjs tone films/<slug>/audio <root> minor` (or `major`) writes `audio/tone/`: `pluck-1`
+  to `pluck-6` (the scale going up), `blip-1` to `blip-3`, `bell-1`, `bell-5`, `confirm`, `resolve`, `deny`,
+  `riser-1`, `riser-2` (1 and 2 s, ending dead: `"align": "sync"`), `fall`, `shimmer`, `sub`, `pad`. With no music, any
+  root: the set only has to agree with itself.
 - **Music** only from a file whose rights are listed (`brand/<slug>/assets.md` → Sounds), copied into `audio/music/`,
-  or from a paid take reserved in the budget. With neither, no music: the kit's sounds carry the film. No music file
-  starts with its own dead air at frame 0: trim it with its segment's `from`. A source's song is never the bed
-  (Outside material).
-- **The seam:** the music drops out on it, and a `rise` timed to end on the last frame carries it into frame 0. In a
-  voice-free film the seam is on screen: the last on-screen line is left unfinished, and frame 0's title finishes it.
-- **The mix:** `node <skill>/tools/mix.mjs films/<slug>/audio` → `mix.wav`. A voice-free film has no `vo.wav`.
+  or from a paid take reserved in the budget. With neither, no music: the hits and the backgrounds carry the film. No
+  music file starts with its own dead air at frame 0: trim it with its segment's `from`. A source's song is never the
+  bed (Outside material).
+- **The seam** (a film that loops): the music drops out on it, and a riser (`kit/rise`, or `tone/riser-1` with
+  `"align": "sync"`) ending on the last frame carries it into frame 0. In a voice-free film the seam is on screen: the
+  last on-screen line is left unfinished, and frame 0's title finishes it.
+- **The mix:** `node <skill>/tools/mix.mjs films/<slug>/audio` → `mix.wav`, `stems/vo.wav`, `music.wav`, `sfx.wav`,
+  `beds.wav` and `stems/played.json` (every hit as played: its time, sound, take, level and `"_"`). The voice is
+  levelled lightly and measured; every sound is set against it; the master is -14 LUFS integrated, at most -1 dBTP,
+  one gain and a limiter that takes only the peaks. A voice-free film has no `vo.wav`: it is set against a nominal
+  voice, and raised toward -14 LUFS only as far as its peaks allow (quieter rather than crushed).
+- **The sound check:** `node <skill>/tools/soundcheck.mjs films/<slug>/audio` prints one line a rule, `ok` or `FAIL`:
+  the master's loudness and peak, how hard the limiter works, the mono fold-down, the music, the effects and the
+  backgrounds against the voice, no file more than 8 % of the hits, no file twice within a second, at most seven hits
+  in a second, at most six hero hits a minute, every hero hit present on a phone; then the long sounds with their
+  starts and ends, and the planned silences. Its output goes into the film's checks, pasted; a `FAIL` is fixed in the
+  sheet (or the library) and mixed again before the director's gate (The gates), which also gets `stems/played.json`
+  and names every sound that does not fit its event.
+- **Nobody in this pipeline hears anything.** Every check is a measurement. The person's listen at full speed is the
+  only judgement of how the film sounds, and the report says so every time.
+- **A sound-only change needs no render:** put the new `mix.wav` on the picture,
+  `ffmpeg -i out/<slug>-feed.mp4 -i audio/mix.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 320k -movflags +faststart <new file>`,
+  and probe the new file as the feed file is probed (The project).
 - **A voice-free film has no words:** run `production.md` → The file's words on `mix.wav` and expect none (a
   bracketed sound tag is not a word). A word found is a voice in the mix: fix it before the check.
 

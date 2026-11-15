@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 // Mix a film's soundtrack: voice-over + sound-effect hits at cue words + a music bed ducked under the voice.
 //
-//   node <skill>/tools/mix.mjs <audio-dir> [--sfx <dir>]
+//   node <skill>/tools/mix.mjs <audio-dir> [--sfx <dir>] [--library <dir>]
+//
+// A version-2 cue sheet (`"version": 2` in sfx-cues.json: every new film's) is handed to tools/mix2.mjs, with the
+// same folder and flags: the library, levels set against the voice, four buses, -14 LUFS (`film.md` → Sound).
+// What follows is the first sheet's mixer, kept so a film made with it mixes as it did.
 //
 // Reads <audio-dir>/vo.wav, cues.json, sfx-cues.json and the music files it names; writes <audio-dir>/mix.wav
 // (48 kHz stereo s16). Its length is cues.json's duration rounded up to a whole number of 30 fps frames
@@ -30,7 +34,7 @@ import { existsSync, readFileSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join, resolve } from "node:path";
 
-const USAGE = "usage: mix.mjs <audio-dir> [--sfx <dir>]";
+const USAGE = "usage: mix.mjs <audio-dir> [--sfx <dir>] [--library <dir>]";
 const NAME = /^[A-Za-z0-9_-]+(\.(wav|mp3))?$/;
 /** A voice quieter than this, in dBFS true peak, is no voice: a silent vo.wav made as a stand-in. */
 const SILENT = -60;
@@ -39,8 +43,10 @@ const PEAK = -3.05;
 const args = process.argv.slice(2);
 const positional = [];
 let sfxFlag;
+let libFlag;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === "--sfx" && args[i + 1] !== undefined && sfxFlag === undefined) sfxFlag = args[++i];
+  else if (args[i] === "--library" && args[i + 1] !== undefined && libFlag === undefined) libFlag = args[++i];
   else positional.push(args[i]);
 }
 if (positional.length !== 1 || positional[0].startsWith("--")) {
@@ -50,8 +56,17 @@ if (positional.length !== 1 || positional[0].startsWith("--")) {
 // Absolute paths: a folder whose name starts with "-" is then never read by ffmpeg as an option.
 const dir = resolve(positional[0]);
 const kitDir = sfxFlag === undefined ? resolve(dir, "../../sfx") : resolve(sfxFlag);
+let sheet = null;
 try {
-  main();
+  sheet = JSON.parse(readFileSync(join(dir, "sfx-cues.json"), "utf8"));
+} catch {
+  // main() reports the missing or broken sheet in its own words
+}
+try {
+  if (sheet?.version === 2) {
+    const { main: mix2 } = await import("./mix2.mjs");
+    console.log(mix2([dir, ...(sfxFlag === undefined ? [] : ["--sfx", sfxFlag]), ...(libFlag === undefined ? [] : ["--library", libFlag])]));
+  } else main();
 } catch (e) {
   console.error(`mix.mjs: ${e.message}`);
   process.exit(1);

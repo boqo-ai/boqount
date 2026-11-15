@@ -150,15 +150,52 @@ Every film, in every layer:
 
 ## Sound follows the picture
 
+The sheet's fields, the mix and the checks are `film.md` → Sound; the standards behind these numbers, with their
+sources, and the library are `sound.md`.
+
+- **Start from the picture's events, not from a list of sounds.** For each storyboard row, list what moves, lands,
+  opens, shuts, is pressed or changes state. One event, one sound; two layers at most (the thing, and its weight or
+  its pitch); three only on the film's full-frame hits.
 - **Every visible action has its sound**, pinned to the cue word it lands on in `audio/sfx-cues.json`
-  (`"at": "<line id>.<word index>"`, plus `offset`), with its purpose in `"_"`.
-- **Real-world sounds:** a tap sounds like a tap, a stamp like a stamp. Foley over decoration: never a bed of
-  whooshes.
-- **The kit's sixteen** (`films/sfx/`): `tap` a word rising or a touch, `tick` one step of a count, `typing`, `toggle`
-  a switch, `pop` and `pop_hi` a thing appearing, `lock` a thing seating, `ding` a notification, `blip` a small state
-  change, `stamp`, `drop` a fall, `error` a loss, `whoosh` and `whoosh_big` a carry or an exit, `rise` the riser into
-  the seam, `sparkle` the burst.
-- **Re-pin after any re-time:** when the cues move, every hit and the music's placement are checked again.
-- A sound the kit lacks is the film's own file in `films/<slug>/audio/sfx/`. A generated one
-  (`node <skill>/tools/eleven.mjs sfx "<prompt>" <out.mp3>`) is a paid call: reserved in the budget first, one request
-  at a time.
+  (`"at": "<line id>.<word index>"`, plus `offset`), with what it is the sound of in `"_"`. **Nothing for its own
+  sake:** no sound whose `"_"` names no event, no stretch of whooshes, no money sound in a film that shows no money.
+- **No object, no sound.** A sound starts with its thing and ends when the thing leaves the frame (`until`): a cue says
+  only when a sound starts, so a long one cued on a word plays on after its thing is gone.
+- **A sound is the sound of the thing:** a tap sounds like a tap, a padlock like a padlock, a date is stamped on, a
+  capture is a shutter. Pick each by what it is the sound of (the library's `use` line), never by habit; a small thing
+  makes a small sound. **A meaning keeps its sound** through the film: every date the stamp, every landing tag the same
+  pluck. A sound the library lacks goes into the library (`film.md` → Sound), not into the film.
+- **Levels are set against the voice** (`under`, in dB under its typical level):
+
+  | Tier | Under the voice | What |
+  |---|---|---|
+  | hero | 6 to 9 dB | the film's full-frame hits; six a minute at most |
+  | support | 11 to 16 dB | transitions, the actions a line names |
+  | texture | 18 to 23 dB | what happens often: ticks, letters, small landings; shorter, quieter, one note or none |
+  | background | 18 to 24 dB | the air of a world (`beds`) |
+  | music | 15 to 20 dB | the bed under the voice |
+
+  **A long sound stays under the voice:** anything over about a second sits at least 12 dB under its typical level, set
+  against the voice and not the music; a sustained sound at the voice's level masks it without ever going over. A
+  short hit may reach the voice on an accent word.
+- **A world may have air.** A scene whose place has a sound (a city, a room of people at keyboards, night) takes one
+  background, from the frame the world arrives to the frame it leaves. A clean product scene takes none: silence there
+  is the design.
+- **Pitch comes from the tonal set,** made in the key of the film's music. Things that are good, open, done or in the
+  brand's colour take plucks and bells; a run of things takes the scale going up; a set completing takes `resolve`; a
+  refusal takes `deny`; sameness is the same note again. A library sound that carries a pitch of its own (its `note`
+  says so) does not go under music: the tonal set does.
+- **A build ends on its point.** A riser, a suck-in or a growing bar is placed by its peak (`"align": "sync"`), so it
+  ends on the frame of the reveal. A push through to a new world: the whoosh peaks as the old world passes the frame.
+- **Two planned silences at most.** Before a full-frame hit the music dips for 0.2 to 0.3 s (`music.dips`) so the hit
+  stands alone. No accidental ones.
+- **Every hero hit is there on a phone,** whose speaker plays almost nothing under 200 Hz: a low hit has harmonics a
+  phone plays (the library's build adds them), or a second, higher layer on the same frame.
+- **No machine-gun:** no file more than 8 % of a film's hits, none twice within a second (the mixer rotates a sound's
+  takes and moves a returning take's pitch); at most seven hits in any second.
+- **Re-pin after any re-time:** when the cues move, every hit, background, dip and the music's placement are checked
+  again.
+- **The kit's sixteen** (`films/sfx/`, `kit/<name>`, synthesized, $0: what carries a film without a library): `tap` a
+  word rising or a touch, `tick` one step of a count, `typing`, `toggle` a switch, `pop` and `pop_hi` a thing
+  appearing, `lock` a thing seating, `ding` a notification, `blip` a small state change, `stamp`, `drop` a fall, `error`
+  a loss, `whoosh` and `whoosh_big` a carry or an exit, `rise` the riser into the seam, `sparkle` the burst.
