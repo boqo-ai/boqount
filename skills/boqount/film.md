@@ -9,6 +9,13 @@ the feed file, `films/<slug>/out/<slug>-feed.mp4`, which enters the check (`chec
 Production decides that the day makes a film and writes its record first (`production.md` → Choosing what to make);
 this file is how the film is made.
 
+**Every film is a story, not an advert built to a checklist.** On screen only the thing the line is about: no kicker
+labels, disclaimers, feature chips or fine print the story does not need; a qualifier a claim needs goes in the
+caption, in plain words. The wow is in the motion, not in more words on screen. A rule that puts something on screen
+on purpose stays (a `product` film's source line by 0.5 s, `story.md`; the credit for outside material). The words are
+the brand book's voice, in the register its audience uses on that network (brand book → Voice), never a deck's words
+(solution, leverage, seamless, end-to-end).
+
 Two things carry a film: a hook that bites (`hooks.md`) and motion where every scene is its own idea (`motion.md`).
 The words follow `script.md`; a `product` or `offer` film follows `story.md` too. Read each when its step comes.
 

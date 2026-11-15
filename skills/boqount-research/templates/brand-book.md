@@ -84,6 +84,8 @@ the human's step: the agent drafts the words and says what to pin.
 
 - <voice and tone; the product's own words; script rules; their sources>. The films' language is
   `brand/<slug>/style.md` → Language.
+- <the register on each network: how the audience talks in that feed and its comments (warm, dry, playful, expert),
+  read from the research, and what the brand never sounds like there; the person agrees to it>.
 
 ## Do and don't
 
