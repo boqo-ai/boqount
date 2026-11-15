@@ -85,11 +85,20 @@ notes only: write `films/glimpse/glimpse.json` (`<skill>/tools/film.mjs` → gli
 of its own lines, the first its promise, quoted exactly, each at most 90 characters; an optional short word or number
 from its own pages, at most 24; its colours, `canvas`, `ink` and `accent`, when `look` found them, with the ink
 reading on the canvas; its face when a font file is in the folder, copied to `films/glimpse/assets/fonts/<family>.ttf`
-(or .otf, .woff2); its logo or app icon, copied to `films/glimpse/assets/logo.svg` or `.png`; each with its source).
-Then `node <skill>/tools/film.mjs glimpse`, the render it prints as `next` (about half a minute; the first render
-after `npm install` also downloads the renderer's browser, about a minute more), and its stills
+(or .otf, .woff2); its logo or app icon, copied to `films/glimpse/assets/logo.svg` or `.png`; **up to two real pictures of the product**,
+the strongest lever of the first look: a screenshot from the README or docs, the site's own product image or
+og:image, the app icon at its largest, a frame of its demo, copied to `films/glimpse/assets/pictures/`, each with
+`frame` (`window` or `phone` for a bare screen, `none` for one already framed), a `crop` to the product itself when it
+sits on a margin, and the `focus` the camera pushes in on; each with its source). With pictures, the film shows them
+large in the middle; with none, the words carry it. Then `node <skill>/tools/film.mjs glimpse`, which also writes the
+film's sound sheet ($0: a soft bed, a pass on each change of world, a mark as the name and the promise land), the two
+sound commands it prints under `sound` in order (the tonal set, then the mix), the render it prints as `next` (about
+half a minute; the first render after `npm install` also downloads the renderer's browser, about a minute more), and
+its stills
 (`<skill>/tools/stills.sh films/glimpse/out/glimpse-draft.mp4 films/glimpse/out/stills --every 1`), which you look
-at before you show it: nothing over anything, no word cut at an edge, no empty world. A number appears only when a
+at before you show it: nothing over anything, no word cut at an edge, no empty world; and
+`node <skill>/tools/soundcheck.mjs films/glimpse/audio` and `node <skill>/tools/flashes.mjs
+films/glimpse/out/glimpse-draft.mp4`, each passing. Nobody has heard it: say so. A number appears only when a
 page of theirs says it; nothing on screen is invented, and what the notes do not have is left out (no colours: the
 neutral palette; no logo: the name is the mark). It is a draft and says so on screen ("first look · draft"): never a
 post, never posted or uploaded.
@@ -97,7 +106,7 @@ post, never posted or uploaded.
 Then one short message, from the notes only, with the first look first:
 
 ```
-Your first look: films/glimpse/out/glimpse-draft.mp4 (16 s, a draft from your own files: <colours: yours | neutral>, <logo: yours | your name>)
+Your first look: films/glimpse/out/glimpse-draft.mp4 (16 s with sound, a draft from your own files: <colours: yours | neutral>, <logo: yours | your name>, <n> of your pictures)
 What it is: <one sentence> (<source>)
 Who buys it: <…> (<source>) | not in your files: step 3 proposes an answer
 What it costs: <plans and prices> (<source>)

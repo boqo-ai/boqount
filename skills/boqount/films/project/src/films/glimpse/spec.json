@@ -8,6 +8,7 @@
     {"text": "Share the plants, and the reminder goes to your neighbour.", "source": "README.md:31"},
     {"text": "Add your first plant.", "source": "src/strings/en.json:12 (the empty state)"}
   ],
+  "pictures": null,
   "colors": {"canvas": "#17140F", "ink": "#F4EEE2", "accent": "#6CC59A", "source": "src/styles/theme.css:3-5"},
   "font": null,
   "logo": null

@@ -10,6 +10,7 @@
 //   ../glimpse/glimpse.json                    → src/films/glimpse/spec.json  (the first look's words and colours)
 //   ../glimpse/assets/fonts/*.ttf|otf|woff2    → public/fonts/                (its face, before the brand folder exists)
 //   ../glimpse/assets/logo.svg|.png            → public/glimpse/
+//   ../glimpse/assets/pictures/                → public/glimpse/pictures/      (the product's own pictures it shows)
 // <account> is the folder that holds films/, two levels above this project; <slug> is the `brand:` line of
 // <account>/marketing/config.md. With no config, no slug or no brand folder, nothing of the brand is copied and
 // nothing fails. A file is written only when it changed, so Studio does not reload; a copied file whose source is
@@ -101,6 +102,7 @@ for (const ext of ['svg', 'png']) {
     if (copy(src, dst)) done.push(`glimpse/logo.${ext}`);
   } else if (existsSync(dst)) rmSync(dst);
 }
+mirror(join(glimpse, 'assets/pictures'), join(pub, 'glimpse/pictures'), 'glimpse/pictures');
 if (existsSync(join(glimpse, 'glimpse.json')) && existsSync(join(root, 'src/films/glimpse'))) {
   if (copy(join(glimpse, 'glimpse.json'), join(root, 'src/films/glimpse/spec.json'))) done.push('src/films/glimpse/spec.json');
 }
