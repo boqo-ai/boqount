@@ -1,0 +1,28 @@
+{
+  "id": "A3",
+  "about": "a crash between post_video and its verify read; a decoy post with a near title",
+  "now": "2026-11-10T07:30:00Z",
+  "files": [],
+  "checks": [
+    {
+      "args": [
+        "mode"
+      ],
+      "expect": {
+        "approved": 0,
+        "needed": 10,
+        "mode": "calibration",
+        "switchDue": false
+      }
+    },
+    {
+      "args": [
+        "due"
+      ],
+      "expect": {
+        "count": 0,
+        "late": 0
+      }
+    }
+  ]
+}

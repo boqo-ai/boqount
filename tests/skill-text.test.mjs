@@ -180,6 +180,38 @@ const PINNED = {
   "measure.md": ["Zero on both days is yellow only when those days' posts had views", "Zero sign-ups against live views also raises an alarm"],
 };
 
+// The load-bearing holds and limits: a rewrite may move them, never drop them (the private skill pins them the same way).
+const HOLDS = {
+  "check.md": ["**A `niche` post asks for nothing.**", "HOLD: cta (no DM rule for <CODE>)", "HOLD: cta (not the brand book's call line)",
+    "HOLD: layer", "HOLD: claims", "HOLD: material", "HOLD: ai-label", "HOLD: probe", "HOLD: duplicate"],
+  "SKILL.md": ["at most 2 posts a day on a channel, only inside the windows, no `sale` post unless the funnel is green",
+    "no batch to catch up", "**Budget:** never exceeded. With nothing left, only zero-cost posts run.", "Never buys ads or views.",
+    "never `-a`: work in progress stays uncommitted", "never `--force`"],
+  "production.md": ["**Every post has a layer**"],
+  "gate.md": ["Nothing else counts as approval: not silence, not an earlier \"post them all\", not your own judgement."],
+  "measure.md": ["A `sale` post goes out only on green", "holds every `sale` post, on every channel, whatever its status"],
+};
+// What must never come back.
+const FORBIDDEN = {
+  "SKILL.md": ["git push --force", "git add -A", "git add ."],
+  "posting.md": ["git push --force"],
+  "measure.md": ["repoint the rule for each post"],
+};
+
+for (const [name, phrases] of Object.entries(HOLDS)) {
+  test(`${name}: the load-bearing holds and limits are still there`, () => {
+    const flat = flatOf(name);
+    assert.deepEqual(phrases.filter((phrase) => !flat.includes(phrase)), []);
+  });
+}
+
+for (const [name, phrases] of Object.entries(FORBIDDEN)) {
+  test(`${name}: nothing it forbids has come back`, () => {
+    const flat = flatOf(name);
+    assert.deepEqual(phrases.filter((phrase) => flat.includes(phrase)), []);
+  });
+}
+
 for (const [name, phrases] of Object.entries(PINNED)) {
   test(`${name}: the rules carried from the private skill are still there`, () => {
     const flat = flatOf(name);

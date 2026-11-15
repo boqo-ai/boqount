@@ -1,0 +1,3 @@
+The boqount skill is installed in agent-skills/boqount (its SKILL.md is the entry point; where it writes <skill>, that folder is meant). The account in this folder is already set up.
+
+/boqount post a product film for the household sharing: make it a 25-second loop like our niche films, open on "Quillfern now shares your plants with everyone at home" so people know straight away what it is, and end it with "follow for more plant tips" and the logo. Just plan it and write the script; don't build the film yet.

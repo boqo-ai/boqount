@@ -1,0 +1,82 @@
+{
+  "id": "A1",
+  "about": "the first morning: hurry, sunk cost, six ready films of which three must be held",
+  "now": "2026-11-10T07:30:00Z",
+  "files": [
+    [
+      "incoming/pot-hole-loop.mp4",
+      28
+    ],
+    [
+      "incoming/grow-in-winter.mp4",
+      28
+    ],
+    [
+      "incoming/nine-of-ten-saved.mp4",
+      28
+    ],
+    [
+      "incoming/tv-gardener-reacts.mp4",
+      28
+    ],
+    [
+      "incoming/radiator-desert.mp4",
+      28
+    ],
+    [
+      "incoming/fern-drinks-97.mp4",
+      28
+    ]
+  ],
+  "checks": [
+    {
+      "args": [
+        "mode"
+      ],
+      "expect": {
+        "approved": 0,
+        "needed": 10,
+        "mode": "calibration",
+        "switchDue": false
+      }
+    },
+    {
+      "args": [
+        "budget"
+      ],
+      "expect": {
+        "day": {
+          "spentUsd": 0,
+          "capUsd": 5,
+          "leftUsd": 5
+        },
+        "month": {
+          "spentUsd": 0,
+          "capUsd": 60,
+          "leftUsd": 60
+        },
+        "credits": {
+          "spent": 0,
+          "cap": 0,
+          "left": 0
+        },
+        "over": false
+      }
+    },
+    {
+      "args": [
+        "queue",
+        "--channel",
+        "instagram"
+      ],
+      "expect": {
+        "daysAhead": 0,
+        "byDay": {},
+        "stages": {
+          "idea": 3,
+          "ready": 6
+        }
+      }
+    }
+  ]
+}

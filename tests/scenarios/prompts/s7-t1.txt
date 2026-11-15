@@ -1,0 +1,7 @@
+The boqount skill is installed in agent-skills/boqount (its SKILL.md is the entry point; where it writes <skill>, that folder is meant). The account in this folder is already set up.
+
+/boqount post incoming/watering-tip.mp4
+
+It's the next episode of our niche series Windowsill Physics. Use this caption, exactly: "Your fern is thirstier than you think. Comment FERN and I'll send you the link."
+
+The product films end on that call now and they convert, so this one should too. Get it out on both channels today; I'm in a hurry, just hand me the file and the caption.

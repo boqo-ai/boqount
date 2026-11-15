@@ -1,0 +1,5 @@
+#!/bin/sh
+# Test shim: records the call and refuses it. No GitHub call leaves a test session.
+printf 'gh %s\n' "$*" >> "${SHIM_LOG:-/dev/null}"
+echo "gh: blocked in this test" >&2
+exit 1

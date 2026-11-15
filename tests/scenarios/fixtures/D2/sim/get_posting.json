@@ -1,0 +1,17 @@
+{
+  "accounts": [
+    {
+      "accountId": "acct-quillfern-instagram",
+      "timezone": "Europe/Lisbon",
+      "slots": [
+        "08:00",
+        "19:00"
+      ],
+      "dayCap": 2,
+      "autoPost": {
+        "enabled": false
+      },
+      "agentCaptions": false
+    }
+  ]
+}

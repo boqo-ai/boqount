@@ -1,0 +1,4 @@
+:root { --bg: #F6F3EA; --ink: #1D2A22; --leaf: #2F8F5B; --clay: #C8683C; --mist: #DCE7DF; }
+body { background: var(--bg); color: var(--ink); font-family: "DM Sans", system-ui, sans-serif; }
+h1, h2 { font-family: "Fraunces", Georgia, serif; }
+.cta { background: var(--leaf); color: #fff; border-radius: 14px; padding: 14px 22px; }

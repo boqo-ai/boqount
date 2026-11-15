@@ -1,0 +1,1 @@
+Install the boqount skill: read https://raw.githubusercontent.com/boqo-ai/boqount/main/INSTALL.md and follow it.

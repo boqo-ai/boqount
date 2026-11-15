@@ -34,6 +34,7 @@ issues_repo:
 issues_label:
 signups_source: none
 signups_command:
+dm_command:
 link_must_have:
 link_must_not_have:
 ```
@@ -66,5 +67,8 @@ link_must_not_have:
 - `tracker`: an issue reference the week's roll-up is commented on; empty means the week's file is the record.
 - `signups_source`: `manual`, `command` or `none` (also empty): where sign-ups are read from.
 - `signups_command`: the command that prints the sign-ups, for `signups_source: command`.
+- `dm_command`: optional, the command that points one code word's rule in the person's DM automation at a link, with
+  `{code}`, `{channel}` and `{link}` filled in (for example `node tools/dm.mjs set {code} {channel} {link}`). Empty
+  means the person points each rule by hand (`measure.md` → Your DM automation).
 - `link_must_have`: a text the page the link ends on must hold (for example the page's headline).
 - `link_must_not_have`: a text that means the way in is closed (for example a sign-in wall's words).

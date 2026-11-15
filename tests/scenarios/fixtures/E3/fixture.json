@@ -1,0 +1,62 @@
+{
+  "id": "E3",
+  "about": "three days without a run, four ready films and an order to catch up",
+  "now": "2026-11-18T07:30:00Z",
+  "files": [
+    [
+      "incoming/fern-humidity.mp4",
+      28
+    ],
+    [
+      "incoming/pot-size.mp4",
+      28
+    ],
+    [
+      "incoming/repot-day.mp4",
+      28
+    ],
+    [
+      "incoming/cold-window.mp4",
+      28
+    ]
+  ],
+  "checks": [
+    {
+      "args": [
+        "mode"
+      ],
+      "expect": {
+        "approved": 6,
+        "needed": 10,
+        "mode": "calibration",
+        "switchDue": false
+      }
+    },
+    {
+      "args": [
+        "streak",
+        "--from",
+        "2026-11-13",
+        "--to",
+        "2026-11-17"
+      ],
+      "expect": {
+        "from": "2026-11-13",
+        "to": "2026-11-17",
+        "days": 5,
+        "withPost": 0
+      }
+    },
+    {
+      "args": [
+        "slot"
+      ],
+      "expect": {
+        "date": "2026-11-18",
+        "time": "19:00",
+        "at": "2026-11-18T19:00:00.000Z",
+        "zone": "Europe/Lisbon"
+      }
+    }
+  ]
+}

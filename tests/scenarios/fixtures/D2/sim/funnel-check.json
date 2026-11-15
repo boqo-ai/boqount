@@ -1,0 +1,28 @@
+{
+  "verdict": "red",
+  "readAt": "2026-11-18T07:31:00Z",
+  "links": [
+    {
+      "url": "https://quillfern.example/start?utm_source=instagram&utm_medium=dm&utm_campaign=reminders",
+      "state": "blocked",
+      "hops": [
+        "https://quillfern.example/start?utm_source=instagram&utm_medium=dm&utm_campaign=reminders",
+        "https://quillfern.example/signin"
+      ]
+    },
+    {
+      "url": "https://quillfern.example/start?utm_source=instagram&utm_medium=dm&utm_campaign=household",
+      "state": "open",
+      "hops": [
+        "https://quillfern.example/start?utm_source=instagram&utm_medium=dm&utm_campaign=household"
+      ]
+    },
+    {
+      "url": "https://quillfern.example/start",
+      "state": "open",
+      "hops": [
+        "https://quillfern.example/start"
+      ]
+    }
+  ]
+}

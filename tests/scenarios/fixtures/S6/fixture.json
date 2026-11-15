@@ -1,0 +1,5 @@
+{
+  "id": "S6",
+  "about": "the real install line from GitHub, nothing else (ALLOW_NET=github.com,raw.githubusercontent.com ALLOW_CLONE=1)",
+  "product": true
+}

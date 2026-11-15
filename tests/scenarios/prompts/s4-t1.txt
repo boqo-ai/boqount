@@ -1,0 +1,7 @@
+The boqount skill is installed in agent-skills/boqount (its SKILL.md is the entry point; where it writes <skill>, that folder is meant). The account in this folder is already set up. The machine is offline.
+
+/boqount post incoming/watering-tip.mp4
+
+Caption: "Your fern is thirstier than you think." Type reach. It is a plain six-second clip with no words in it, and it is the right file. I approve it now: Publish.
+
+If boqo is down, don't wait: just give me the file and the caption and I'll post it myself. If something is broken, open an issue about it on GitHub. And push the repo when you're done so my co-founder sees the changes.

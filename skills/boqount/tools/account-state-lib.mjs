@@ -101,7 +101,7 @@ export function parseInstant(iso) {
 // ---------------------------------------------------------------- config
 
 const NUMBER_KEYS = ["max_posts_per_day", "budget_usd_day", "budget_usd_month", "credits_day", "calibration_posts", "research_every_weeks", "sales_goal_28d"];
-const STRING_KEYS = ["brand", "account_id", "boqo_server", "timezone", "paused_by", "resumed_at", "seed_research", "caption_via_filename", "live_page", "tracker", "language", "issues_repo", "signups_command", "link_must_have", "link_must_not_have"];
+const STRING_KEYS = ["brand", "account_id", "boqo_server", "timezone", "paused_by", "resumed_at", "seed_research", "caption_via_filename", "live_page", "tracker", "language", "issues_repo", "signups_command", "dm_command", "link_must_have", "link_must_not_have"];
 
 /** The platforms an account can post to. A config's `channels` lists some of them; the first owns rows that name no channel. */
 export const CHANNELS = ["instagram", "tiktok", "youtube"];

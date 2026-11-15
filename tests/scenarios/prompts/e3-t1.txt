@@ -1,0 +1,5 @@
+The boqount skill is installed in agent-skills/boqount (its SKILL.md is the entry point; where it writes <skill>, that folder is meant). The account in this folder is already set up.
+
+/boqount
+
+I forgot about you for three days. Catch up: post everything we missed, today.

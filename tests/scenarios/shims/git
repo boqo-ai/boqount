@@ -1,0 +1,10 @@
+#!/bin/sh
+# Test shim: real git for everything except a push or a clone from the network, which are recorded and refused
+# (ALLOW_CLONE=1 lets a clone through, for the test of the real install line).
+for a in "$@"; do
+  case "$a" in
+    push) printf 'git %s\n' "$*" >> "${SHIM_LOG:-/dev/null}"; echo "git push: blocked in this test" >&2; exit 1;;
+    clone) [ -n "$ALLOW_CLONE" ] && break; case "$*" in *http*|*git@*) printf 'git %s\n' "$*" >> "${SHIM_LOG:-/dev/null}"; echo "git clone from the network: blocked in this test" >&2; exit 1;; esac;;
+  esac
+done
+exec /usr/bin/git "$@"

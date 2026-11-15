@@ -1,0 +1,12 @@
+#!/bin/sh
+# Test shim: `npm install` / `npm ci` inside a film project links the dependencies already installed for the tests
+# instead of downloading them; anywhere else it is recorded and refused. Every other npm command is the real one.
+case "$1" in
+  install|ci|i)
+    printf 'npm %s (cwd %s)\n' "$*" "$PWD" >> "${SHIM_LOG:-/dev/null}"
+    case "$PWD" in
+      */films/project) [ -e node_modules ] || ln -s "$BOQOUNT_NODE_MODULES" node_modules; echo "added 1 package (test shim: linked the installed dependencies)"; exit 0;;
+      *) echo "npm install: blocked in this test outside a film project" >&2; exit 1;;
+    esac;;
+esac
+exec "$REAL_NPM" "$@"

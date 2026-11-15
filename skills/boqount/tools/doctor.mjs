@@ -55,7 +55,7 @@ export function checks() {
   add("RIFE", false, !!r, r ? r.bin.replace(homedir(), "~") : "not installed (ffmpeg's minterpolate is used instead)", "footage brought to 120 fps (footage-120.mjs)", `node ${join(HERE, "footage-120.mjs").replace(homedir(), "~")} --install`);
 
   const age = out("age", ["--version"]);
-  add("age", false, !!age, age ? age.trim() : "not found", "sharing keys between people who run one account", how("age", "the package manager (age), or age-encryption.org"));
+  add("age", false, !!age, age ? age.trim() : "not found", "sharing keys between people who run one account (keys.sh)", how("age", "the package manager (age), or age-encryption.org"));
 
   // the film project's packages, and the optional model listening for the sound library
   const project = ["films/project", "../films/project"].map((p) => join(process.cwd(), p)).find((p) => existsSync(join(p, "package.json")));

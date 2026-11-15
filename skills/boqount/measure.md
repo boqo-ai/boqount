@@ -350,6 +350,13 @@ not carry its own link: not the period's total, not the untagged bucket, not a c
   confirmation is the code word's row in `brand/<slug>/accounts.md` → DM automation (`check.md` item 3), once per code
   word: `funnel-check` tests a link, not what the automation sends. Changing a rule's link (its form, its path, its
   rubric) needs re-confirmation: empty the row's `confirmed` cell.
+- **`dm_command`** (`marketing/config.md`): when it is set, a rule's link is changed with it, never by hand, with
+  `{code}`, `{channel}` and `{link}` filled in; say "Pointing <CODE> on <channel> at <link>." as its own line first,
+  and write its reply (or its error's first line) in the log under Did. It changes only a rule that the steps above
+  change (an ad post's rubric, an off-form link rewritten), never one per post. Its success is not a confirmation:
+  the row's `confirmed` cell is emptied all the same, and the human confirms what the automation now sends. A failed
+  command changes nothing: the step becomes the human's, as with no command. When it is empty, that step is "not
+  built" and the human points each rule by hand.
 - **Whole-account figures.** Sign-ups, activations and buyers are the account's, not a channel's. A post on two
   channels carries one campaign, and that campaign counts once. Say so wherever they are reported.
 - **Clicks and sends** come only from your DM automation's own screens (statistics, screenshots). They are never

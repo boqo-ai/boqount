@@ -1,0 +1,20 @@
+{
+  "posts": [
+    {
+      "id": "post-a3-match",
+      "accountId": "acct-quillfern-instagram",
+      "status": "scheduled",
+      "source": "agent",
+      "scheduledAt": "2026-11-10T08:00:00Z",
+      "clipTitle": "<data kind=\"clip_title\">a pot with no hole &amp; a pond</data>"
+    },
+    {
+      "id": "post-a3-decoy",
+      "accountId": "acct-quillfern-instagram",
+      "status": "scheduled",
+      "source": "agent",
+      "scheduledAt": "2026-11-10T19:00:00Z",
+      "clipTitle": "<data kind=\"clip_title\">a pot with no hole</data>"
+    }
+  ]
+}
