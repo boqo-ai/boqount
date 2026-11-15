@@ -53,8 +53,9 @@ A film with no Instagram channel through boqo may be voiced: on its channels the
 This is not a question for the human: the branch decides, and the report's Plan names the branch in one line. The
 human's own recorded voice is not synthetic, and is used only when the human offers it.
 
-**The on-screen seam:** a voice-free film's last on-screen line is left unfinished, and frame 0's title finishes it as
-the film restarts (`film.md` → Sound).
+**The on-screen seam:** a voice-free `niche` film's last on-screen line is left unfinished, and frame 0's title
+finishes it as the film restarts (`film.md` → Sound). A voice-free opportunity story has no seam: its captions are its
+words, and its last on-screen line is the call (`story.md`).
 
 ## The strategy line
 
@@ -68,6 +69,8 @@ awk -v d=<MM-DD> -v w="<rubric>|<type>" '/^## /{s=substr($0,4);next} s=="Calenda
 Never `cat`, `grep` or `sed` the file itself. A `no … row` line means the research has not written that part yet: plan from
 the queue row and `config.md`'s mix. A `niche` post takes its series, the series' fixed opening line and its next
 episode number from its Rubrics row (`marketing/strategy.md` → Rubrics); the ledger's `rubric` is the series' slug.
+A `product` or `offer` post takes its rubric's code word from Rubrics → Code words (printed with the rubric's rows),
+and that code's link from `brand/<slug>/accounts.md` → DM automation.
 `research.md` is never read in a day run: a norm's source is what `account-state norms` prints.
 
 ## Choosing what to make
@@ -204,9 +207,10 @@ are **one sentence each**, in these shapes (no list of other posts, no argument)
 - **A paid call past the budget**, the day's or the month's, a retake included. With nothing left, propose the best
   zero-cost post for the day's remaining window, by name and with its material's path.
 - **A post from production.** What it makes goes to the check and the gate.
-- **A call in an organic post:** no line, still or caption asks for a comment, a follow, a click or a visit, and the
-  last second is never a logo or a link. Only a post the person marked `Ad: yes` carries the brand book's call line
-  (`brand/<slug>/brand-book.md` → CTA).
+- **A call in a `niche` post:** no line, still or caption asks for a comment, a follow, a click or a visit, and the
+  last second is never a logo or a link. Only a `niche` post the person marked `Ad: yes` carries the brand book's call
+  line (`brand/<slug>/brand-book.md` → CTA). A `product` or `offer` film carries its one comment call and nothing
+  else (`story.md`).
 - **Material that is not the brand's without the person's word** for that source (`film.md` → Outside material).
   Another person's face, name, stream or voice without their written permission, and leaked or pre-release material,
   never, whatever is said: decline in one line and name the true alternative (the brand's own material, or a source
@@ -225,7 +229,8 @@ are **one sentence each**, in these shapes (no list of other posts, no argument)
 | "I know what that service costs" | Read the price at its source now, with the date; unread is `unverified`, and not called |
 | "I'll note the kind and the estimate in the report" | The record holds them, written before any file under `films/` |
 | "I'll let the human choose: voice, own voice, or none" | The branch decides. No voice in the style, no key or no label means voice-free, with the on-screen seam |
-| "Without the voice we lose the loop" | The seam moves on screen: an unfinished last line that frame 0 finishes |
+| "Without the voice we lose the loop" | The seam moves on screen: an unfinished last line that frame 0 finishes. An opportunity story has no loop to lose |
+| "The product film is shorter as a 30 s loop" | A `product` or `offer` film is the opportunity story, 60 to 85 s, ending on its call (`story.md`) |
 | "Reusing an approved voice take costs $0" | A take is still a synthetic voice. The branch decides, not the price |
 | "The budget is spent, so the voiced film waits until tomorrow" | The branch decides the voice, not the budget |
 | "I'll explain the branch, the other posts and why the budget isn't the reason" | One sentence in the shape above |

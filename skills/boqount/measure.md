@@ -22,9 +22,10 @@ and save before the next outward call (SKILL.md → Save, locally).
 ## The funnel (step 4)
 
 1. **The links.**
-   - The profile link (`brand/<slug>/accounts.md` → Links): it carries every sign-up of an organic post, and no organic
-     post has a link of its own (Attribution, below).
-   - Each DM rule's link in `brand/<slug>/accounts.md` → DM automation, if any: the rules stay alive.
+   - The profile link (`brand/<slug>/accounts.md` → Links): it carries every sign-up of a `niche` post, and no post has
+     a link of its own (Attribution, below).
+   - Each code word's link in `brand/<slug>/accounts.md` → DM automation: the `product` and `offer` films send people
+     to them.
    - An ad post's own link (its record's `Ad call` line) while its ad runs, until the person says it ended. The
      record's `Link` is always the profile link.
    - With none of these (day one: no profile link yet), `funnel-check` is not run, since with no link it exits 1: the
@@ -51,10 +52,11 @@ and save before the next outward call (SKILL.md → Save, locally).
 
    A date with no key is 0, except under `manual` when it is after the file's newest date (the reply's `through`):
    then it is `unavailable: not typed yet`. **Sign-ups never set the colour:** no post asks
-   for a sign-up, so a quiet two days proves nothing. Zero sign-ups against live views (step 5's read) is a line in
+   for a sign-up (a code word asks for a comment), so a quiet two days proves nothing. Zero sign-ups against live views (step 5's read) is a line in
    the report's Numbers, not an alarm.
 5. **The DM review** (does your DM automation still send the right link?) is the human's item, once a week, on
-   Monday's list. The rules stay alive for anyone who comments, though no organic post asks.
+   Monday's list, with each code word's row: the product films ask for those comments. A code word the person answers
+   by hand is their item too: "are the <CODE> comments answered?"
 6. **The colour** is the links' state and, for a boqo channel, its account being active.
    - **green**: the verdict is `green`, boqo answers for every boqo channel, and nothing is yellow. A `sale` post goes
      out only on green.
@@ -151,6 +153,9 @@ Write the colour, its time and the red links to `state.md` → Funnel.
    read at <age>)", and the value never enters norms. A 13-day number is not a 72 h number, and comparing it with a
    72 h norm would read every late post as `above`. Writing the verdict (`verdict_at`) closes that window for `due`.
 5. **Sale posts.**
+   - **An `offer` post** carries its rubric's code word, whose campaign every post of that rubric shares (Attribution,
+     below), so it has no sign-up figure of its own either: as for an organic post, below, with `unavailable: organic,
+     the rubric's campaign` and the rubric's figure for the period beside it.
    - **An organic post** (not `Ad: yes`) has no link of its own (Attribution, below), so it has no sign-up figure of its
      own: its `signups_7d`, `activated_7d`, `buyers_7d`, `signups_28d` and `buyers_28d` are
      `unavailable: organic, no link of its own`, never 0, and its verdict says so. What the offer's days brought is read
@@ -196,9 +201,12 @@ figures arrive in the chat. For each:
    person`), with the taken time and its age, never the run's time. An empty row takes the taken time as Read at and
    that age as Age. A row already filled by `get_analytics` keeps its Read at, views and likes, and gains the
    screenshot's other numbers. On a by-hand channel the person's views and likes are the read.
-3. **The ledger.** `follows` (with `follows_source: counted`), `sends` (Shares), `saves`, `reach` (Accounts reached),
-   `skip_3s` (Skip rate), `visits` (Profile activity) hold the newest screenshot's values, with `screenshot <age>` in
-   `note`. The names in brackets are Instagram's; another platform's screen gives its own figure of the same meaning.
+3. **The ledger.** `follows` (with `follows_source: counted`), `sends` (Shares), `saves`, `reach` (Accounts reached,
+   which Instagram now shows as Viewers: the cell's Source says `(viewers)`), `skip_3s` (Skip rate, as the screen gives
+   it, with its "lower/higher than typical" word in `note`), `visits` (Profile activity) hold the newest screenshot's
+   values, with `screenshot <age>` in `note`. Bio-link taps on a screen go into the record's row Source, never into
+   the ledger's `clicks` (that column is your DM automation's). The names in brackets are Instagram's, read in
+   whatever language the phone shows them; another platform's screen gives its own figure of the same meaning.
    `comments_7d` is written only from a screenshot taken at 7 d or later. An earlier count stays in the record's row.
 4. **Then** run Learning's verdict (a screenshot can move `data` to `full`), the screenshot norms and the playbook check
    for the posts it touched. Save, and report what each screenshot changed.
@@ -301,19 +309,22 @@ when `adPosts` is above 0.
 
 ## Attribution
 
-No organic post carries a code word or a link of its own (`brand/<slug>/brand-book.md` → CTA), so **a sign-up is not tied
-to an organic post.** It is read for a period, three ways, never per post:
+No organic post carries a link of its own (`brand/<slug>/brand-book.md` → CTA), so **a sign-up is not tied to an
+organic post.** A `product` or `offer` film asks for a comment with its rubric's code word; the campaign behind that
+word is the rubric's own fixed one (`<rubric>`), shared by every post of the rubric, so a sign-up through it is tied to
+a rubric and a period, never to one post. It is read for a period, three ways, never per post:
 - **The profile link** (`brand/<slug>/accounts.md` → Links; the bio's words and its link are the person's to edit).
   When the link carries a tag, its sign-ups are read by that tag, from its entry in the campaigns reply's `byCampaign`
   (`signups_source`, The funnel point 4). Otherwise they stand in the untagged total (`-`), which is the profile link's
   and everything else's that carries no campaign: say so.
-- **Any campaign an ad post or a DM rule carries:** each campaign's entry in `byCampaign`. The rules in your DM
-  automation stay alive for anyone who comments.
+- **Each code word's campaign, and any campaign an ad post carries:** each campaign's entry in `byCampaign`. The
+  rules in your DM automation (or your own replies, by hand) answer anyone who comments, whether a post asked or not.
 - **The answers to "how did you hear about us?":** only the person can give them. Ask with the weekly sign-ups rows
   (Measurements 7), write the count by answer and its date into the week's `## Sales`, and in the log under Did. With no
   answer given since: `unavailable: nobody has read the answers`, with the last reading and its date beside it.
 
-A record's `Link` is always the profile link, and its ledger `code_word` and `utm_campaign` stay empty. Only a post
+A `niche` record's `Link` is the profile link, and its ledger `code_word` and `utm_campaign` stay empty. A `product`
+or `offer` record carries its rubric's code word, that code's link and the rubric's campaign. Only a `niche` post
 marked `Ad: yes` has its own campaign and reads per post (Measurements 5). No number is ever moved to a post that did
 not carry its own link: not the period's total, not the untagged bucket, not a campaign's.
 - **An ad post's campaign** is `<rubric>-<YYYYMMDD>`, the post's rubric and date. It and the ad's own link are in the

@@ -29,8 +29,9 @@ Type? 1. <your pick> — <why, one line>
 File: <path> · Frame 0: <path> · Contact sheet: <path>   (or: "not on this machine")
 Script: <path>   (only one the check wrote: "written from the file: frames and Whisper")
 Hook: <all four | chain explainer: its three, by its format | file or clips, lacks <second person | a real number>: your Publish accepts it>
-Layer: <niche: <series>, episode <n> | product | offer> · <the film and the caption ask for nothing | Ad: the call line, on your word of <date>>
+Layer: <niche: <series>, episode <n> · the film and the caption ask for nothing | niche, Ad: the call line, on your word of <date> | product or offer, the opportunity story (the format is being tested) · the film and the caption ask for a comment: <CODE> → <the DM row's link>, replies by <the automation | you, by hand>>
 Length: <n> s   (only a chain explainer whose chain cannot fit 30 s: "May this one run <n> s, up to 45? Otherwise it stays the 30 s cut.")
+Re-read before it posts: <each fact that can move, and where it is read again on the posting day>   (only when the record has the line)
 Outside material: <each still by its file; each shot as <file> <from>–<to> s, with "its own sound" or "picture only"; the caption's credit line | none>; with its own sound: "the platform may mute or block the post"
 Gates: <what Gate 1 and Gate 2 left open, in a line each | nothing left open>   (a film made here)
 For each channel the post goes to:
@@ -53,9 +54,11 @@ Publish / Edit / Skip
   `<skill>/tools/stills.sh <file> marketing/media/<slug>` (`film.md` → Stills).
 - The four types are `reach`, `awareness`, `trust`, `sale`; your pick comes first. The layer suggests it (`niche` →
   `reach`; `product` → `awareness` or `trust`; `offer` → `sale`), and the choice stays the human's.
-- **No code word, no DM rule line and no link** in the message of an organic post: it asks for nothing (`check.md`
-  item 3). The record's Link is the profile link, kept for the measured path, and the message does not show it. An ad
-  post whose call line carries a code word adds one line: `Code word: <CODE> · DM rule confirmed <date> by the human`.
+- **The code word and its DM rule** are on the Layer line of a `product` or `offer` post, with who replies: a reply
+  by hand is the person's promise to answer every comment that asks, and the message says so in those words. A `niche`
+  post has neither: it asks for nothing (`check.md` item 3), its Link is the profile link, kept for the measured path,
+  and the message does not show it. A `niche` ad post whose call line carries a code word adds one line: `Code word:
+  <CODE> · DM rule confirmed <date> by the human`.
 - **An ad post** goes out only on a human Publish, whatever the mode; marking it `Ad: yes` changes nothing by itself
   (`check.md` item 3).
 - **The length question** is answered with the Publish: a yes is a `Ruling:`, the film is rebuilt at that length and

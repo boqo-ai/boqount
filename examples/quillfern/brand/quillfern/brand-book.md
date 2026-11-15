@@ -53,10 +53,18 @@ page logged out on the day it is used, and the README as it stands.
 
 ## CTA
 
-No organic post asks for anything: no line, picture or caption asks for a comment, a code word, a follow, a click or
-a visit, and no post ends on a logo or a link. The call lives on the profile. Setting it is the human's step: the
-agent drafts the words and says what to pin.
+**A film that shows the product ends on one comment call. Any other post asks for nothing.** Setting the profile is
+the human's step: the agent drafts the words and says what to pin.
 
+- **The comment call** (`product` and `offer` films): the film's last line, "Comment <code>, and I'll send you the
+  link.", and the last sentence of the caption's own words, "Comment <CODE> and I'll send you the link." The code
+  words are FERN for `reminders` and HOME for `household` (`marketing/strategy.md` → Rubrics → Code words); the
+  person replies to each such comment by hand, with the link in `accounts.md` → DM automation. Source: the person,
+  2026-11-14 ("no automation; I'll answer them myself, it's a few a day").
+- **Every other post (`niche`):** nothing asks for a comment, a code word, a follow, a click or a visit, in the voice,
+  on screen or in the caption, and its last second is its payoff or its first picture again.
+- **The payoff words:** none: each film names the viewer's gain plainly (a plant alive when they come home), never a
+  promise about a plant's health (Claims).
 - **The bio:** per channel, what the brand does and then the call line for an ad post (below), inside the platform's
   bio limit (Instagram 150 characters, TikTok 80, read on their help pages 2026-11-11).
   Instagram: "Water reminders for every plant you own. One message on the right day. Add your first plant at
@@ -66,9 +74,9 @@ agent drafts the words and says what to pin.
 - **Pinned posts:** none yet. Once it exists, first the product film that shows the reminder at work.
 - **The brand's own pinned comment:** under each product film, "Quillfern sends one reminder on the day a plant needs
   water. The link is in the bio." Source: drafted at onboarding, approved by the person 2026-11-11.
-- **The call line for an ad post:** "Add your first plant at quillfern.example." The bio ends on it; of the posts,
-  only one the human will promote with bought views carries it, on their word for that post (the record's `Ad: yes
-  (<their words, date>)`), and it carries exactly this line. No code word.
+- **The call line for a `niche` ad post:** "Add your first plant at quillfern.example." The bio ends on it; of the
+  niche posts, only one the human will promote with bought views carries it, on their word for that post (the
+  record's `Ad: yes (<their words, date>)`), and it carries exactly this line. No code word.
 
 ## Visual
 

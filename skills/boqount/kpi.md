@@ -29,8 +29,8 @@ after a sign-up. A brand with no such step leaves `activated` empty, and `activa
 
 The `_28d` ones count the 28 days that end with the judged week. The rest count the judged week.
 
-An organic post carries no campaign (`measure.md` → Attribution), and the tool counts sign-ups only under the campaigns
-the window's own posts carry. A window with none reads the conversion and sales figures as the tool prints them,
+A `niche` post carries no campaign, and a `product` or `offer` post carries only its rubric's shared one (`measure.md`
+→ Attribution); the tool counts sign-ups only under the campaigns the window's own posts carry. A window with none reads the conversion and sales figures as the tool prints them,
 blind (`no post in the window carries a campaign`), never 0. The account's sign-ups for that window are still read,
 for the period, from the campaigns reply (What sold, below), and reported beside the KPIs, never inside one.
 
@@ -99,8 +99,10 @@ nothing else.
 - **What:** `buyers`. A price is read at brand-book → Facts' source. Revenue is never estimated from a count.
 - **To whom, and how:** `paths`, one line each, in the tool's order. A path is a **series or a product function** (the
   ledger's `rubric`) with the segment its posts aimed at: posts → views, and sign-ups → activations → buyers only where
-  a campaign carried them. An organic post adds its posts and views to its path and no sign-ups of its own, so a path
-  with no ad post reads `unavailable: organic, no link of its own` for those three, never 0. An ad post adds no
+  a campaign carried them. A `product` or `offer` rubric's posts carry its code word and the rubric's own campaign
+  (`measure.md` → Attribution), so its path reads that campaign's sign-ups, activations and buyers, for the rubric
+  and the period, never per post. A `niche` post adds its posts and views to its path and no sign-ups of its own, so a
+  series with no ad post reads `unavailable: organic, no link of its own` for those three, never 0. An ad post adds no
   posts or views to its path (`measure.md` → Bought views), and its campaign's sign-ups count there as any campaign's;
   its bought views stand on their own line beside the paths, from its record.
 - **The account's sign-ups,** one line, for the 28 days, read three ways (`measure.md` → Attribution), reported as the
@@ -133,9 +135,10 @@ layer in `layer` like any other row (`production.md` → An idea from the human 
      `awareness`), on a rubric that carries that type (step 7's strategy line) and for that rubric's own segment. Among
      several such rubrics, take the one highest in `paths`. Its one variable is chosen to move that KPI, and its
      expectation is a range in that KPI. It puts the post on that channel.
-   - **Conversion or sales:** read for the whole account, it is not a film's to move: an organic post carries no
-     sign-up of its own and asks for nothing. The bet is about the profile (the bio's words, the pinned posts) or about
-     an ad post. A profile bet is the person's step: draft the words and say what to pin (`your steps`,
+   - **Conversion or sales:** read for the whole account, it is not one film's to move: no post carries a sign-up of
+     its own. The bet is about the profile (the bio's words, the pinned posts), about a `product` rubric whose path
+     reads its code word's campaign (one more opportunity story on it, with one variable changed), or about an ad
+     post. A profile bet is the person's step: draft the words and say what to pin (`your steps`,
      `memory.md` → The morning report); it counts as one of the two and stands on the `Bets:` line as
      `profile (<kpi>)`. An ad post is a `sale` row only on the person's word that they will promote it (`Ad: yes`), and
      is never made as a film for the sake of the bet.

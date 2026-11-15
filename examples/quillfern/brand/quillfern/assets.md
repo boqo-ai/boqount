@@ -42,6 +42,13 @@ Font files live in `brand/quillfern/fonts/`. A font other than Inter in `style.m
 
 - None yet: the films draw the phone and its reminder (the person, 2026-11-09).
 
+## Interface labels
+
+| Screen | Labels, exactly as shown | Read at | Date |
+|---|---|---|---|
+| Lock-screen widget | "Days since water", with the count | the Quillfern app on the person's phone, read with them at onboarding | 2026-11-09 |
+| The reminder | "Water your plant · Today, 9:00", the Done disc | the same | 2026-11-09 |
+
 ## Product output
 
 - None.

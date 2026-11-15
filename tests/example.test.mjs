@@ -33,7 +33,7 @@ test("example: parseConfig reads the config", () => {
   assert.match(read("marketing/config.md"), /^git_commit: off$/m);
 });
 
-test("example: the queue holds the first week, two niche episodes and one product post, with no call and no product in a niche row", () => {
+test("example: the queue holds the first week, two niche episodes and one product post; no niche row names the product or asks, and no hook asks", () => {
   const rows = queueRows(read("marketing/queue.md"));
   assert.equal(rows.length, 3);
   for (const r of rows) assert.equal(r.stage, "idea");
@@ -41,7 +41,10 @@ test("example: the queue holds the first week, two niche episodes and one produc
   assert.deepEqual(layers, ["niche, episode 1", "niche, episode 1", "product"]);
   const niche = rows.filter((_, i) => layers[i].startsWith("niche"));
   for (const r of niche) assert.doesNotMatch(r.note, /quillfern/i, `${r.slug} names the product`);
-  for (const r of rows) assert.doesNotMatch(r.note, /link in bio|comment|follow us|sign up|download|tap the link/i, `${r.slug} asks for something`);
+  const asks = /link in bio|comment|follow us|sign up|download|tap the link/i;
+  for (const r of niche) assert.doesNotMatch(r.note, asks, `${r.slug} asks for something`);
+  // A product film ends on its one comment call (story.md), but its hook asks for nothing.
+  for (const r of rows) assert.doesNotMatch(/hook: ([^;]*)/.exec(r.note)?.[1] ?? "", asks, `${r.slug}'s hook asks for something`);
 });
 
 test("example: norms come back on every channel from the strategy's benchmarks", () => {

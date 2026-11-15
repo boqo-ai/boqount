@@ -125,8 +125,8 @@ or the config's `signups_command`), with its read time.
   channel's (one row per channel); sign-ups, activation and buyers rows are the account's, once. A `no-data` row keeps its
   value when it has one, and its why goes on the No data line. The week that ended gets its one line, with no verdict.
 - **Sales:** from the tool's `sales` and the campaigns reply only, as `kpi.md` → What sold, to whom, and how has it:
-  the account's sign-ups by the three reads, the paths by series (an organic post adds posts and views and no sign-ups
-  of its own), and on a month's first roll-up its month line; then the bets this run wrote, each by its slug (a profile
+  the account's sign-ups by the three reads, the paths by series and product function (a `niche` post adds posts and views and no sign-ups
+  of its own; a product function's path reads its code word's campaign), and on a month's first roll-up its month line; then the bets this run wrote, each by its slug (a profile
   bet as `profile`). No number moves from the account's line into a path or a post.
 - **Posts:** the ledger rows planned in `from`..`to`, by filter:
   `awk -F, -v a=<from> -v b=<to> 'NR==1 || ($4>=a && $4<=b)' marketing/ledger.csv`. Name each post with its channels
@@ -214,7 +214,8 @@ budget are given once.
 5. Sign-ups on the two days before today, on the account's clock (the campaigns reply, `<time>`; `unavailable: no sign-ups source` with
    `signups_source: none`, never 0), then the period's sign-ups by `measure.md` → Attribution's three reads (the
    profile link, the campaigns, the "how did you hear" answers: `unavailable: nobody has read the answers`, with the
-   last reading and its date), then an ad post's own campaign count. An organic post has none.
+   last reading and its date), then an ad post's own campaign count. No other post has a count of its own: a code
+   word's campaign is its rubric's.
 6. On a gap day, `Days with a post: <withPost>/<days> since <date>`, each missed day named (`auto.md` → The gap).
 7. On the roll-up's day, last, two items:
    `KPI <judged week>: <on>/<judged> on target; constraint <kpi> at <ratio> | none; buyers_28d <n> (goal <goal> | no goal); best path <segment> via <rubric>: <sign-ups> sign-ups, <buyers> buyers | no path with a sign-up (account-state kpi, <time>)`,
@@ -295,6 +296,6 @@ Nothing else follows the report. A slip, a "what next" or an explanation goes in
 | "One more note after the report will help" | Only the two named blocks follow it. The rest goes in the log |
 | "A comment is a GitHub write; skip it" | With `tracker` set, the weekly comment is the tracker's record: its line right before the call, then `--body-file` |
 | "The plan line only needs slug and type" | A planned post's line names its layer too, and series and episode for `niche` |
-| "A code word or the post's link belongs in the plan or Waits for you" | No slot holds one. An organic post has neither; an ad post is named by its slug |
-| "The sale post's sign-ups go in Numbers" | An organic post has none. The period's sign-ups, by the three reads, are the account's line |
+| "A code word or the post's link belongs in the plan or Waits for you" | No slot holds one. A product post's code word is in its record, a `niche` post has neither, and an ad post is named by its slug |
+| "The sale post's sign-ups go in Numbers" | No post has its own: an `offer` post's code word counts for its rubric. The period's sign-ups, by the three reads, are the account's line |
 | "I'll say it once, above the report" | The line comes right before the tool call. The copy above the report is extra |

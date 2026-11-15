@@ -30,7 +30,7 @@ without them, clips cut from a long video.
 | | Instagram | TikTok | YouTube |
 |---|---|---|---|
 | Caption | at most 2,000 characters | at most 2,200 | a title of at most 100 characters, a description of at most 5,000 |
-| A link | No organic post shows one: it is on the profile. An ad post's (`Ad: yes`): not clickable in a caption, so the profile link, or the reply of the brand's DM automation (`check.md` item 3) | No organic post shows one. An ad post's: not clickable in a caption, so the profile link | No organic post shows one. An ad post's: clickable in the description |
+| A link | No post shows one: it is on the profile, or in the reply to a code word. A `product` or `offer` post's link is sent by whoever answers its code word (`check.md` item 3); a `niche` ad post's (`Ad: yes`): not clickable in a caption, so the profile link, or that reply | No post shows one. The code word's reply sends it, by the person's DM automation or by hand | No post shows one. An ad post's: clickable in the description |
 | AI-content label | through boqo `instagramAiLabel`; by hand the person switches it on | the person switches it on, either way | the person sets "altered content", either way |
 
 Through boqo, a YouTube post's title is the upload name's words and its `caption` is the description.
@@ -332,6 +332,13 @@ soon as it passes the gate: `slot --day <for>`, then `when: {date, time}` or the
 them ahead; in calibration, their approval messages go out ahead. An empty buffer is rebuilt over 2–3 days, never in
 a batch (`auto.md` → The gap).
 
+**A fact that can move is read again on the posting day.** A post that states one (an estimate, a release date, a "no
+date yet") carries `- Re-read before it posts:` under its record's Posting, with each fact and where it is read. On
+the day of its slot, before the post goes out (through boqo: in the run before its time; by hand: before the
+hand-over), each source is read again and the line gets `read again <date>: holds`. A fact that turned false stops
+the post: status `held`, note `claims (a fact moved)`, and a scheduled post is taken out (A canceled post). A post
+held for it comes back only as a new cut, through the check.
+
 ## The post
 
 Through boqo, one `post_video` per row: one post on one channel.
@@ -444,7 +451,7 @@ Tell the user in at most two lines per row: `found <post id>, <time on the accou
 - Through boqo, the permalink comes from `get_analytics` `top` (the unwrapped title = the upload name without
   `.mp4`). No row there: leave `permalink` empty and write `Permalink: owed` in the record; each run tries `top`
   again. The fallback is the public profile read logged out, or the human.
-- A post made to loop (`loopSafe` in the probe): the first time one goes out on a channel, look at the platform's
+- A post made to loop (a `niche` film; `loopSafe` in the probe): the first time one goes out on a channel, look at the platform's
   copy on its public page and check the loop still closes (the last frame meets the first, the sound starts at
   zero). With no permalink yet this stays owed in the log. A broken loop is a problem report (Failures).
 

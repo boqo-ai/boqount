@@ -10,6 +10,10 @@ here.
 
 ## Film-level structure
 
+These six are a `niche` film's. A `product` or `offer` film is the opportunity story: about ten worlds that change on
+spoken words, captions that carry it on mute, and no loop (`story.md` → The picture). Inside each of its worlds, items
+4 and 5 hold, and the rest of this file holds whole.
+
 1. **One carried object** across the whole film, transformed by the story (the starter: one plant with its count and
    its moisture gauge). The hook frame shows it; the payoff shows it fixed; the last scene's last frames rebuild
    frame 0.
@@ -118,6 +122,11 @@ Every film, in every layer:
 - **Something new for the eye about every second**, on the word being said or shown, and never so busy that the line
   cannot be read. The three full-frame hits stay the loudest moments.
 - **Not finished:** a film whose camera never moves, or whose rows are labels changing in place.
+- **Nothing flashes.** Rich motion is movement, never blinking: no place where a large part of the frame (the whole
+  frame, or any ninth of it on a 3 × 3 grid) goes between dark and bright more than three times in any one second, the
+  usual limit for flashing content. A run of moments passes by sliding or by the camera pushing through it, each on
+  screen 0.4 s or more; never as a run of full-frame swaps or flash effects. The three full-frame hits are single
+  washes, seconds apart, and an opportunity story's world changes are moves or cuts, never flashes.
 
 ## Layout
 
@@ -132,9 +141,12 @@ Every film, in every layer:
 - **Land in a slot.** Anything that flies in lands in a real place in the layout: a slot, a list row.
 - **Numbers agree** with the words, every frame. A state that contradicts them is greyed or struck until it updates.
 - **Effects once.** No glint or sweep on every card; one burst per film at most, never over a number to read.
-- **Real labels.** The product's interface uses its real labels and controls. Other apps and sites appear as plain
+- **Real labels.** The product's interface uses its real labels and controls, read again at the product's page or app
+  before a film shows a panel of it: what the screen says today, not what a kit, an older film or memory says. The
+  brand kit keeps each label set with where and when it was read (`brand/<slug>/assets.md` → Interface labels); a
+  film that shows a set the product no longer has is held (`check.md` item 1). Other apps and sites appear as plain
   windows with text titles, never with their logos.
-- **Flashes:** no more than three in any second.
+- **Flashes:** no more than three in any second (Rich motion → Nothing flashes).
 
 ## Sound follows the picture
 

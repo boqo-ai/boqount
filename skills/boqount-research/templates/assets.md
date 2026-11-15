@@ -40,6 +40,15 @@ Font files live in `brand/<slug>/fonts/`. A font other than Inter in `style.md` 
 
 - <recordings of the product doing the work: paths, dates, what they show>
 
+## Interface labels
+
+Every label a film shows of the product's own screens, read at the product's page or app, never from memory or an
+older film. Read again before a film shows that panel; a set the product no longer has holds the film.
+
+| Screen | Labels, exactly as shown | Read at | Date |
+|---|---|---|---|
+| <the screen or panel> | <tabs, buttons, fields, placeholders> | <URL, or app and version> | <YYYY-MM-DD> |
+
 ## Product output
 
 - <examples of results the product made, with the rights to show them: paths>
