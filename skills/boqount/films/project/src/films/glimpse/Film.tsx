@@ -160,7 +160,7 @@ const Source: React.FC<{said: {source: string}; y: number; at: number; plate?: b
   const o = p(f, at, 24, EXPO);
   return (
     <div style={{position: 'absolute', left: L.left, width: W, top: y, display: 'flex', justifyContent: 'center', opacity: o, transform: `translateY(${(1 - o) * 14}px)`}}>
-      <div style={{maxWidth: W, fontFamily: TEXT, fontSize: 32, fontWeight: 500, color: plate ? C.ink : C.muted, letterSpacing: '0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', ...(plate ? {background: rgba(C.deep, 0.82), padding: '8px 22px', borderRadius: 26} : {})}}>
+      <div style={{maxWidth: W, fontFamily: TEXT, fontSize: 32, fontWeight: 500, color: plate ? C.ink : C.muted, letterSpacing: '0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', ...(plate ? {background: C.deep, padding: '8px 22px', borderRadius: 26} : {})}}>
         {said.source}
       </div>
     </div>
@@ -334,6 +334,9 @@ const PictureWorld: React.FC<{pic: Picture; n: number; end: number}> = ({pic, n,
   const push = 1 + 0.32 * k;
   const ox = bezel + fx * bw;
   const oy = bar + bezel + fy * bh;
+  // the picture's top never rises above the source chip's bottom: the top band keeps the draft mark and the chip clear
+  const CLEAR = L.top + 100;
+  const ty = Math.max((760 - (top + oy)) * 0.55 * k, CLEAR - (top + oy - oy * push));
   const ring = p(f, start + 80, 40, EXPO);
   const imgW = bw / cw;
   const imgH = bh / ch;
@@ -341,7 +344,7 @@ const PictureWorld: React.FC<{pic: Picture; n: number; end: number}> = ({pic, n,
   return (
     <AbsoluteFill>
       <Backdrop glow={[n % 2 ? 300 : 780, 700]} />
-      <div style={{position: 'absolute', left, top, width: boxW, height: boxH, perspective: 1600, transform: `translate(${(L.W / 2 - (left + ox)) * 0.55 * k}px, ${(760 - (top + oy)) * 0.55 * k}px)`}}>
+      <div style={{position: 'absolute', left, top, width: boxW, height: boxH, perspective: 1600, transform: `translate(${(L.W / 2 - (left + ox)) * 0.55 * k}px, ${ty}px)`}}>
         <div
           style={{
             position: 'absolute',
@@ -462,7 +465,7 @@ const Promise_: React.FC = () => {
 
 /** The draft's mark: the film says what it is. */
 const DraftMark: React.FC = () => (
-  <div style={{position: 'absolute', left: L.left, top: L.top - 50, fontFamily: TEXT, fontSize: 32, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: C.muted}}>
+  <div style={{position: 'absolute', left: L.left - 14, top: L.top - 58, padding: '6px 14px', borderRadius: 14, background: C.deep, fontFamily: TEXT, fontSize: 32, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: C.muted}}>
     first look · draft
   </div>
 );
