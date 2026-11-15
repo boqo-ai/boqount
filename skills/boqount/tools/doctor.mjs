@@ -46,6 +46,11 @@ export function checks() {
   const model = whisperModel();
   add("whisper-cli", false, whisper && !!model, whisper ? (model ? `model ${model.replace(homedir(), "~")}` : "no model file (set WHISPER_MODEL or put a ggml-*.bin in ~/.cache/whisper)") : "not found", "a file's words, the voice against the script (without it the person confirms the words)", how("whisper-cpp, then a model: ggml-base.en.bin from huggingface.co/ggerganov/whisper.cpp into ~/.cache/whisper", "whisper.cpp from github.com/ggml-org/whisper.cpp, and a model file"));
 
+  const ytv = out("yt-dlp", ["--version"]);
+  add("yt-dlp", false, !!ytv, ytv ? ytv.trim() : "not found", "a reference's video, and the platform's copy of a post (reference.mjs, platform-copy.mjs; without it the person saves the file)", how("yt-dlp", "the package manager (yt-dlp), or github.com/yt-dlp/yt-dlp"));
+  const x265 = ffv ? /\blibx265\b/.test(out("ffmpeg", ["-hide_banner", "-encoders"]) ?? "") : false;
+  add("ffmpeg libx265", false, x265, x265 ? "found" : "not in this ffmpeg", "the 4K archive master (npm run master); the feed file does not need it", how("ffmpeg (Homebrew's build has it)", "an ffmpeg built with libx265"));
+
   const r = rife();
   add("RIFE", false, !!r, r ? r.bin.replace(homedir(), "~") : "not installed (ffmpeg's minterpolate is used instead)", "footage brought to 120 fps (footage-120.mjs)", `node ${join(HERE, "footage-120.mjs").replace(homedir(), "~")} --install`);
 

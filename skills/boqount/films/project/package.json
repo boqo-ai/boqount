@@ -34,6 +34,7 @@
     "draft": "node scripts/run.mjs draft",
     "render": "node scripts/run.mjs render",
     "feed": "node scripts/run.mjs feed",
+    "master": "node scripts/run.mjs master",
     "slides": "node scripts/slides.mjs"
   },
   "allowScripts": {
