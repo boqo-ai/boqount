@@ -58,7 +58,9 @@ Windows WSL or Git Bash).
 5. **Connect no service and run no `npm install`.** Onboarding asks for each of those when it is needed.
 
 6. **Start now, in this chat.** Read `<skills>/boqount/SKILL.md`, then `<skills>/boqount/onboarding.md`, and run
-   onboarding in the folder the person started you in. Its first step is a question about that folder: ask it.
+   onboarding in the folder the person started you in. It opens with what the next minutes give them (their project
+   read and said back, then shown as a short first film in their own colours, logo and words) and roughly how long,
+   then asks two yes-questions, about the folder and about setting up the films: say the promise, then ask them.
 
 ## If something fails
 

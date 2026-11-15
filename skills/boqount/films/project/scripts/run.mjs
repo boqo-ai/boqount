@@ -62,6 +62,10 @@ const blend = (src, dst, crf, preset) =>
 
 const sync = () => run('node', [join(root, 'scripts/sync-assets.mjs')]);
 
+/** The script's own Remotion flags, each left out where the extra flags set it themselves: a `--concurrency=8` after
+ * the id replaces the default 4 instead of being passed twice (which Remotion refuses). */
+const defaults = (flags) => flags.filter((d) => !extra.some((a) => a.split('=')[0] === d.split('=')[0]));
+
 switch (cmd) {
   case 'sync':
     sync();
@@ -88,7 +92,7 @@ switch (cmd) {
     const f = film();
     const tmp = join(f.out, `${f.slug}-draft120.mp4`);
     sync();
-    remotion(['render', f.id, tmp, '--scale=0.5', '--color-space=bt709', '--crf=20', '--concurrency=4', ...extra]);
+    remotion(['render', f.id, tmp, ...defaults(['--scale=0.5', '--color-space=bt709', '--crf=20', '--concurrency=4']), ...extra]);
     blend(tmp, join(f.out, `${f.slug}-draft.mp4`), 20, 'medium');
     rmSync(tmp);
     break;
@@ -96,7 +100,7 @@ switch (cmd) {
   case 'render': {
     const f = film();
     sync();
-    remotion(['render', f.id, join(f.out, `${f.slug}-120.mp4`), '--color-space=bt709', '--crf=16', '--concurrency=4', ...extra]);
+    remotion(['render', f.id, join(f.out, `${f.slug}-120.mp4`), ...defaults(['--color-space=bt709', '--crf=16', '--concurrency=4']), ...extra]);
     break;
   }
   case 'feed': {

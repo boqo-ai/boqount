@@ -462,3 +462,137 @@ test("the CLI prints one JSON line, exits 1 with an error line, and finds the sk
   const shipped = fail(["init", "--dir", account(), "--from", join(tmpdir(), "boqount-no-such-films")]);
   assert.match(JSON.parse(shipped.stdout).error, /boqount-no-such-films/);
 });
+
+// ---------------------------------------------------------------- glimpse (the first look, onboarding.md → 2)
+
+const GLIMPSE = {
+  name: { text: "Quillfern", source: "README.md:1" },
+  opening: { text: "One message", source: "site/index.html:12" },
+  lines: [
+    { text: "Water reminders for every plant you own.", source: "site/index.html:14" },
+    { text: "One reminder on the day a plant needs water.", source: "README.md:25" },
+  ],
+  colors: { canvas: "#17140f", ink: "#f4eee2", accent: "#6cc59a", source: "src/theme.css:3-5" },
+  font: null,
+  logo: null,
+};
+const CLOCK = readFileSync(fileURLToPath(new URL("../skills/boqount/films/project/src/films/glimpse/timeline.json", import.meta.url)), "utf8");
+async function withGlimpse(spec, files = {}) {
+  const { dir } = await initialized();
+  files = { "films/project/src/films/glimpse/timeline.json": CLOCK, ...files };
+  const put = (path, text) => {
+    mkdirSync(join(dir, path, ".."), { recursive: true });
+    writeFileSync(join(dir, path), text);
+  };
+  if (spec !== undefined) put("films/glimpse/glimpse.json", typeof spec === "string" ? spec : JSON.stringify(spec));
+  for (const [path, text] of Object.entries(files)) put(path, text);
+  return { dir, r: await film(["glimpse", "--dir", dir]) };
+}
+
+test("glimpse checks the first look's spec, writes its sound, and names the sound, the render and the stills", async () => {
+  const { dir, r } = await withGlimpse(GLIMPSE);
+  assert.equal(r.code, 0, JSON.stringify(r.out));
+  assert.deepEqual(r.out.next.command, ["npm", "run", "draft", "--", "Glimpse"]);
+  assert.equal(r.out.next.cwd, join(dir, "films/project"));
+  assert.equal(r.out.out, "films/glimpse/out/glimpse-draft.mp4");
+  assert.deepEqual(r.out.drawn, { colors: "the brand's", font: "Inter", logo: "the name", pictures: 0 });
+  assert.deepEqual(readdirSync(join(dir, "films/glimpse")).sort(), ["audio", "glimpse.json"]);
+  assert.deepEqual(r.out.sound.map((s) => s.command.slice(2, 3)[0]), ["tone", "films/glimpse/audio"]);
+  assert.match(r.out.sound[0].command[1], /soundlib\.mjs$/);
+  assert.match(r.out.sound[1].command[1], /mix\.mjs$/);
+});
+
+test("glimpse's sound sheet follows the film's clock: a pass on each change, the name and the promise, a bed, $0", async () => {
+  const { dir } = await withGlimpse(GLIMPSE);
+  const sheet = JSON.parse(read(dir, "films/glimpse/audio/sfx-cues.json"));
+  const clock = JSON.parse(CLOCK).variants["0"];
+  assert.equal(sheet.version, 2);
+  assert.equal(sheet.loop, false);
+  assert.deepEqual(sheet.target, { I: -14, TP: -1 });
+  assert.equal(sheet.beds.length, 1);
+  assert.equal(sheet.beds[0].sound, "tone/pad");
+  const passes = sheet.hits.filter((h) => h.align === "sync").map((h) => h.at);
+  assert.deepEqual(passes, clock.slice(1).map(([, at]) => at));
+  assert.equal(sheet.hits.length, clock.length - 1 + 2);
+  for (const h of [...sheet.hits, ...sheet.beds]) {
+    assert.match(h.sound, /^(kit|tone)\//, "kit and tonal sounds only");
+    assert.ok(h._ && h._.length > 8, "every sound says what it is the sound of");
+  }
+  assert.deepEqual(JSON.parse(read(dir, "films/glimpse/audio/cues.json")), { duration: JSON.parse(CLOCK).duration, lines: [] });
+});
+
+test("glimpse takes up to two pictures of the product, each with its file, its source and a sane crop and focus", async () => {
+  const pic = { file: "assets/pictures/settings.png", source: "README.md:7", frame: "none", crop: [0.2, 0.1, 0.6, 0.8], focus: [0.5, 0.7] };
+  const file = { "films/glimpse/assets/pictures/settings.png": "png" };
+  let { r } = await withGlimpse({ ...GLIMPSE, pictures: [pic] }, file);
+  assert.equal(r.code, 0, JSON.stringify(r.out));
+  assert.equal(r.out.drawn.pictures, 1);
+  ({ r } = await withGlimpse({ ...GLIMPSE, pictures: [pic] }));
+  assert.match(r.out.error, /pictures\[0\] has no file/);
+  const bad = [
+    [{ ...pic, source: "" }, /has no source/],
+    [{ ...pic, file: "../x.png" }, /must be assets\/pictures/],
+    [{ ...pic, frame: "tv" }, /frame is one of/],
+    [{ ...pic, crop: [0.5, 0, 0.6, 1] }, /crop is/],
+    [{ ...pic, focus: [2, 0] }, /focus is/],
+  ];
+  for (const [p, re] of bad) {
+    ({ r } = await withGlimpse({ ...GLIMPSE, pictures: [p] }, file));
+    assert.match(r.out.error, re);
+  }
+  ({ r } = await withGlimpse({ ...GLIMPSE, pictures: [pic, pic, pic] }, file));
+  assert.match(r.out.error, /at most 2/);
+});
+
+test("glimpse refuses a word with no source, a rewrite that is too long, and too few or too many lines", async () => {
+  const cases = [
+    [{ ...GLIMPSE, name: { text: "Quillfern", source: "" } }, /name has no source/],
+    [{ ...GLIMPSE, opening: { text: "Water reminders for every plant", source: "x" } }, /opening\.text is 31 characters, at most 24/],
+    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0]] }, /2 to 4/],
+    [{ ...GLIMPSE, lines: [...GLIMPSE.lines, ...GLIMPSE.lines, GLIMPSE.lines[0]] }, /2 to 4/],
+    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0], { text: "Fast.", source: " " }] }, /lines\[1\] has no source/],
+  ];
+  for (const [spec, re] of cases) {
+    const { r } = await withGlimpse(spec);
+    assert.equal(r.code, 1);
+    assert.match(r.out.error, re);
+  }
+});
+
+test("glimpse refuses colours that are not hex or whose ink does not read on the canvas, and takes none as neutral", async () => {
+  let { r } = await withGlimpse({ ...GLIMPSE, colors: { ...GLIMPSE.colors, accent: "green" } });
+  assert.match(r.out.error, /colors\.accent must be an opaque hex/);
+  ({ r } = await withGlimpse({ ...GLIMPSE, colors: { canvas: "#ffffff", ink: "#dddddd", accent: "#00aa00", source: "a.css" } }));
+  assert.match(r.out.error, /under 4\.5:1/);
+  ({ r } = await withGlimpse({ ...GLIMPSE, colors: null, opening: null }));
+  assert.equal(r.code, 0);
+  assert.equal(r.out.drawn.colors, "neutral");
+});
+
+test("glimpse needs the file of a named font or a logo, and takes them when they are there", async () => {
+  const spec = { ...GLIMPSE, font: { family: "Space Grotesk", source: "src/fonts/" }, logo: { source: "public/logo.svg" } };
+  let { r } = await withGlimpse(spec);
+  assert.match(r.out.error, /font "Space Grotesk" has no file: copy it/);
+  ({ r } = await withGlimpse(spec, { "films/glimpse/assets/fonts/Space Grotesk.woff2": "x" }));
+  assert.match(r.out.error, /logo has no file/);
+  ({ r } = await withGlimpse(spec, { "films/glimpse/assets/fonts/Space Grotesk.woff2": "x", "films/glimpse/assets/logo.svg": "<svg/>" }));
+  assert.equal(r.code, 0, JSON.stringify(r.out));
+  assert.deepEqual(r.out.drawn, { colors: "the brand's", font: "Space Grotesk", logo: "their logo", pictures: 0 });
+});
+
+test("glimpse without its spec, with a spec that is not JSON, or without the project says what to do first", async () => {
+  let { r } = await withGlimpse(undefined);
+  assert.match(r.out.error, /no films\/glimpse\/glimpse\.json: write it from the deep read's notes/);
+  ({ r } = await withGlimpse("{ nope"));
+  assert.match(r.out.error, /is not JSON/);
+  const bare = account();
+  const r2 = await film(["glimpse", "--dir", bare]);
+  assert.match(r2.out.error, /run film\.mjs init first/);
+});
+
+test("new refuses glimpse as a slug: it is the first look's folder", async () => {
+  const { dir } = await initialized();
+  const r = await film(["new", "glimpse", "--dir", dir]);
+  assert.equal(r.code, 1);
+  assert.match(r.out.error, /glimpse is a folder of the film project/);
+});
