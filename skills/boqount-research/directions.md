@@ -114,7 +114,7 @@ them travel with no product in them.
 3. Whether followers come from a format a viewer can expect again: follows per 1,000 views for named, numbered
    series against one-off hits, each with its sample.
 4. Why each works (hook, loop, length, sound), which layer it could serve (`niche`, `product`, `offer`), what the day
-   would make it as (`film`, `clips`, `file`, `slideshow`) and at what cost.
+   would make it as (`film`, `clips`, `file`, `slideshow`, `recording`) and at what cost.
 5. Trends with a date on them (a sound, a meme, a template): when they started, and whether they are rising or fading.
 6. What the niche's top posts share in their first second and their last, and how many of them ask for anything.
 7. Accounts of about our size (our followers or fewer) with a post far above their own usual, in the last 90 days:
@@ -209,7 +209,9 @@ what the brand has of its own, and which two or three styles the brand could own
 2. What is worn out: what most accounts in the niche repeat, with examples and what those posts draw now.
 3. What the brand has of its own: its colours, fonts, logo, voice, characters and material (`brand/<slug>/`, the
    brand's site and profiles), and how much of it shows in its posts now.
-4. Which devices would make the account recognisable with its logo covered, and what each needs to produce.
+4. Which devices would make the account recognisable with its logo covered, and what each needs to produce; and the
+   language layers around the posts: how the niche's accounts call back to earlier episodes, and how they answer
+   comments (by hand or not, and what that draws), with examples.
 5. At a `refresh`: what the dated lines in `brand/<slug>/style.md` → Observations say against the rules above them.
 
 Sources to start from: the public pages of the creators and brands the formats and competitors notes name, and of

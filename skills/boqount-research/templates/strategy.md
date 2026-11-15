@@ -67,7 +67,11 @@ episodes, not one.
 
 | Format | Layer | Made as | Price | Evidence |
 |---|---|---|---|---|
-| <format> | <niche \| product \| offer> | <film \| clips \| file \| slideshow> | <$ and credits, hours> | <…> |
+| <format> | <niche \| product \| offer> | <film \| clips \| file \| slideshow \| recording> | <$ and credits, hours> | <…> |
+
+A **collab** (a post published together with a creator or another brand) is a row of its own: the partner, their
+written permission (brand book → Legal), whose account posts it, and how: when the posting tool cannot add a
+collaborator, it is posted by hand. Without the permission it is "not makeable now", with the reason.
 
 ## Hook bank
 

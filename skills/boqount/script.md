@@ -5,8 +5,8 @@ The script is `films/<slug>/script.txt`.
 
 ## The rules
 
-1. **One topic per film.** One function of the product, one problem, one promise. A line about anything else (another
-   feature, a side benefit) is cut and parked for its own film.
+1. **One topic per film.** One function of the product, one problem, one promise: one product story per film. A line
+   about anything else (another feature, a side benefit) is cut and parked for its own film.
 2. **Every line leads into the next.** Read the script aloud as a chain: each line answers or follows from the one
    before. If a line can be deleted and the next still follows, it was filler. A line that needs a picture to make
    sense is broken: a picture cannot rescue a sentence whose noun is missing.
@@ -28,10 +28,21 @@ The script is `films/<slug>/script.txt`.
 10. **Softened where nobody can know.** A line about what other people do or will do says "plenty", "many" or "can",
     never a count nobody holds; a line about an outside fact says no more than its source ("announced", not
     "launched").
+11. **Spoken like a creator talks to camera, not written like prose.** Casual openers ("okay, so", "here's the
+    thing"), contractions, a question answered right away ("Week three? Maybe one post."), plain verbs. No literary
+    devices: no triplets of parallel fragments ("Same idea. Same talent. Same budget."), no aphorisms, no rhythm for its
+    own sake, no line that reads like a poster. Read it aloud: if it sounds like a voice-over for an advert or a poem,
+    rewrite it as a text to a friend.
+12. **No numbered lists, in the voice or on screen.** "One:, Two:, Three:" and numbered chips sound and look robotic.
+    Steps flow the way a person tells them: "It reads… Then it… You say yes or no… And it checks…". One exception: a
+    how-to whose steps the viewer will repeat may number them on screen when its rubric is that format; its voice
+    still tells them as a person would.
 
 ## Checklist before voicing
 
 - [ ] Every line is about the film's one topic.
+- [ ] Read aloud, it sounds like a person talking to camera: no triplets, aphorisms or poster lines.
+- [ ] No "One:, Two:" in the voice, no numbered chips on screen (a numbered how-to rubric excepted).
 - [ ] Read aloud, each line follows from the one before; none can be removed without breaking the chain.
 - [ ] No word someone outside the trade wouldn't use.
 - [ ] Every number has a unit and says what it is for; the arithmetic on screen is right.

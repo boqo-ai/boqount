@@ -119,3 +119,17 @@ the offer is ("it's on our profile") needs the person's word for that post.
   - Either way the music drops out on the seam, a riser timed to end on the last frame carries it into frame 0, and
     `"loop": true` in `sfx-cues.json` folds what sounds past the end onto the head (`film.md` → Sound). No end-card
     hold: it is dead time, where the last viewers leave.
+
+## Delayed value (a device any film may use)
+
+How far into a film each piece of value lands, so a viewer always has a reason to stay for the next one. A storyboard
+may use it in any layer, inside that layer's parts:
+- frame 0 is the whole promise, and the most surprising picture of the film;
+- by 2 to 3 s, a pattern the viewer knows (a trend, a meme, a habit) or a twist on the first line;
+- a first punchline by about 8 s;
+- a reversal by about a quarter of the length;
+- then one answered piece of the promise per line, each bigger than the last;
+- the film's one burst at about 55 to 60 %;
+- the product (in a `product` or `offer` film) named late, at about 85 % in a short film or at part 8 of the
+  opportunity story, where a pull-back shows the whole world inside it;
+- the end re-plays the hook, which now reads as true (a `niche` film's seam; an opportunity story's call).

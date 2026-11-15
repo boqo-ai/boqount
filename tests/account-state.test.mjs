@@ -693,11 +693,12 @@ test("stops does not count caught:funnel holds as check catches", () => {
   assert.deepEqual(stops([...BASE6, c1, c2, s1, s2], GREEN, NOW24), { stop: true, reasons: ["two caught in a row"] });
 });
 
-test("ledgerRows accepts what the day makes (film, clips, file, slideshow) and an older ledger's tiers", () => {
-  for (const tier of ["film", "clips", "file", "slideshow", "1", "2", "3", "4", "stock"]) {
+test("ledgerRows accepts what the day makes (film, clips, file, slideshow, recording) and an older ledger's tiers", () => {
+  for (const tier of ["film", "clips", "file", "slideshow", "recording", "1", "2", "3", "4", "stock"]) {
     assert.equal(ledgerRows(ledgerText([row({ slug: `kind-${tier}`, tier })])).length, 1, tier);
   }
   assert.throws(() => ledgerRows(ledgerText([row({ slug: "kind-bad", tier: "reel" })])), /ledger line 2: tier reel/);
+  assert.throws(() => ledgerRows(ledgerText([row({ slug: "kind-story", tier: "story" })])), /ledger line 2: tier story/, "a story has no ledger row");
 });
 
 test("stops does not count a hold that waits on the human as a check catch", () => {

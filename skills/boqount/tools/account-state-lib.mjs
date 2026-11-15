@@ -12,9 +12,10 @@ const ENUMS = {
   status: ["planned", "checked", "approved", "uploading", "uploaded", "post_requested", "handed", "scheduled", "posted", "held", "skipped", "failed", "canceled", "abandoned", "legacy"],
   type: [...TYPES, "legacy"],
   type_source: ["human", "skill", "legacy"],
-  // What the post is: a film made from scratch, clips cut from a long video, a finished file, a slideshow of stills.
-  // The numbered values and `stock` are an older ledger's tiers, still read.
-  tier: ["film", "clips", "file", "slideshow", "1", "2", "3", "4", "stock"],
+  // What the post is: a film made from scratch, clips cut from a long video, a finished file, a slideshow of stills,
+  // a screen recording of the product at work. A story has no ledger row. The numbered values and `stock` are an
+  // older ledger's tiers, still read.
+  tier: ["film", "clips", "file", "slideshow", "recording", "1", "2", "3", "4", "stock"],
   // A post the person promotes with bought views (its record's `Ad: yes`). Its views are bought: kept out of every
   // norm, the reach-drop run and the reach and follower KPIs. A ledger without the column has no ad post.
   ad: ["yes", "no"], // `no` reads as empty: a record says "Ad: no", and that word gets copied here

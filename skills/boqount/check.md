@@ -26,8 +26,12 @@ owed` once the human confirms the platform shows its AI label on the test post, 
   of each media folder they come from (`brand/<slug>/media/`, the film's `media/`);
 - `brand/<slug>/brand-book.md`, the sections Positioning, Facts, Claims, Legal, CTA (an ad post's call line) and Do
   and don't (the person's word for material that is not the brand's);
-- `brand/<slug>/style.md` → Look and → Language, for the look and the language of a post made here (kind `film` or
-  `slideshow`);
+- `brand/<slug>/style.md` → Look and → Language, for the look and the language of a post made here (kind `film`,
+  `slideshow` or `story`);
+- **two kinds read as others are:** a `recording` is checked as a `file` is, in every item. A `story` has no hook
+  formula and no arc: item 2 reads only its language, its extra details and its lists; item 3 holds any ask in its
+  words or pictures, the link sticker the person adds excepted; every other item holds as for a film
+  (`production.md` → A story);
 - `hooks.md`: the hook's rules and `hooks.md` → The arc;
 - for a `product` or `offer` post, and an ad post whose call line carries a code word, its code word's DM rule:
   `awk '/^## DM automation/{p=1;next} /^## /{p=0} p' brand/<slug>/accounts.md`;
@@ -80,6 +84,11 @@ owed` once the human confirms the platform shows its AI label on the test post, 
    A part missing or out of order is `HOLD: hook` on every kind but `file` and `clips`; a line that states an amount
    of money or says the viewer will earn is item 1's `HOLD: claims`. Outside a chain explainer and the opportunity
    story, every hook has all four, whichever formula it follows: on every kind but `file` and `clips`, a miss is `HOLD: hook`.
+   - **No extra details, no numbered list** (a post made here, every layer): on screen only the thing the line is
+     about (`film.md` → Overview). A source plate, a disclaimer, a feature chip, a kicker label or fine print the
+     story does not need is `HOLD: hook (extra detail)`; what a rule puts on screen on purpose stays (an opportunity
+     story's source line, a series mark, the credit's own place). "One:, Two:" in the voice, or numbered chips on
+     screen, is `HOLD: hook (numbered list)`, unless the rubric is a numbered how-to (`script.md` rule 12).
    - **A post made here** also keeps `style.md` → Language: its one form of address, the series' fixed opening line,
      and its ending (the payoff, or its first picture again). A miss in the film is `HOLD: hook`; in a caption it is
      fixed as `GO with edits`. A still that departs from `style.md` → Look holds nothing: the approval message's Check

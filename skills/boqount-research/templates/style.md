@@ -46,6 +46,8 @@ motion: <snappy | smooth | bouncy>
   about, and how each is shown: a place, a screen, an object in a hand.> Source: <…>
 - **Pace:** <how long a beat holds; how the camera moves>. Source: <…>
 - **Text on screen:** <size, place in the frame, words at once>. Source: <…>
+- **One meaning per hue:** <each accent token and the one thing it means in every film: "this one, now", live, a
+  link, failed>; no gradients in the interface's chrome. Source: <…>
 
 ## Language
 
@@ -57,6 +59,10 @@ motion: <snappy | smooth | bouncy>
   Source: <…>
 - **Caption grammar:** <line 1, what follows, hashtags (how many), the credit line for outside material last>.
   Source: <…>
+- **Callbacks:** <one a week to an earlier episode, so a returning viewer is rewarded: how this brand does it>.
+  Source: <…>
+- **Replies:** the comments are part of the voice, answered by hand, never by automation (a code word's DM rule is
+  not a reply); <the brand's pinned comment, if any, and what it may say>. Source: <…>
 
 ## Devices
 

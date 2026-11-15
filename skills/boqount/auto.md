@@ -45,8 +45,10 @@ post keeps its gate, and the report carries `Alarm: calibration <approved>/<need
   - **A record whose `- Gate 3:` line reads `owed`** (`film.md` → The gates writes it) is held for the person
     exactly like `GO with edits`. Any other film's gate in auto is the check plus the stops: nobody watches it at speed
     or hears it (`film.md` → The gates).
+  - **A flagship record** (`Flagship: yes`) without its `- Gate 3: <the person's verdict> <ISO>` line is held for
+    the person like `GO with edits` (`production.md` → A flagship film).
   - **A record that carries outside material** is held for a human Publish the same way, whatever its kind (`film`,
-    `clips`, `file`, `slideshow`): the test is its `Outside material` line (anything but `none`); `Gate 3: owed` is how
+    `clips`, `file`, `slideshow`, `recording`, `story`): the test is its `Outside material` line (anything but `none`); `Gate 3: owed` is how
     a film says it.
   - **An ad post** (`Ad: yes`) needs a human Publish too (`check.md` item 3).
   - **`HOLD`** is held, as always.

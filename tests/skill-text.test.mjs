@@ -161,3 +161,28 @@ test("SKILL.md: going alongside is the human's pick, and a run alongside leaves 
     "never writes `marketing/state.md`, `marketing/queue.md`", "publishes only a post its scope names",
     "only added rows keeps every row of both", "release --soft"]) assert.ok(flat.includes(s), s);
 });
+
+// ---------------------------------------------------------------- rules carried from the private skill (parity)
+
+const flatOf = (name) => readFileSync(join(main, name), "utf8").replace(/[ \t]*\n[ \t]*/g, " ");
+const PINNED = {
+  "production.md": ["A story is a video, never a still", "All the text is on screen within the first second",
+    "film.mjs new <slug> --ig-story", "**no ledger row**", "at most 5 minutes", "Only in a browser or app the person signed in to",
+    "It needs the person even in auto", "One product story per film"],
+  "SKILL.md": ["A story is made as a short animated video with minimal sound", "goes to `marketing/agent-briefs/` and is committed"],
+  "check.md": ["HOLD: hook (extra detail)", "HOLD: hook (numbered list)", "a `recording` is checked as a `file` is"],
+  "script.md": ["Spoken like a creator talks to camera", "No numbered lists, in the voice or on screen"],
+  "motion.md": ["No dead space", "settles with one small overshoot", "A counter stops when its bar stops", "One meaning per hue",
+    "No glitchy 3D", "A sound signature per station"],
+  "film.md": ["At least two rounds and at most four", "`lead` 0.4 s", "never 0.5 to 0.6 s", "A series after its reference varies hard",
+    "Whisper also drops clean lines"],
+  "auto.md": ["A flagship record"],
+  "measure.md": ["Zero on both days is yellow only when those days' posts had views", "Zero sign-ups against live views also raises an alarm"],
+};
+
+for (const [name, phrases] of Object.entries(PINNED)) {
+  test(`${name}: the rules carried from the private skill are still there`, () => {
+    const flat = flatOf(name);
+    assert.deepEqual(phrases.filter((phrase) => !flat.includes(phrase)), []);
+  });
+}

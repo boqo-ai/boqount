@@ -15,12 +15,19 @@ slideshow's files go to `marketing/media/<slug>/`.
 | `clips` | A clip cut by boqo from the brand's own long video | a boqo channel, and the video in `brand/<slug>/assets.md` → Material with rights | boqo credits, within `credits_day` |
 | `file` | A finished video the person supplies, or one from the brand's own library (`brand/<slug>/assets.md`) | the file | $0 |
 | `slideshow` | Stills already on disk, made into a vertical video with ffmpeg and the sound kit | the stills | $0 |
+| `recording` | A screen recording of the product doing the work (A screen recording, below) | a browser or app the person signed in to | $0 |
+| `story` | A short animated video for the account's stories, never a still (A story, below) | the film project | $0 with the library's or the kit's sounds |
 
 - The record's field is `Kind`. The ledger's `tier` column holds the kind, and so does the queue's `tier` column; a
   queue row's layer goes in its `layer` column, never in `note`. The queue's columns, in order: `slug | stage | type |
   rubric | tier | for | file | note | layer` (`templates/queue.md`).
 - **A post is a video file.** A carousel goes out only as a `slideshow`.
-- A trend is an idea for a `film`: it carries the trend's mechanism, never its original subject or its sound.
+- A trend is an idea for a `film`: it carries the trend's mechanism, never its original subject or its sound (A
+  trend, below).
+- **A flagship film** is a `film` with the record's `Flagship: yes` (A flagship film, below): opt-in, about one a
+  week at most.
+- **One product story per film.** A `product` or `offer` film tells one function of the product; a line about another
+  function belongs in that function's film (`script.md` rule 1).
 - **Every post has a layer**, whatever its kind (`niche`, `product` or `offer`, in the record's Layer field). A
   `file`, a clip or a slideshow takes the layer its content is: one that names or shows the product anywhere is not
   `niche`.
@@ -189,6 +196,70 @@ Stills already on disk (a carousel's slides, the brand's media), made into a ver
 
 4. The record's file is that video, Kind `slideshow`, and it enters at the check.
 
+## A screen recording
+
+The product doing the work, filmed on screen: the thing a line would claim, seen happening.
+- **Only in a browser or app the person signed in to,** on their account: ask once, then wait. Nothing is filmed of
+  another person's account, inbox, stream or data.
+- **What is on screen is a claim** (`check.md` item 1): the real labels as they are today, nothing private (an
+  e-mail, a customer's name, a key) in any frame; a frame that shows one is cut or blurred before the check.
+- **As a post,** the recording is the record's file, Kind `recording`, and from the check on it is read as a `file`
+  is (`check.md`): nothing is re-cut by the check, a fix is a new file. **Inside a film,** it plays muted on the kit's
+  `Device` (`motion.md` → The kit), and the film is the post.
+- How to film off a screen so it holds up on a phone: `film.md` → Filmed off a screen.
+
+## A trend
+
+- **A trend pass:** one pass over the sources the strategy line's calendar row names, at most 5 minutes, written to
+  the log with what was read and when (`Trend pass <date>: <sources>; <what fits, or nothing>`). With the web barred,
+  the pass is written out as a brief for the person instead.
+- **What a trend gives** is its mechanism (`film.md` → A reference): never its original subject, its words or its
+  pictures.
+- **Its sound** is a track the person saved from the platform's own library to `marketing/media/sound/`, with where
+  it is from; with none saved, the film has the account's own sound, never the trend's. $0 only.
+- The voice follows the branch above.
+
+## A flagship film
+
+About once a week at most, a `film` made at full depth on the strongest reach or awareness hook of the week, planned
+days ahead, never for the same morning. It is opt-in: the strategy's calendar row or the person names it, and the
+record says `Flagship: yes`.
+- **Count first:** this ISO week's flagship films (Monday on) in the records' `Flagship` lines; one already planned or
+  posted means the next waits for next week.
+- **The person signs off the script** before any voice or scene work, as numbered plain text after Gate 1.
+- **Gate 1 runs in rounds** (`film.md` → The gates), two at least.
+- **The person's watch:** after Gate 2 the person watches it at full speed, and the record's Posting carries
+  `- Gate 3: <the person's verdict> <ISO>`. **It needs the person even in auto:** a flagship record without that line
+  is treated as `GO with edits` (`auto.md`).
+
+## A story
+
+**A story is a video, never a still:** short, animated in the brand's look, with minimal sound. Stories carry trust
+(step 12's ideas, a thank-you, a behind-the-scenes moment), not reach.
+- **The base** is the template `_ig-story`: `node <skill>/tools/film.mjs new <slug> --ig-story` makes the film's
+  folders, and only the words and the cues change. It renders and mixes like any film (`film.md` → The project,
+  → Sound).
+- **The picture:** 1080×1920 at 60 fps, 8 to 15 s, the brand's look (`brand/<slug>/style.md` → Look and Tokens).
+  **All the text is on screen within the first second:** each element comes in on its own cue, about 0.3 s each,
+  staggered in reading order, eased out with no overshoot; then it holds, and only a decoration (a highlighter
+  sweep) moves after 1 s. Nothing idles, loops or drifts.
+- **A highlighter** is one box behind the word, tall enough for its descenders, its two layers (the plain word and the
+  word on the fill) in the same box, each clipped to its side of the sweep. Read a full-size still of the word before
+  the render.
+- **The sound:** two or three sounds at most, no music, no voice, from the library or the kit. The burst of text
+  gets one sound for the whole burst, cut where the burst ends, never a hit per line; a highlighter its marker
+  sound. A story is quiet: its sheet's target is about `{"I": -24, "TP": -6}`, and the sound check's output goes into
+  its record.
+- **A link sticker:** when the person will add a link, the frame leaves y 1300 to 1580 empty for it, above the
+  story's own controls, and one arrow in the link colour points there.
+- **The words:** the person's, or a step 12 idea they took, in the brand's language and register. The claims rules
+  hold (no invented counts). A word like "yesterday" or "right now" holds only on its day, and the record says which.
+- **Posting:** a story is not a feed post. It has a record (Kind `story`) and a queue row, and **no ledger row** (the
+  checkpoints are the feed's), and it does not count toward the day's posts. It goes through the check and the gate
+  like a post, then to the person by hand with its file and words (`posting.md` → By hand, the record alone carrying
+  the statuses), unless the publishing tool can post stories. Under `publish_via: boqo-only` with no story tool it
+  waits as a file, its record and queue row `held`.
+
 ## An idea from the human (`post <idea>`)
 
 The idea gets the same rules as the day's post, and the answer is three short parts, in this order. Parts 1 and 2
@@ -240,6 +311,8 @@ are **one sentence each**, in these shapes (no list of other posts, no argument)
 | "The budget is spent, so the voiced film waits until tomorrow" | The branch decides the voice, not the budget |
 | "I'll explain the branch, the other posts and why the budget isn't the reason" | One sentence in the shape above |
 | "It's trending: a quick meme with the trend's sound" | A trend is an idea for a `film`, with its mechanism and the film's own sound |
+| "A still is enough for a story" | A story is a short animated video with minimal sound (A story) |
+| "Let's make every film a flagship" | About one a week, planned days ahead, with the person's sign-off and watch |
 | "Music from the kit, it's free" | The kit is sounds. Music only from a track the person saved; otherwise none |
 | "The starter film is finished: post it on a slow day" | It is a worked example. Never posted |
 | "Queue it at `idea`, and let the check hold it" | Someone else's face or stream is declined in one line, with no queue row |

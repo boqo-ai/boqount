@@ -11,7 +11,8 @@ The table and the Posting lines hold what is the same on every channel. What dif
 | Segment | |
 | Rubric | |
 | Layer | niche (series <name>, episode <n>) / product / offer, the opportunity story   (`hooks.md` → The arc; `story.md`) |
-| Kind | film / clips / file / slideshow |
+| Kind | film / clips / file / slideshow / recording / story   (a story has no ledger row: `production.md` → A story) |
+| Flagship | no / yes (<who named it, date>)   (a `film` only, about one an ISO week: `production.md` → A flagship film) |
 | Ad | no / yes (<the person's words, date>)   (only the person's word for this post sets yes, and with it each ledger row's `ad: yes`; check.md item 3) |
 | Code word | <CODE, the rubric's (`marketing/strategy.md` → Rubrics → Code words), with its row in `brand/<slug>/accounts.md` → DM automation | none (a `niche` post)> |
 | Ad call | (only a `niche` post with Ad: yes) <the call line of brand-book → CTA, exactly>; code word <CODE \| none>; link <the ad's own link, in the form `brand/<slug>/accounts.md` → Links gives>; campaign <utm_campaign> |

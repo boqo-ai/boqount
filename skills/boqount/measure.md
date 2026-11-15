@@ -51,9 +51,10 @@ and save before the next outward call (SKILL.md → Save, locally).
    - `none`, or a reply with `unavailable`: the point is `unavailable: <why>`, never 0 sign-ups.
 
    A date with no key is 0, except under `manual` when it is after the file's newest date (the reply's `through`):
-   then it is `unavailable: not typed yet`. **Sign-ups never set the colour:** no post asks
-   for a sign-up (a code word asks for a comment), so a quiet two days proves nothing. Zero sign-ups against live views (step 5's read) is a line in
-   the report's Numbers, not an alarm.
+   then it is `unavailable: not typed yet`. **Zero on both days is yellow only when those days' posts had views**
+   (step 5's read: views > 0 on any channel); with no views, zero sign-ups says nothing, and an `unavailable` point
+   never sets the colour (a blind source is not a zero). This point is settled after step 5's read, and the colour
+   with it.
 5. **The DM review** (does your DM automation still send the right link?) is the human's item, once a week, on
    Monday's list, with each code word's row: the product films ask for those comments. A code word the person answers
    by hand is their item too: "are the <CODE> comments answered?"
@@ -61,8 +62,10 @@ and save before the next outward call (SKILL.md → Save, locally).
    - **green**: the verdict is `green`, boqo answers for every boqo channel, and nothing is yellow. A `sale` post goes
      out only on green.
    - **yellow**: a `changed` or `unread` link, no link, a tool error, boqo down or a boqo channel's account not
-     `active`. Sale posts wait at their status, unposted today. Other types go on. A yellow is on the Funnel line, with
-     an alarm only where its own rule gives one (`posting.md` → Failures).
+     `active`, or zero sign-ups as in point 4. Sale posts wait at their status, unposted today. Other types go on.
+     Zero sign-ups against live views also raises an alarm: the way from a view to a sign-up may be broken somewhere
+     the links do not show. Any other yellow is on the Funnel line, with an alarm only where its own rule gives one
+     (`posting.md` → Failures).
    - **red**: any link is `blocked`.
 
 **Red.** A `blocked` link, whichever it is, holds every `sale` post, on every channel, whatever its status (a `handed`
@@ -347,10 +350,9 @@ not carry its own link: not the period's total, not the untagged bucket, not a c
 Each part goes into its slot of the morning report (`memory.md`).
 - **Numbers**: followers per channel, the verdicts with `data`, the estimates marked, the per-film measures, an ad
   post's bought views on their own line (Bought views), and the period's sign-ups by Attribution's three reads (an ad
-  post: its own campaign count), the whole account's, every one with its source and read time; zero sign-ups against
-  live views is a line here.
+  post: its own campaign count), the whole account's, every one with its source and read time.
 - **Funnel**: the colour and the red links.
-- **Alarms**: a red funnel, stale analytics.
+- **Alarms**: a red funnel, zero sign-ups against live views (The funnel, point 4), stale analytics.
 - **Auto**: each `cancel_post`.
 - **Waits for you**, its `your steps` part: the request; on Monday the DM review and the account screens; the review's
   decision while it is open (Learning 7).

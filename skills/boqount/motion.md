@@ -61,6 +61,10 @@ One distinct idea per row: two rows that share an idea are merged, or one is rei
 - **Deterministic.** Every value is a pure function of the frame (`useF`, `p`, `lerp`, seeded `rnd`): no CSS
   transition or keyframe, no `Math.random`. Easing comes from the style's preset (`M.in`, `M.out`, `M.move`); a
   landing is a `slam`.
+- **Overshoot, settled:** a thing that lands (a word, a card, a number falling into its slot) lands with `slam`, with
+  no overshoot; an entrance eases out with none. An **assembly or a morph** (parts coming together into one shape, one
+  shape becoming another) takes at least about 1.5 s, eased in and out, and settles with one small overshoot (a few
+  per cent of its travel, once); never a linear snap between poses, which reads as jerky.
 
 ## The kit
 
@@ -121,6 +125,21 @@ Every film, in every layer:
   invented: no made-up number, name or comment.
 - **Something new for the eye about every second**, on the word being said or shown, and never so busy that the line
   cannot be read. The three full-frame hits stay the loudest moments.
+- **Hypnotic, unusual camera:** each world seen from an angle a phone feed rarely gives: straight down, from the floor
+  up, a lens-close macro, an orbit; jumps of scale (one pixel to the whole account, one post to a year of them);
+  perspective that bends (a grid tipping into a floor to the horizon, a dolly zoom, a tunnel, an endless spiral).
+  Motion that repeats in rhythm (a ring turning, a spiral climbing) is the hypnosis: it locks to the music's beat.
+- **Show the system as one object** when a film explains a process: a machine or a ring with a station per step,
+  that someone who never heard the trade's words reads in a second; each step seen happening at its station.
+- **Retention devices**, each once and where it is true: a macro close-up that fills the frame; a high-speed-camera
+  slow motion with a small millisecond timer, and a snap back to real speed; a kaleidoscopic transition into the next
+  beat, made as a move of the camera through the picture, never a flash (Nothing flashes).
+- **A counter stops when its bar stops:** it rolls while the bar grows and lands on its value with it; no reel spins
+  at rest.
+- **The hero stays steady.** When many things fail and one survives, they fail in one clean wave; the survivor is the
+  most prominent object, never flickers or changes identity, and the camera goes through it into the next scene.
+  Nothing flies off at random.
+- **No glitchy 3D:** no plane clipping through an object, no floating fragment, no seam showing between parts.
 - **Not finished:** a film whose camera never moves, or whose rows are labels changing in place.
 - **Nothing flashes.** Rich motion is movement, never blinking: no place where a large part of the frame (the whole
   frame, or any ninth of it on a 3 × 3 grid) goes between dark and bright more than three times in any one second, the
@@ -131,6 +150,9 @@ Every film, in every layer:
 ## Layout
 
 - **Frame 0** is a finished picture: a readable hook and one subject, already moving within 0.2 s.
+- **No dead space.** The picture fills the whole 9:16 frame in every scene, down through and below the caption band
+  (a floor, a reflection, a crowd, falling tiles). The bottom third may sit under the platform's interface, but is
+  never empty black.
 - **One subject in the opening**, with one complete move.
 - **Safe area.** The platforms draw their own interface over the top 14 % of the frame, the bottom 35 % and 6 % of
   each side, so what a viewer must read (text, numbers, labels) stays inside `L`: on 1080×1920, below y 270, above
@@ -140,6 +162,9 @@ Every film, in every layer:
   that cannot reach that is texture, or it is cut: nothing is meant to be read and can't be.
 - **Land in a slot.** Anything that flies in lands in a real place in the layout: a slot, a list row.
 - **Numbers agree** with the words, every frame. A state that contradicts them is greyed or struck until it updates.
+- **One meaning per hue.** Each accent of the style means one thing across every film (for example: "this one, now";
+  live or time running; a link; late or failed), and a colour never changes meaning between scenes. No gradients in
+  the interface's chrome: pictures and footage carry the colour.
 - **Effects once.** No glint or sweep on every card; one burst per film at most, never over a number to read.
 - **Real labels.** The product's interface uses its real labels and controls, read again at the product's page or app
   before a film shows a panel of it: what the screen says today, not what a kit, an older film or memory says. The
@@ -187,6 +212,9 @@ sources, and the library are `sound.md`.
   says so) does not go under music: the tonal set does.
 - **A build ends on its point.** A riser, a suck-in or a growing bar is placed by its peak (`"align": "sync"`), so it
   ends on the frame of the reveal. A push through to a new world: the whoosh peaks as the old world passes the frame.
+- **A sound signature per station.** When the film shows a system of steps, each station has its own sound, from the
+  library by what it is the sound of; a repeating cycle has a rhythmic motif in the music's key (the tonal set) that
+  speeds up as the cycle spins up; the three full-frame hits get the film's three biggest sounds.
 - **Two planned silences at most.** Before a full-frame hit the music dips for 0.2 to 0.3 s (`music.dips`) so the hit
   stands alone. No accidental ones.
 - **Every hero hit is there on a phone,** whose speaker plays almost nothing under 200 Hz: a low hit has harmonics a

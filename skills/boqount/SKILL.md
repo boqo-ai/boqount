@@ -112,7 +112,7 @@ the holder in its report when someone holds it.
    row taken at `idea` or `script`, its kind and layer come from the row):
    - write its record from `templates/publication.md` (the template is the format: open no other post's record)
      with status `planned`, a proposed type, its layer (`niche` with its series and episode, `product` or `offer`:
-     `hooks.md` → The arc), its kind (`film`, `clips`, `file`, `slideshow`), hypothesis, expectation and cost
+     `hooks.md` → The arc), its kind (`film`, `clips`, `file`, `slideshow`, `recording`, `story`), hypothesis, expectation and cost
      estimate. A `product` or `offer` post carries its rubric's code word and that code's DM row's link
      (`brand/<slug>/brand-book.md` → CTA), and its Hypothesis says `the format is being tested` (`story.md`); a
      `niche` post has no code word, and its Link is the profile link (`brand/<slug>/accounts.md` → Links), shown in no
@@ -128,7 +128,8 @@ the holder in its report when someone holds it.
 10. **Gate:** `autopost: auto` → `auto.md`; `calibration` or `paused` → `gate.md`.
 11. **Publish** each approved post on each of its channels (`posting.md`): through boqo, or handed to the person.
 12. **Community.** A list for the human: the comments to answer (read from the public post page, logged out, or a
-    screenshot) and story ideas for trust.
+    screenshot) and story ideas for trust. A story is made as a short animated video with minimal sound, never a
+    still (`production.md` → A story).
 13. **Close** (`memory.md`): the log entry, `state.md`, the full Save, the report.
 
 ## Gates and autonomy
@@ -191,7 +192,8 @@ the holder in its report when someone holds it.
 - **Writes** stay in `marketing/` and `brand/<slug>/`, plus the working folder `production.md` names for a post
   being made. Derived media go to `marketing/media/`; upload replies (signed URLs) go to `.boqo-upload/` only. Material
   that is not the brand's is never committed: its folder is git-ignored, its `SOURCES.md` excepted (`film.md` →
-  Outside material).
+  Outside material). A brief for a film-building agent that is meant to be reused goes to `marketing/agent-briefs/` and is
+  committed, so a run on another machine has it (`.boqo-upload/` is never committed).
 - **Secrets** live in mode-600 files under `~/.config/boqount/` and are never printed. Check one with
   `test -s <file>`.
 - Nothing outside the account's folder is deleted.

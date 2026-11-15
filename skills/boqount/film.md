@@ -14,7 +14,8 @@ labels, disclaimers, feature chips or fine print the story does not need; a qual
 caption, in plain words. The wow is in the motion, not in more words on screen. A rule that puts something on screen
 on purpose stays (a `product` film's source line by 0.5 s, `story.md`; the credit for outside material). The words are
 the brand book's voice, in the register its audience uses on that network (brand book → Voice), never a deck's words
-(solution, leverage, seamless, end-to-end).
+(solution, leverage, seamless, end-to-end), and spoken the way a creator talks to camera, never written like prose or
+a poster; no numbered list in the voice or on screen (`script.md` rules 11 and 12).
 
 Two things carry a film: a hook that bites (`hooks.md`) and motion where every scene is its own idea (`motion.md`).
 The words follow `script.md`; a `product` or `offer` film follows `story.md` too. Read each when its step comes.
@@ -246,6 +247,13 @@ check it with `test -s`, never print it.
 1. **`vo-plan.json`** (in `films/<slug>/audio/`): `voice`, `lead`, optional `model`, `tempo` and `voiceSettings`, and
    `lines`, each `{"id", "text", "gap"}` with optional `display`, `prev` and `next`. The ids are the script's; the
    seam's settings are `hooks.md` → Rules; numbers and names are written as `script.md` → Mechanics says.
+   **Tight pauses from the first draft:** `lead` 0.4 s (0.2 s in a film that loops: the seam's pause is the seam's
+   tail plus `lead`); a line's `gap` 0.2 to 0.35 s, the short end inside a run of lines and the long end where the
+   scene changes, never 0.5 to 0.6 s; an in-line split 0.12 to 0.2 s. A long pause stays only where it is the point
+   (an ellipsis of about 0.3 s, a hold on the product's name, the hold after the call). After any re-time, check that
+   every scene's animation still ends before the next scene's cue and re-pin the music placed on a cue.
+   **A name the voice keeps mispronouncing:** splice an approved take of the name in, cut at the stop closures around
+   it (the silent instant before a p, t or k), rather than re-voicing the whole line again.
 2. **Each take is a paid call:** reserved in the budget before it, a retake too, never past what is left
    (`production.md` → Choosing what to make).
 3. `node <skill>/tools/eleven.mjs tts-lines films/<slug>/audio/vo-plan.json films/<slug>/audio/lines` (`--only <id>`
@@ -253,7 +261,8 @@ check it with `test -s`, never print it.
    `vo.wav` and `cues.json`.
 4. **Listen with tools:** a line whose last consonant comes back as a separate burst (a sound under 0.12 s after a
    gap over 0.12 s) is re-taken; the assembled `vo.wav` is transcribed (`production.md` → The file's words) and
-   compared with the script word by word. An approved take is reused for an identical line.
+   compared with the script word by word. Whisper also drops clean lines from a long file: when a line is missing,
+   cut that stretch and transcribe it alone before believing it. An approved take is reused for an identical line.
 5. **A voiced film needs the platform's AI label:** the record's `AI label: yes (synthetic voice)`
    (`posting.md` → The AI label). The person's own recorded voice is not synthetic, and is used only when they offer
    it.
@@ -280,6 +289,18 @@ message) and what to watch for.
   with `--loop` for a looping film, its output pasted).
 - **Real labels, read again.** Before a film shows a panel of the product, its page or app is read again and the
   labels on screen are the ones read, with the date (`motion.md` → Real labels).
+- **Traps the stills don't show,** checked by tool:
+  - **Colour tags:** ffmpeg drops the colour primaries and transfer tags when the frames it is given carry none.
+    Write them on the stream (`-bsf:v h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1:video_full_range_flag=0`
+    for BT.709) and confirm with `ffprobe`: a file that reads `unknown` plays with shifted colours on some phones.
+  - **Never re-encode finished shots through an image library** (OpenCV and the like): it shifts chroma. Trim and
+    join in YUV with ffmpeg, and after any assembly compare the untouched shots with their source.
+  - **Hidden cuts inside a source shot:** after every cut, list the per-frame steps above three times the shot's
+    typical step and look at each one; a two-frame flash or a jump hides there.
+  - **Large low-contrast dark gradients** band into steps after a platform's re-encode: give a dark field texture or
+    light, or a step of contrast, rather than a wide smooth ramp near black.
+  - **A player keeps the old file open:** a file replaced while a player shows it may keep playing the old cut under
+    the same name. Quit the player and reopen before a verdict on a new cut.
 - **The film's own checks, reported.** Before the approval message, every check (the lint, the probe, the loop, the
   safe stills, the file's words) is reported with the command that was run and what it printed, never as a bare
   "passed". The report says plainly that the film was not watched at speed or heard.
@@ -292,13 +313,27 @@ write the full brief out and answer it in place, in character, before reading th
 - **A gate runs only for a film that is going on.** Before Gate 1, read the script against `check.md`: the claims, the
   hook and the structure, the call, the AI label, duplicates. A film that would be held starts no agent and is not
   built: the record stays `planned`, its queue row at `script`, and the report names the hold.
-- **Gate 1, the script, one round, before the build.** Two viewers from the film's real audience (the segment it is
+- **Gate 1, the script, one round, before the build** (a flagship film runs rounds, below). Two viewers from the film's real audience (the segment it is
   made for): the least informed of them, and a heavy scroller. The round passes when both give back, in their own
   words, the film's one sentence (A, B) and how it touches them (C), and, for `product` and `offer`, what to do (G).
   In a `niche` film G is still asked: an answer that the film wants them to buy, sign up, comment or visit is a hole
   to fix before the build, because the film then reads as an advert. The other answers are a list of holes: fix the
   cheap ones and name the rest in the approval message. A fact-checker runs **only when a line states an outside
   fact** (a company, a study, a figure, a date). Claims about the product are the check's.
+- **Gate 1 in rounds** (a flagship film, `production.md` → A flagship film; any film on the person's word). After the
+  fixes, a new pair reads the whole new script: anyone who has read a version is anchored. The first round of a
+  rewrite also runs the old script, as a control. At least two rounds and at most four; stop at the first round from
+  the second on that passes with its holes fixed or named. A line changed after the last round goes to a new pair, and
+  to the fact-checker if it states a fact; if that would be a fifth round, the approval message names those lines as
+  untested.
+- **Reading a round.** H shows where the writing is weakest; it does not forecast retention (viewers reading text
+  swipe on films people love). Both viewers lost at the same line: look at the order before the words; the fix that
+  works usually moves the line so it answers a question the viewer already has. A hole that is a picture's job ("I
+  never saw what it looks like") goes into the storyboard, not the script. A complaint that a `niche` film's seam line
+  is cut off is the loop working: skip it.
+- **The fact-checker passes** when every line is SUPPORTED, rewritten, or the finding is disproved by a quote you read
+  in the source yourself: checkers are wrong too. After a rewrite it checks only the changed lines, with the whole
+  script for context.
 - **Gate 2, picture and sound, one director pass** on Gate 2's stills (Stills). The long-sounds line goes in only when
   a sound runs over 1 s. Before the pass, read the stills yourself for the logo: a mark that
   `brand/<slug>/assets.md` → Logo forbids is a fix, whatever the director says. A camera that never moves, or rows
@@ -307,7 +342,8 @@ write the full brief out and answer it in place, in character, before reading th
   left open, on its `Gates:` line, and the sentence that nobody watched the film at speed or heard it. After Gate 2,
   write in the record's Posting `- Gate 3: owed (<why>)` when the film carries material that is not the brand's, or
   Gate 1 or Gate 2 left something open; otherwise `- Gate 3: none`. An `owed` film needs the person's Publish even in
-  auto.
+  auto. A flagship film's line is the person's own verdict after their full-speed watch, `- Gate 3: <verdict> <ISO>`
+  (`production.md` → A flagship film).
 
 **The viewer brief.** On a voice-free film, two changes and no others: the Situation's second and third sentences
 read "A fast animated vertical video comes on, with music only, and these lines appear as on-screen text. You get to
@@ -421,6 +457,20 @@ beat), under the film's own voice or text.
 Anything not named and sourced, a source's sound the person's word does not cover or that runs beyond its own shot,
 or a longer run is `HOLD: material` (`check.md`).
 
+## Filmed off a screen
+
+When the post is a film played on a computer screen and filmed with a phone (a look some formats use on purpose):
+- **The file:** the screen's full-screen size under any notch, so nothing is scaled or letterboxed; 60 fps constant,
+  H.264 High, yuv420p, BT.709 tagged; played full screen in the system player.
+- **Designed for the camera:** no stroke under 3 px of the design, no fine stripes or dot grids, no grain overlay, no
+  pure black (a near-black instead), no small white text on dark.
+- **The screen:** refresh rate fixed at 60 Hz (not adaptive), auto-brightness, colour shifting and night modes off,
+  brightness about 60 to 75 % so whites do not clip on the phone, a dark room with nothing bright behind the camera,
+  the pointer hidden.
+- **The phone:** a camera app that locks the shutter (30 or 60 fps, shutter 1/60; at 60 compare 1/60 with 1/120),
+  exposure and focus locked, stabilisation off on a tripod. Against moiré change the distance, tilt a few degrees off
+  axis, or defocus very slightly. Shoot a 5 s test first and look at it on the phone at 100 % before the full take.
+
 ## A reference
 
 A film modelled on another film (a reference the person shows, a trend) takes its skeleton and its devices: the order
@@ -428,6 +478,19 @@ of its parts, how its hook works, how its scenes change. Never its words, its pi
 its numbers: its first number is replaced by a newer one from a source of the film's own, and its look is the brand's
 (`brand/<slug>/style.md`). A scene that redraws the reference's own picture (its set, its background, its signature
 graphic) is sent back. The reference is named in the record's Source, never in the film or the caption.
+
+**A series after its reference varies hard.** The reference film is a reference, not a template: each film after it
+changes whom it talks to (a solo founder, a local business, a coach, an agency, each in their own words and pictures)
+and may change its format (a day in the life, a confession, a versus, a point of view, a mini story with a twist, a
+myth-buster, a "watch me make this" build, a letter to the viewer) and its narrator. Its parts change only where its
+layer lets them: a `product` or `offer` film keeps the opportunity story's ten parts (`story.md`) and varies everything
+around them; a `niche` series changes format only as a new series, written in the strategy's Rubrics. Every film is original: a new hook, a new world, a new carried object, new jokes, no scene,
+line or picture reused from an earlier film of the series. What stays is what the layer and the brand fix (true claims,
+the product named, a `product` or `offer` film's one call as its last line, the register, no numbered list, no extra
+details) and the reference's visual standard. **The bar is the reference's numbers:** its skip rate at 3 s, average
+watch and views at 72 h, written in the strategy's Rubrics row once measured; a film that falls below both at 72 h is a
+`Learning:` line, and the next one changes direction. Each film of the series takes the first free slot after its
+check, within the day's limits.
 
 ## Never
 
@@ -447,6 +510,7 @@ graphic) is sent back. The reference is named in the record's Source, never in t
 
 | Thought | Reality |
 |---|---|
+| "Same as the last episode, it worked" | A series after its reference varies hard: new hook, world, object and jokes (A reference) |
 | "The stills look right, so the film works" | Nobody watched it at speed or heard it. The approval message says so |
 | "A quick 'follow for more' at the end" | No follow call, ever. A `niche` film ends on its payoff, then the seam; an opportunity story on its one comment call |
 | "There's no DM automation yet, but the call is what converts" | No confirmed reply route, no call: the film is held (`check.md` item 3), and the person is asked to set one up or to reply by hand |
