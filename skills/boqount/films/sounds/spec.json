@@ -1,5 +1,5 @@
 {
- "_": "What the account's sound library asks ElevenLabs for (soundlib.mjs gen, a paid call per take, only on the person's word), and what build keeps. One entry a sound: id <group>/<name>; kind hit (a one-shot, trimmed to its onset), swell (grows to a point: the mixer can put that point on the cue) or bed (a long background, looped); is: what it is the sound of; prompt: the text sent; seconds; candidates: takes asked; keep: takes kept; use: what it is for (pick a sound by its use); slice: a tiny one-shot asked as several seconds of the same thing and cut into single events; loop: asked as a seamless loop; min/max: the length a kept take must have; minCentroid: how bright it must be (Hz); repeat: meant to run in a row (a counter); note: what to know before using it. A sound the library lacks is a new entry here, then gen --only <id> and build --only <id>.",
+ "_": "What the account's sound library asks ElevenLabs for (soundlib.mjs gen, a paid call per take, only on the person's word), and what build keeps. One entry a sound: id <group>/<name>; kind hit (a one-shot, trimmed to its onset), swell (grows to a point: the mixer can put that point on the cue) or bed (a long background, looped); is: what it is the sound of; prompt: the text sent; seconds; candidates: takes asked; keep: takes kept; use: what it is for (pick a sound by its use); slice: a tiny one-shot asked as several seconds of the same thing and cut into single events; loop: asked as a seamless loop; min/max: the length a kept take must have; minCentroid: how bright it must be (Hz); repeat: meant to run in a row (a counter); note: what to know before using it; tags: AudioSet labels (the AST model's own names) any one of which, heard at 0.05 or more, keeps a take; accept: other entries whose description CLAP may hear a take as and still keep it; reject: AudioSet labels that, heard at 0.1 or more, throw a take out; musical: a sound meant to carry a pitch, so a take heard as music is not thrown out; maxrank: how near its own description must rank among all (default 5); rev: the prompt was rewritten, so its new takes get new raw names. A sound the library lacks is a new entry here, then gen --only <id> and build --only <id>.",
  "sounds": [
   {
    "id": "ui/click",
@@ -10,7 +10,15 @@
    "candidates": 2,
    "keep": 4,
    "use": "a pointer presses a button",
-   "slice": true
+   "slice": true,
+   "tags": [
+    "Clicking",
+    "Tick",
+    "Computer keyboard",
+    "Typing",
+    "Tap"
+   ],
+   "rev": 3
   },
   {
    "id": "ui/tap",
@@ -21,7 +29,14 @@
    "candidates": 2,
    "keep": 4,
    "use": "a finger touches a screen; a small thing touches down",
-   "slice": true
+   "slice": true,
+   "tags": [
+    "Tap",
+    "Knock",
+    "Thump, thud",
+    "Tick"
+   ],
+   "rev": 2
   },
   {
    "id": "ui/key",
@@ -32,7 +47,14 @@
    "candidates": 2,
    "keep": 5,
    "use": "one letter typed",
-   "slice": true
+   "slice": true,
+   "tags": [
+    "Typing",
+    "Computer keyboard",
+    "Typewriter",
+    "Clicking"
+   ],
+   "rev": 2
   },
   {
    "id": "ui/typing",
@@ -42,7 +64,11 @@
    "seconds": 1.6,
    "candidates": 3,
    "keep": 2,
-   "use": "a field fills with typed text (cut it where the text ends)"
+   "use": "a field fills with typed text (cut it where the text ends)",
+   "tags": [
+    "Typing",
+    "Computer keyboard"
+   ]
   },
   {
    "id": "ui/switch",
@@ -53,7 +79,19 @@
    "candidates": 2,
    "keep": 3,
    "use": "a state turns on or off; a tab changes",
-   "slice": true
+   "slice": true,
+   "tags": [
+    "Clicking",
+    "Tick",
+    "Tap",
+    "Knock",
+    "Tick-tock"
+   ],
+   "accept": [
+    "ui/click",
+    "ui/key"
+   ],
+   "rev": 3
   },
   {
    "id": "ui/pop",
@@ -63,7 +101,13 @@
    "seconds": 0.5,
    "candidates": 7,
    "keep": 3,
-   "use": "a small element appears"
+   "use": "a small element appears",
+   "tags": [
+    "Burst, pop"
+   ],
+   "reject": [
+    "Knock"
+   ]
   },
   {
    "id": "ui/pop-low",
@@ -73,7 +117,10 @@
    "seconds": 0.5,
    "candidates": 4,
    "keep": 3,
-   "use": "a larger element appears; a card comes up"
+   "use": "a larger element appears; a card comes up",
+   "tags": [
+    "Burst, pop"
+   ]
   },
   {
    "id": "ui/tick",
@@ -85,14 +132,29 @@
    "keep": 4,
    "use": "a clock hand steps; a count advances by one",
    "slice": true,
-   "max": 0.6
+   "max": 0.6,
+   "tags": [
+    "Tick",
+    "Tick-tock",
+    "Clock"
+   ],
+   "accept": [
+    "ui/key",
+    "ui/click",
+    "ui/switch"
+   ],
+   "reject": [
+    "Vehicle horn, car horn, honking",
+    "Vehicle"
+   ],
+   "rev": 3
   },
   {
    "id": "ui/counter",
    "kind": "hit",
    "is": "a split-flap display flipping numbers very fast",
    "prompt": "A mechanical split-flap display flipping its numbers very fast, a rapid even flutter of small clicks. Close-mic, dry, no reverb, no music, one take.",
-   "seconds": 2.0,
+   "seconds": 2,
    "candidates": 3,
    "keep": 2,
    "use": "a number counts up fast (cut it where the number lands)",
@@ -106,18 +168,25 @@
    "seconds": 0.5,
    "candidates": 5,
    "keep": 3,
-   "use": "a message or a comment is sent"
+   "use": "a message or a comment is sent",
+   "accept": [
+    "ui/success",
+    "ui/notify"
+   ],
+   "musical": true,
+   "rev": 2
   },
   {
    "id": "ui/notify",
    "kind": "hit",
    "is": "a soft two-note notification chime",
    "prompt": "A soft pleasant two-note notification chime of a new message arriving, warm, short. Close-mic, dry, no reverb, no music, one-shot.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 3,
    "keep": 2,
    "use": "a message arrives",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "musical": true
   },
   {
    "id": "ui/error",
@@ -127,7 +196,8 @@
    "seconds": 0.6,
    "candidates": 3,
    "keep": 2,
-   "use": "a thing is refused or shut"
+   "use": "a thing is refused or shut",
+   "musical": true
   },
   {
    "id": "ui/success",
@@ -138,7 +208,8 @@
    "candidates": 3,
    "keep": 2,
    "use": "a thing is done; a tick is drawn",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "musical": true
   },
   {
    "id": "ui/slide",
@@ -159,7 +230,13 @@
    "candidates": 4,
    "keep": 2,
    "use": "a bar fills (put its end on the moment the bar is full)",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "accept": [
+    "move/riser-short",
+    "move/riser"
+   ],
+   "musical": true,
+   "rev": 2
   },
   {
    "id": "ui/shutter",
@@ -169,7 +246,16 @@
    "seconds": 0.6,
    "candidates": 5,
    "keep": 2,
-   "use": "a moment is captured"
+   "use": "a moment is captured",
+   "tags": [
+    "Camera",
+    "Single-lens reflex camera"
+   ],
+   "accept": [
+    "ui/click",
+    "ui/switch"
+   ],
+   "rev": 2
   },
   {
    "id": "ui/scrub",
@@ -179,14 +265,15 @@
    "seconds": 0.6,
    "candidates": 3,
    "keep": 2,
-   "use": "a range stretches back in time; a timeline is scrubbed"
+   "use": "a range stretches back in time; a timeline is scrubbed",
+   "musical": true
   },
   {
    "id": "ui/chat-flurry",
    "kind": "hit",
    "is": "a rapid flurry of many small message pops speeding up",
    "prompt": "A rapid flurry of many small chat message pops arriving one after another, speeding up into a dense burst. Dry, no reverb, no music, no voices.",
-   "seconds": 2.0,
+   "seconds": 2,
    "candidates": 3,
    "keep": 2,
    "use": "a chat fills fast (cut it where the burst ends)"
@@ -200,17 +287,27 @@
    "candidates": 7,
    "keep": 4,
    "use": "the camera pushes through to the next world",
-   "minCentroid": 300
+   "minCentroid": 300,
+   "tags": [
+    "Whoosh, swoosh, swish"
+   ],
+   "reject": [
+    "Heart sounds, heartbeat",
+    "Heart murmur"
+   ]
   },
   {
    "id": "move/whoosh-low",
    "kind": "swell",
    "is": "a deep heavy whoosh with a low rumble",
    "prompt": "A deep heavy cinematic whoosh passing by with a low rumble, powerful, no impact at the end. Dry, no music.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 4,
    "keep": 3,
-   "use": "a large thing passes; a hard change of world"
+   "use": "a large thing passes; a hard change of world",
+   "tags": [
+    "Whoosh, swoosh, swish"
+   ]
   },
   {
    "id": "move/suck",
@@ -227,10 +324,11 @@
    "kind": "swell",
    "is": "a short rising tension sweep",
    "prompt": "A short rising synth tension sweep, building fast and stopping abruptly at the top. No impact, no music, no drums.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 3,
    "keep": 2,
-   "use": "the half second before a reveal (put its end on the reveal)"
+   "use": "the half second before a reveal (put its end on the reveal)",
+   "musical": true
   },
   {
    "id": "move/riser",
@@ -240,7 +338,13 @@
    "seconds": 2.5,
    "candidates": 6,
    "keep": 2,
-   "use": "the two seconds before the film's turn (put its end on the turn)"
+   "use": "the two seconds before the film's turn (put its end on the turn)",
+   "accept": [
+    "move/riser-short",
+    "move/suck",
+    "move/reverse-cymbal"
+   ],
+   "musical": true
   },
   {
    "id": "move/downlifter",
@@ -251,7 +355,11 @@
    "candidates": 6,
    "keep": 2,
    "use": "energy leaves: a thing shuts, a world goes dull",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "accept": [
+    "move/tape-stop"
+   ],
+   "musical": true
   },
   {
    "id": "move/reverse-cymbal",
@@ -261,18 +369,27 @@
    "seconds": 1.5,
    "candidates": 3,
    "keep": 2,
-   "use": "a soft lead-in to a line or a scene (put its end on the first word)"
+   "use": "a soft lead-in to a line or a scene (put its end on the first word)",
+   "musical": true
   },
   {
    "id": "move/shimmer",
    "kind": "swell",
    "is": "a magical sparkling chime shimmer",
    "prompt": "A bright magical sparkle shimmer, glittering chimes rising gently, short.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 5,
    "keep": 2,
    "use": "a thing lights up or turns to the brand colour",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "tags": [
+    "Chime",
+    "Wind chime",
+    "Jingle bell",
+    "Jingle, tinkle"
+   ],
+   "musical": true,
+   "rev": 2
   },
   {
    "id": "move/glitch",
@@ -282,7 +399,8 @@
    "seconds": 0.5,
    "candidates": 4,
    "keep": 3,
-   "use": "a thing breaks, is refused, or a picture is interrupted"
+   "use": "a thing breaks, is refused, or a picture is interrupted",
+   "musical": true
   },
   {
    "id": "move/tape-stop",
@@ -292,7 +410,8 @@
    "seconds": 0.8,
    "candidates": 3,
    "keep": 2,
-   "use": "a thing is stopped dead"
+   "use": "a thing is stopped dead",
+   "musical": true
   },
   {
    "id": "hit/thud",
@@ -302,7 +421,12 @@
    "seconds": 0.5,
    "candidates": 4,
    "keep": 3,
-   "use": "a card, a block or a number lands"
+   "use": "a card, a block or a number lands",
+   "tags": [
+    "Thump, thud",
+    "Knock",
+    "Thunk"
+   ]
   },
   {
    "id": "hit/boom",
@@ -312,7 +436,13 @@
    "seconds": 1.5,
    "candidates": 3,
    "keep": 2,
-   "use": "one of the film's few full-frame hits"
+   "use": "one of the film's few full-frame hits",
+   "tags": [
+    "Boom",
+    "Explosion",
+    "Bang"
+   ],
+   "musical": true
   },
   {
    "id": "hit/punch",
@@ -322,17 +452,23 @@
    "seconds": 0.5,
    "candidates": 4,
    "keep": 3,
-   "use": "a number or a word lands hard"
+   "use": "a number or a word lands hard",
+   "musical": true
   },
   {
    "id": "hit/slam",
    "kind": "hit",
    "is": "a heavy metal door slamming shut",
    "prompt": "A heavy metal vault door slamming shut, one hard slam with a short metallic ring. No music, one-shot.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 3,
    "keep": 2,
-   "use": "a thing shuts for good"
+   "use": "a thing shuts for good",
+   "tags": [
+    "Slam",
+    "Door",
+    "Bang"
+   ]
   },
   {
    "id": "hit/stamp",
@@ -342,7 +478,16 @@
    "seconds": 0.5,
    "candidates": 7,
    "keep": 3,
-   "use": "a tag, a date or a verdict is stamped on"
+   "use": "a tag, a date or a verdict is stamped on",
+   "tags": [
+    "Thump, thud",
+    "Knock",
+    "Tap",
+    "Thunk"
+   ],
+   "accept": [
+    "hit/thud"
+   ]
   },
   {
    "id": "hit/clank",
@@ -353,7 +498,12 @@
    "candidates": 5,
    "keep": 3,
    "use": "metal meets metal: a lock rattles, a thing bounces off",
-   "minCentroid": 1200
+   "minCentroid": 1200,
+   "tags": [
+    "Clang",
+    "Chink, clink"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/lock-shut",
@@ -363,7 +513,21 @@
    "seconds": 0.6,
    "candidates": 6,
    "keep": 3,
-   "use": "a padlock closes"
+   "use": "a padlock closes",
+   "tags": [
+    "Chink, clink",
+    "Clang",
+    "Keys jangling",
+    "Clicking",
+    "Rattle",
+    "Tick"
+   ],
+   "accept": [
+    "hit/clank",
+    "ui/switch",
+    "foley/lock-open"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/lock-open",
@@ -373,7 +537,20 @@
    "seconds": 0.6,
    "candidates": 6,
    "keep": 2,
-   "use": "a padlock opens"
+   "use": "a padlock opens",
+   "tags": [
+    "Chink, clink",
+    "Clang",
+    "Keys jangling",
+    "Clicking",
+    "Rattle",
+    "Ding"
+   ],
+   "accept": [
+    "hit/clank",
+    "ui/switch",
+    "foley/lock-shut"
+   ]
   },
   {
    "id": "foley/lock-rattle",
@@ -383,7 +560,19 @@
    "seconds": 0.8,
    "candidates": 5,
    "keep": 2,
-   "use": "a locked thing is tried and does not open"
+   "use": "a locked thing is tried and does not open",
+   "tags": [
+    "Rattle",
+    "Keys jangling",
+    "Chink, clink",
+    "Clang"
+   ],
+   "accept": [
+    "hit/clank",
+    "foley/coin",
+    "foley/lock-shut"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/paper",
@@ -394,7 +583,15 @@
    "candidates": 5,
    "keep": 4,
    "use": "a receipt, a card or a page lands",
-   "min": 0.12
+   "min": 0.12,
+   "tags": [
+    "Crumpling, crinkling",
+    "Tearing",
+    "Rustle",
+    "Tap",
+    "Thump, thud",
+    "Shuffling cards"
+   ]
   },
   {
    "id": "foley/cards",
@@ -404,7 +601,14 @@
    "seconds": 1.2,
    "candidates": 5,
    "keep": 2,
-   "use": "a row of things is dealt out"
+   "use": "a row of things is dealt out",
+   "tags": [
+    "Shuffling cards"
+   ],
+   "accept": [
+    "foley/paper"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/scissors",
@@ -414,7 +618,10 @@
    "seconds": 0.5,
    "candidates": 4,
    "keep": 3,
-   "use": "a cut is made"
+   "use": "a cut is made",
+   "tags": [
+    "Scissors"
+   ]
   },
   {
    "id": "foley/laptop-close",
@@ -424,7 +631,20 @@
    "seconds": 0.8,
    "candidates": 5,
    "keep": 2,
-   "use": "a laptop shuts"
+   "use": "a laptop shuts",
+   "tags": [
+    "Knock",
+    "Thump, thud",
+    "Door",
+    "Tap",
+    "Slam"
+   ],
+   "accept": [
+    "hit/thud",
+    "foley/paper",
+    "ui/switch"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/marker",
@@ -444,7 +664,19 @@
    "seconds": 0.5,
    "candidates": 5,
    "keep": 2,
-   "use": "a screen is swiped away"
+   "use": "a screen is swiped away",
+   "tags": [
+    "Rub",
+    "Whoosh, swoosh, swish",
+    "Scrape",
+    "Rustle"
+   ],
+   "accept": [
+    "ui/slide",
+    "move/swish",
+    "foley/marker"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/coin",
@@ -455,18 +687,27 @@
    "candidates": 3,
    "keep": 2,
    "use": "a coin, a credit or a small prize lands",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "tags": [
+    "Coin (dropping)",
+    "Chink, clink"
+   ],
+   "musical": true
   },
   {
    "id": "foley/cash",
    "kind": "hit",
    "is": "an old cash register ringing",
    "prompt": "An old cash register \"ka-ching\": the bell and the drawer opening. No music, one-shot.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 3,
    "keep": 2,
    "use": "money is made (only where the film may show money)",
-   "note": "carries a pitch of its own: under music, use the tonal set"
+   "note": "carries a pitch of its own: under music, use the tonal set",
+   "tags": [
+    "Cash register"
+   ],
+   "musical": true
   },
   {
    "id": "foley/heartbeat",
@@ -476,7 +717,10 @@
    "seconds": 0.8,
    "candidates": 3,
    "keep": 2,
-   "use": "a held breath before a hit"
+   "use": "a held breath before a hit",
+   "tags": [
+    "Heart sounds, heartbeat"
+   ]
   },
   {
    "id": "crowd/cheer",
@@ -486,17 +730,24 @@
    "seconds": 1.5,
    "candidates": 3,
    "keep": 2,
-   "use": "people react to a big moment"
+   "use": "people react to a big moment",
+   "tags": [
+    "Cheering",
+    "Crowd"
+   ]
   },
   {
    "id": "crowd/gasp",
    "kind": "hit",
    "is": "a small group of people gasping",
    "prompt": "A small group of people gasping in surprise at once, short. No music, no words.",
-   "seconds": 1.0,
+   "seconds": 1,
    "candidates": 3,
    "keep": 2,
-   "use": "people are caught out"
+   "use": "people are caught out",
+   "tags": [
+    "Gasp"
+   ]
   },
   {
    "id": "amb/city-dusk",
@@ -575,7 +826,12 @@
    "keep": 1,
    "use": "a video plays on a phone or a screen nearby",
    "loop": true,
-   "note": "can read as speech: never under a line that must be understood"
+   "note": "can read as speech: never under a line that must be understood",
+   "accept": [
+    "amb/crowd-murmur",
+    "crowd/cheer"
+   ],
+   "rev": 2
   },
   {
    "id": "foley/rustle",
@@ -585,7 +841,182 @@
    "seconds": 0.6,
    "candidates": 4,
    "keep": 3,
-   "use": "a person moves: lifts a phone, turns, sits back"
+   "use": "a person moves: lifts a phone, turns, sits back",
+   "tags": [
+    "Rustle",
+    "Static",
+    "Whoosh, swoosh, swish",
+    "Zipper (clothing)",
+    "Crumpling, crinkling"
+   ],
+   "accept": [
+    "foley/paper",
+    "foley/swipe"
+   ]
+  },
+  {
+   "id": "foley/sauce-pour",
+   "kind": "swell",
+   "is": "thick sauce glugging out of a squeeze bottle and pouring",
+   "prompt": "Thick syrup pouring slowly from a glass bottle into a bowl: heavy viscous glugs and a thick liquid stream landing. Close-mic, wet, realistic foley, no music.",
+   "seconds": 2,
+   "candidates": 3,
+   "keep": 3,
+   "use": "a thick liquid pours out of a bottle: sauce, syrup, paint",
+   "tags": [
+    "Pour",
+    "Liquid",
+    "Squish",
+    "Splash, splatter",
+    "Gurgling",
+    "Drip",
+    "Water",
+    "Fill (with liquid)",
+    "Trickle, dribble",
+    "Stir"
+   ],
+   "rev": 2
+  },
+  {
+   "id": "move/whizz-slow",
+   "kind": "swell",
+   "is": "a bullet whizzing past in slow motion",
+   "prompt": "A bullet flying past in extreme slow motion: a deep, stretched, slowed-down whizz with a low airy tail, cinematic bullet time. No gunshot, no impact, no music.",
+   "seconds": 2.5,
+   "candidates": 3,
+   "keep": 3,
+   "use": "a small fast thing flies past in slow motion (bullet time)",
+   "tags": [
+    "Whoosh, swoosh, swish",
+    "Whir",
+    "Wind",
+    "Hum"
+   ]
+  },
+  {
+   "id": "amb/laser-hum",
+   "kind": "swell",
+   "is": "a soft electric laser hum",
+   "prompt": "The steady electrical hum of a glowing neon tube, a low smooth buzz at constant pitch, quiet, no clicks, no music.",
+   "seconds": 2,
+   "candidates": 3,
+   "keep": 3,
+   "use": "a beam or a glowing plane holds; a scanner line",
+   "tags": [
+    "Hum",
+    "Buzz",
+    "Electric shaver, electric razor",
+    "Mains hum",
+    "Whir",
+    "Electric"
+   ],
+   "rev": 2
+  },
+  {
+   "id": "move/liftoff",
+   "kind": "swell",
+   "is": "a small toy rocket lifting off",
+   "prompt": "A small toy rocket lifting off a launch pad: a short fizzing ignition and a bright rising whoosh flying up and away. Close-mic, dry, no explosion, no music.",
+   "seconds": 1.6,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a small thing lifts off and flies up: a toy rocket, a launch",
+   "tags": [
+    "Whoosh, swoosh, swish",
+    "Hiss",
+    "Fireworks",
+    "Firecracker",
+    "Rumble"
+   ]
+  },
+  {
+   "id": "foley/page-flip",
+   "kind": "hit",
+   "is": "a calendar page flipped over",
+   "prompt": "A stiff paper page of a desk calendar flipped over by hand and landing flat: one crisp paper flick and a light slap. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.7,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a calendar page or a sheet is flipped over",
+   "tags": [
+    "Rustle",
+    "Crumpling, crinkling",
+    "Tearing",
+    "Shuffling cards",
+    "Tap",
+    "Thump, thud"
+   ],
+   "rev": 2,
+   "min": 0.12
+  },
+  {
+   "id": "foley/cup-down",
+   "kind": "hit",
+   "is": "a ceramic coffee mug set down on a desk",
+   "prompt": "A ceramic coffee mug set down on a wooden desk: one soft ceramic knock. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.6,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a cup or a mug is set down",
+   "tags": [
+    "Dishes, pots, and pans",
+    "Chink, clink",
+    "Knock",
+    "Thump, thud",
+    "Tap",
+    "Wood"
+   ]
+  },
+  {
+   "id": "move/deflate",
+   "kind": "swell",
+   "is": "a balloon slowly deflating, a sad descending squeak",
+   "prompt": "A small party balloon slowly deflating: a sad, descending squeaky hiss of air running out. Close-mic, dry, no pop, no music.",
+   "seconds": 1.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a thing runs out of steam: a sad little deflate, a world goes flat",
+   "tags": [
+    "Hiss",
+    "Squeak",
+    "Whistling",
+    "Air horn, truck horn",
+    "Wind"
+   ]
+  },
+  {
+   "id": "move/fizzle",
+   "kind": "swell",
+   "is": "a sparkler fizzling out with a small puff",
+   "prompt": "A small sparkler fizzling out: a short crackling sizzle that dies away, ending in a soft puff of smoke. Close-mic, dry, no music.",
+   "seconds": 1.2,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a magic trick fails: a wand or a sparkler fizzles out",
+   "tags": [
+    "Hiss",
+    "Sizzle",
+    "Crackle",
+    "Fireworks",
+    "Burst, pop"
+   ]
+  },
+  {
+   "id": "foley/wrench",
+   "kind": "hit",
+   "is": "a small ratchet wrench clicking",
+   "prompt": "A small ratchet wrench turned twice: two quick metallic ratchet clicks. Close-mic, dry, no reverb, no music.",
+   "seconds": 0.8,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a small fix is made: a wrench turns",
+   "tags": [
+    "Ratchet, pawl",
+    "Tools",
+    "Mechanisms",
+    "Clicking",
+    "Tick"
+   ]
   }
  ]
 }

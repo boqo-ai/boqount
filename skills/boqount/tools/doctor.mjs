@@ -64,7 +64,7 @@ export function checks() {
       break;
     } catch {}
   }
-  add("@huggingface/transformers", false, transformers, transformers ? "found" : "not found", "a model listening to sound-library takes: no tool reads it yet (soundlib.mjs build keeps takes by measurement)", "npm install @huggingface/transformers in films/project");
+  add("@huggingface/transformers", false, transformers, transformers ? "found" : "not found", "two models listening to sound-library takes in soundlib.mjs build (CLAP and AST; without it takes are kept by measurement)", "npm install @huggingface/transformers in films/project");
 
   return list;
 }

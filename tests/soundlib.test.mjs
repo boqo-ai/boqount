@@ -171,3 +171,99 @@ test("tempo: a kick every beat reads as its tempo; too short a file has none", (
   }
   assert.equal(tempo(new Float32Array(rate), rate), null);
 });
+
+// Model listening (listen.mjs), with a fake pair of listeners: no package and no download in a test.
+import { build } from "../skills/boqount/tools/soundlib.mjs";
+import { passes, resample } from "../skills/boqount/tools/listen.mjs";
+
+function fakeEars(heardAs, tagsFor) {
+  // CLAP: each description is a unit vector on its own axis; a take points at the axis of what it is heard as.
+  let labels = [];
+  let n = 0;
+  return {
+    ear: {
+      async texts(l) {
+        labels = l;
+        return l.map((_, i) => l.map((__, j) => (i === j ? 1 : 0)));
+      },
+      async audio() {
+        const want = heardAs[n] ?? labels[0];
+        return labels.map((x) => (x === want ? 1 : 0.1 * Math.random()));
+      },
+    },
+    tagger: {
+      async tags() {
+        return tagsFor[n++] ?? [["Silence", 0.9]];
+      },
+    },
+  };
+}
+
+t("build listens: a take heard as its own sound or tagged with one of its tags stays; music and a rejected label go", async () => {
+  const acct = account([
+    { id: "ui/pop", kind: "hit", is: "a bubble pop", prompt: "p", use: "x", seconds: 0.5, candidates: 4, keep: 4, tags: ["Burst, pop"], reject: ["Knock"] },
+    { id: "hit/thud", kind: "hit", is: "a heavy thud", prompt: "t", use: "x", seconds: 0.5, candidates: 1 },
+  ]);
+  for (let k = 0; k < 4; k++) ff("-f", "lavfi", "-i", `sine=frequency=${800 + k * 100}:duration=0.3`, "-af", "afade=t=out:st=0.02:d=0.28", "-f", "mp3", join(acct, `films/sounds/.raw/ui__pop-${k}.mp3`));
+  // Take 0: CLAP hears it as itself. Take 1: heard as a thud, but AST names a tag. Take 2: AST hears music first.
+  // Take 3: heard as a thud, tagged with a rejected label.
+  const ears = fakeEars(
+    ["a bubble pop", "a heavy thud", "a bubble pop", "a heavy thud"],
+    [[["Burst, pop", 0.4]], [["Burst, pop", 0.2], ["Tick", 0.1]], [["Music", 0.6], ["Burst, pop", 0.3]], [["Knock", 0.3], ["Tap", 0.2]]],
+  );
+  // Two entries: rank <= 5 always holds in a two-sound library, so a spec maxrank of 1 makes rank mean "heard first".
+  const spec = JSON.parse(readFileSync(join(acct, "films/sounds/spec.json"), "utf8"));
+  spec.sounds[0].maxrank = 1;
+  writeFileSync(join(acct, "films/sounds/spec.json"), JSON.stringify(spec));
+  const out = await build(["--films", join(acct, "films"), "--only", "ui/pop"], { listeners: ears });
+  assert.match(out, /^listened: CLAP and AST/);
+  const v = JSON.parse(readFileSync(join(acct, "films/sounds/library.json"), "utf8")).sounds["ui/pop"].variants;
+  assert.deepEqual(v.map((x) => x.take).sort(), ["0", "1"]);
+  assert.equal(v[0].take, "0", "the take heard as itself goes first");
+  for (const x of v) for (const k of ["fit", "rank", "heard", "tags"]) assert.ok(x[k] !== undefined, k);
+  assert.match(lib(["audition"], { cwd: acct }).stdout, /audition\.html/);
+  assert.match(readFileSync(join(acct, "films/sounds/audition.html"), "utf8"), /heard as: Burst, pop/);
+});
+
+t("build without the package keeps by measurement and says it did not listen", async () => {
+  const acct = account([{ id: "hit/thud", kind: "hit", is: "a thud", prompt: "t", use: "x", seconds: 0.5, candidates: 1 }]);
+  ff("-f", "lavfi", "-i", "sine=frequency=300:duration=0.3", "-f", "mp3", join(acct, "films/sounds/.raw/hit__thud-0.mp3"));
+  const out = await build(["--films", join(acct, "films")], { listeners: { missing: "not installed here" } });
+  assert.match(out, /^not listened: not installed here/);
+  const s = JSON.parse(readFileSync(join(acct, "films/sounds/library.json"), "utf8")).sounds["hit/thud"];
+  assert.equal(s.listened, false);
+  assert.equal(s.variants.length, 1);
+  assert.equal(s.variants[0].heard, undefined);
+});
+
+test("passes: the private build's rules, one by one", () => {
+  const base = { dur: 0.3, centroid: 2000, rank: 9, heard: "x", tags: [["Tick", 0.02]], tagged: 0 };
+  const s = { kind: "hit", tags: ["Tick"] };
+  assert.equal(passes(s, { ...base, rank: 5 }), true, "own description among the five nearest");
+  assert.equal(passes(s, { ...base, rank: 6 }), false);
+  assert.equal(passes({ ...s, maxrank: 8 }, { ...base, rank: 6 }), true);
+  assert.equal(passes(s, { ...base, tagged: 0.05 }), true, "a tag at 0.05");
+  assert.equal(passes(s, { ...base, heard: "a key" }, ["a key"]), true, "heard as an accepted entry");
+  assert.equal(passes(s, { ...base, rank: 1, tags: [["Speech", 0.3]] }), false, "speech first");
+  assert.equal(passes({ ...s, musical: true }, { ...base, rank: 1, tags: [["Music", 0.9]] }), true, "musical keeps music");
+  assert.equal(passes({ ...s, kind: "bed" }, { ...base, rank: 1, tags: [["Speech", 0.9]] }), true, "a bed may sound like voices");
+  assert.equal(passes({ ...s, reject: ["Knock"] }, { ...base, rank: 1, tags: [["Tick", 0.5], ["Knock", 0.1]] }), false, "a rejected label");
+  assert.equal(passes({ ...s, max: 0.2 }, { ...base, rank: 1 }), false, "too long");
+  assert.equal(passes({ ...s, minCentroid: 3000 }, { ...base, rank: 1 }), false, "too dark");
+});
+
+test("the shipped spec: listening fields have their shapes, and every accepted id is a sound or a known gap", () => {
+  const { sounds } = JSON.parse(readFileSync(shippedSpec, "utf8"));
+  const ids = new Set(sounds.map((s) => s.id));
+  for (const s of sounds) {
+    for (const k of ["tags", "reject", "accept"]) if (s[k] !== undefined) assert.ok(Array.isArray(s[k]) && s[k].every((x) => typeof x === "string"), `${s.id}.${k}`);
+    if (s.musical !== undefined) assert.equal(typeof s.musical, "boolean", s.id);
+    if (s.rev !== undefined) assert.ok(Number.isInteger(s.rev) && s.rev >= 2, s.id);
+    for (const a of s.accept ?? []) assert.ok(ids.has(a) || a === "move/swish", `${s.id} accepts ${a}`);
+  }
+  assert.ok(sounds.length >= 65);
+});
+
+test("resample: a 48 kHz second becomes a 16 kHz second", () => {
+  assert.equal(resample(new Float32Array(48000), 48000, 16000).length, 16000);
+});

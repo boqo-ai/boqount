@@ -2,7 +2,7 @@
 // The account's sound library, and a film's tonal set. `sound.md` says how the library is used; this file makes it.
 //
 //   node <skill>/tools/soundlib.mjs gen   [--films <dir>] [--only id,id] [--yes]   paid: ElevenLabs takes of each entry
-//   node <skill>/tools/soundlib.mjs build [--films <dir>] [--only id,id]           trim, level, measure: the manifest
+//   node <skill>/tools/soundlib.mjs build [--films <dir>] [--only id,id] [--no-listen]  trim, level, measure, listen: the manifest
 //   node <skill>/tools/soundlib.mjs drop  <id> <n> [--films <dir>]                  take n of a sound out (a person heard it)
 //   node <skill>/tools/soundlib.mjs list  [--films <dir>]                           the manifest as a table
 //   node <skill>/tools/soundlib.mjs audition [<audio-dir>] [--films <dir>]          a page with every take, for a person's ear
@@ -21,13 +21,17 @@
 // true`: a tick, a click, a key) is asked as several seconds of the same thing and cut into single events by `build`.
 //
 // `build` keeps, per entry, up to `keep` takes that fit its measurable limits (`min`/`max` length in seconds,
-// `minCentroid` brightness). Nobody hears a take here and no model listens: the person's listen through `audition`
-// decides which stay (`drop` the ones they reject). A take that lives under 150 Hz gets harmonics at 200-1200 Hz, so
+// `minCentroid` brightness). When @huggingface/transformers is installed, two models listen too (`listen.mjs`): a
+// take is kept only if CLAP ranks its own description among the five nearest of the library's (or hears it as one the
+// entry `accept`s) or AST names one of its `tags`; one either hears as music or speech is out unless it is `musical`,
+// and a `reject` label at 0.1 throws it out. Without the package nothing listens, and the report says so. Nobody hears
+// a take here either way: the person's listen through `audition` decides which stay (`drop` the ones they reject). A take that lives under 150 Hz gets harmonics at 200-1200 Hz, so
 // a phone, which plays almost nothing under 200 Hz, still plays it.
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { dot, loadListeners, passes, score } from "./listen.mjs";
 import { ID, SR, biquad, decode, envelope, ffmpeg, filter, meanLevel, measure, mono, seeded, spectrum, writeAudio } from "./sound-lib.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -174,32 +178,61 @@ export function body(y) {
   return sum.map((c) => Float32Array.from(c, (v) => (v * Math.pow(10, -3 / 20)) / sp));
 }
 
-export function build(args) {
+export async function build(args, { listeners } = {}) {
   const p = paths(args);
   const all = readSpec(p);
+  // The two models (listen.mjs), unless --no-listen or the package is absent: then takes are kept by measurement.
+  const ears = listeners ?? (args.includes("--no-listen") ? { missing: "--no-listen" } : await loadListeners({ cwd: dirname(dirname(p.root)) }));
+  const listened = !ears.missing;
+  const labels = all.map((s) => s.is);
+  const T = listened ? await ears.ear.texts(labels) : null;
   const man = existsSync(p.man) ? JSON.parse(readFileSync(p.man, "utf8")) : { _: "", sounds: {} };
   man._ =
-    "Written by soundlib.mjs build. One entry per sound; its variants are takes of the same thing. `sync` is where a take peaks (s), `loud` its loudest 400 ms K-weighted (LKFS), `phone` the same with nothing under 200 Hz (what a phone's speaker plays), `peak` its sample peak (dBFS), `low` the share of its energy under 150 Hz, `voice` the share at 1-4 kHz, `body` true where harmonics were added so a phone plays it. Nobody has heard these files until a person listens through `audition`.";
-  const lines = [];
+    "Written by soundlib.mjs build. One entry per sound; its variants are takes of the same thing, best first. `sync` is where a take peaks (s), `loud` its loudest 400 ms K-weighted (LKFS), `phone` the same with nothing under 200 Hz (what a phone's speaker plays), `peak` its sample peak (dBFS), `low` the share of its energy under 150 Hz, `voice` the share at 1-4 kHz, `body` true where harmonics were added so a phone plays it. Where the models listened: `fit` the cosine between the take and its description (CLAP), `rank` its place among every description in the library, `heard` the description CLAP put first, `tags` what a second model (AST, AudioSet labels) named it. Nobody has heard these files until a person listens through `audition`: the models' readings are a machine's.";
+  const lines = [listened ? "listened: CLAP and AST (a machine's reading, not a person's)" : `not listened: ${ears.missing}. Takes are kept by measurement; the person's listen decides.`];
   for (const s of readSpec(p, flag(args, "only"))) {
+    const i = all.findIndex((x) => x.id === s.id);
+    const want = new Set(s.tags ?? []);
     const cands = [];
     for (let k = 0; k < (s.candidates ?? 3); k++) {
       const raw = rawName(p, s, k);
       if (!existsSync(raw)) continue;
       const x = decode(raw);
       if (x[0].length < 0.05 * SR || peakOf(mono(x)) < 1e-3) continue;
-      (s.slice ? slices(x) : [x]).forEach((part, j) => {
+      for (const [j, part] of (s.slice ? slices(x) : [x]).entries()) {
         let y = processTake(part, s.kind);
-        if (y[0].length < 0.02 * SR) return;
+        if (y[0].length < 0.02 * SR) continue;
         let m = measure(y);
         const bodied = s.kind !== "bed" && m.low > 0.5;
         if (bodied) (y = body(y)), (m = measure(y));
-        cands.push({ take: s.slice ? `${k}.${j}` : String(k), y, body: bodied, ...m });
-      });
+        const c = { take: s.slice ? `${k}.${j}` : String(k), y, body: bodied, ...m };
+        if (listened) {
+          const mo = Float32Array.from(mono(y));
+          const a = await ears.ear.audio(mo);
+          const cos = T.map((t) => dot(t, a));
+          const best = cos.indexOf(Math.max(...cos));
+          c.fit = Math.round(cos[i] * 1000) / 1000;
+          c.rank = cos.filter((v) => v > cos[i]).length + 1;
+          c.heard = labels[best];
+          c.tagList = await ears.tagger.tags(mo, 5);
+          c.tagged = Math.max(0, ...c.tagList.filter(([l]) => want.has(l)).map(([, q]) => q));
+        }
+        cands.push(c);
+      }
     }
+    const accepted = all.filter((x) => (s.accept ?? []).includes(x.id)).map((x) => x.is);
     const fits = (c) => c.dur <= (s.max ?? 99) && c.dur >= (s.min ?? 0) && c.centroid >= (s.minCentroid ?? 0);
-    // A one-shot that starts late (its first 40 ms far under its peak) goes after the ones that start on time.
-    const kept = cands.filter(fits).sort((a, b) => (s.kind === "hit" ? (a.attack < -6) - (b.attack < -6) : 0)).slice(0, s.keep ?? 2);
+    // Listened: a take passes on either model and the best agreement goes first (listen.mjs → passes, score). Not
+    // listened: the limits alone, and a one-shot that starts late (its first 40 ms far under its peak) goes last.
+    const kept = listened
+      ? cands
+          .filter((c) => passes(s, { ...c, tags: c.tagList }, accepted))
+          .sort((a, b) => score(s, b) - score(s, a))
+          .slice(0, s.keep ?? 2)
+      : cands
+          .filter(fits)
+          .sort((a, b) => (s.kind === "hit" ? (a.attack < -6) - (b.attack < -6) : 0))
+          .slice(0, s.keep ?? 2);
     const group = join(p.lib, s.id.split("/")[0]);
     mkdirSync(group, { recursive: true });
     const base = s.id.split("/")[1];
@@ -207,12 +240,13 @@ export function build(args) {
     const variants = kept.map((c, n) => {
       const file = `${s.id}-${n + 1}.flac`;
       writeAudio(join(p.lib, file), c.y);
-      const { y, ...rest } = c;
-      return { file, ...rest };
+      const { y, tagList, tagged, ...rest } = c;
+      return { file, ...rest, ...(tagList ? { tags: tagList.slice(0, 3).map(([l, q]) => `${l} ${q}`).join(", ") } : {}) };
     });
-    man.sounds[s.id] = { kind: s.kind, is: s.is, use: s.use ?? "", ...(s.note ? { note: s.note } : {}), ...(s.repeat ? { repeat: true } : {}), source: `ElevenLabs sound effects, generated ${new Date().toISOString().slice(0, 10)}`, prompt: s.prompt, variants };
+    man.sounds[s.id] = { kind: s.kind, is: s.is, use: s.use ?? "", ...(s.note ? { note: s.note } : {}), ...(s.repeat ? { repeat: true } : {}), source: `ElevenLabs sound effects, generated ${new Date().toISOString().slice(0, 10)}`, prompt: s.prompt, listened, variants };
     lines.push(`${s.id.padEnd(22)} kept ${variants.length}/${cands.length}${variants.length < Math.min(2, s.keep ?? 2) ? "   <-- few" : ""}`);
-    for (const v of variants) lines.push(`      ${v.dur}s  loud ${v.loud}  phone ${v.phone}  low ${v.low}${v.body ? "  (body added)" : ""}`);
+    for (const v of variants)
+      lines.push(`      ${v.dur}s  loud ${v.loud}  phone ${v.phone}  low ${v.low}${v.body ? "  (body added)" : ""}${listened ? `  clap r${v.rank} ${v.fit}  | ${v.tags}` : ""}`);
   }
   // Entries that left the spec leave the manifest.
   for (const id of Object.keys(man.sounds)) if (!all.some((s) => s.id === id)) delete man.sounds[id];
@@ -254,12 +288,12 @@ export function audition(args) {
   }
   const rows = Object.entries(groups).flatMap(([g, items]) => [
     `<h2>${esc(g)}/</h2>`,
-    ...items.map(([id, s, base]) => `<section><h3>${esc(id)}</h3><p>${esc(s.use || s.is)}${s.note ? ` · ${esc(s.note)}` : ""}</p>${s.variants.map((v, i) => `<div class=t><audio controls preload=none src="${esc(base + v.file)}"></audio><span>take ${i + 1} · ${v.dur} s</span></div>`).join("")}</section>`),
+    ...items.map(([id, s, base]) => `<section><h3>${esc(id)}</h3><p>${esc(s.use || s.is)}${s.note ? ` · ${esc(s.note)}` : ""}</p>${s.variants.map((v, i) => `<div class=t><audio controls preload=none src="${esc(base + v.file)}"></audio><span>take ${i + 1} · ${v.dur} s${v.tags ? ` · heard as: ${esc(v.tags)}` : ""}</span></div>`).join("")}</section>`),
   ]);
   const count = Object.values(groups).reduce((t, x) => t + x.length, 0);
   const page =
     "<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width'><title>Sound library</title><style>body{font:15px/1.45 system-ui,sans-serif;max-width:860px;margin:32px auto;padding:0 16px;background:#141414;color:#eee}h2{margin-top:36px}h3{margin:18px 0 2px;font-size:16px}p{margin:0 0 6px;color:#aaa}.t{display:flex;align-items:center;gap:12px;margin:4px 0;flex-wrap:wrap}audio{height:32px;width:260px}span{color:#a0a0a0;font-size:13px}</style>" +
-    `<h1>Sound library: ${count} sounds</h1><p>Every take, as the mixer uses it. Nobody has heard these: listen, and say which takes go.</p>${rows.join("")}`;
+    `<h1>Sound library: ${count} sounds</h1><p>Every take, as the mixer uses it. Nobody has heard these: the notes are what two models named them, where they listened. Listen, and say which takes go.</p>${rows.join("")}`;
   mkdirSync(p.root, { recursive: true });
   writeFileSync(join(p.root, "audition.html"), page);
   return join(p.root, "audition.html");
@@ -514,7 +548,7 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
     process.exit(2);
   }
   try {
-    console.log(COMMANDS[cmd](rest));
+    console.log(await COMMANDS[cmd](rest));
   } catch (e) {
     console.error(`soundlib.mjs: ${e.message}`);
     process.exit(1);

@@ -4,7 +4,7 @@ What every film's sound is held to, where each number comes from, and how the ac
 rules a film is built by are `motion.md` → Sound follows the picture; the sheet, the mix and the check are `film.md` →
 Sound.
 
-**Nobody hears anything in this pipeline.** Every check below is a measurement. The person's listen at full speed is
+**Nobody hears anything in this pipeline.** Every check below is a measurement or a model's reading. The person's listen at full speed is
 the only judgement of how a film sounds, and every report says so.
 
 ## The standards, and where each comes from
@@ -40,11 +40,11 @@ files. A film names a sound by its id (`ui/click`) and the mixer rotates its tak
 | Group | What is in it | Use |
 |---|---|---|
 | `ui/` | click, tap, key, typing, switch, pop, pop-low, tick, counter, send, notify, error, success, slide, progress, shutter, scrub, chat-flurry | what a pointer, a finger or a keyboard does |
-| `move/` | whoosh-air, whoosh-low, suck, riser-short, riser, downlifter, reverse-cymbal, shimmer, glitch, tape-stop | air a moving thing or the camera pushes; a build; energy leaving |
+| `move/` | whoosh-air, whoosh-low, suck, riser-short, riser, downlifter, reverse-cymbal, shimmer, glitch, tape-stop, whizz-slow, liftoff, deflate, fizzle | air a moving thing or the camera pushes; a build; energy leaving |
 | `hit/` | thud, boom, punch, slam, stamp, clank | weight landing |
-| `foley/` | lock-shut, lock-open, lock-rattle, paper, cards, scissors, laptop-close, marker, swipe, rustle, coin, cash, heartbeat | the thing itself |
+| `foley/` | lock-shut, lock-open, lock-rattle, paper, cards, scissors, laptop-close, marker, swipe, rustle, coin, cash, heartbeat, sauce-pour, page-flip, cup-down, wrench | the thing itself |
 | `crowd/` | cheer, gasp | people, never a named one |
-| `amb/` | city-dusk, room, office-keys, night, morning, crowd-murmur, screen | the air of a world: long, quiet |
+| `amb/` | city-dusk, room, office-keys, night, morning, crowd-murmur, screen, laser-hum | the air of a world: long, quiet |
 | `tone/` (per film) | pluck-1 to -6, blip-1 to -3, bell-1, bell-5, confirm, resolve, deny, riser-1, riser-2, fall, shimmer, sub, pad | pitched marks in the key of the film's music (`film.md` → Sound) |
 | `kit/` | the sixteen synthesized sounds (`motion.md` → Sound follows the picture) | what carries a film without a library |
 
@@ -63,9 +63,22 @@ two backgrounds can read as speech (so never under a line that must be understoo
    harmonics at 200 to 1200 Hz (`body`) so a phone plays it, and keeps up to `keep` takes within the entry's limits
    (`min` and `max` length, `minCentroid` brightness). It measures each one (length, `sync`: where it peaks, `loud` and
    `phone`: its loudest 400 ms, whole and with nothing under 200 Hz, its peak, its share of low and of speech band).
-3. **The person listens.** `audition` writes `films/sounds/audition.html`, every take with a player; the person says
-   which go, and `drop <id> <n>` takes each one out. **Fewer takes beat a wrong one.** No model listens here: until a
-   person has, the library is unheard, and the report says so.
+3. **Two models listen** (`tools/listen.mjs`), when `@huggingface/transformers` is installed (`doctor.mjs` says
+   whether it is; `npm install @huggingface/transformers` in `films/project`; the models download once, about 930
+   MB). CLAP sets the take against the description (`is`) of every sound in the library: its own must be among the
+   five nearest (`maxrank`), or the one it hears first must be an entry the spec `accept`s. AST names it with
+   AudioSet's labels ("Shuffling cards", "Camera"): one of the entry's `tags` must be among its five, at 0.05 or more.
+   A take passes on either; one AST hears first as music or speech (0.3 or more) is out unless the entry
+   is `musical`, and so is one with a `reject` label at 0.1 or more, or one that breaks the entry's limits. Kept takes
+   go best agreement first. **Fewer takes of a sound beat a wrong one.** The manifest keeps, per take, what each model
+   heard (`fit`, `rank`, `heard`, `tags`); read the build's lines: what the tagger names a take is the nearest thing to
+   hearing it. Without the package (or with `--no-listen`) takes are kept by the limits alone, and the build's first
+   line says "not listened".
+4. **The person listens.** `audition` writes `films/sounds/audition.html`, every take with a player and what the
+   models named it; the person says which go, and `drop <id> <n>` takes each one out. A model's reading is a
+   machine's: until a person has listened, the library is unheard, and the report says so. **A take goes into a film
+   only if its `heard` names what its `is` says** (or one of its `tags` does): a take the model heard as another
+   sound is the wrong sound, whatever its measurements.
 
 **The library stays where it was made.** ElevenLabs' terms let the account use what it generated inside its films,
 and forbid passing the sound effects on as isolated files or as a sound library: `films/sounds/` is git-ignored
