@@ -44,7 +44,7 @@ export function check(dir, { library, kit } = {}) {
   const m = ebur128(["-i", join(dir, "mix.wav")]);
   const tgt = P.target ?? { I: -14, TP: -1 };
   if (voiced) rule(Math.abs(m.I - tgt.I) <= 0.5 && m.TP <= tgt.TP + 0.05, `master ${m.I} LUFS integrated, ${m.TP} dBTP, range ${m.LRA} LU (target ${tgt.I} LUFS, at most ${tgt.TP} dBTP)`);
-  else rule(m.I <= tgt.I + 0.5 && m.TP <= tgt.TP + 0.05, `master ${m.I} LUFS integrated, ${m.TP} dBTP (no voice: at most ${tgt.I} LUFS and ${tgt.TP} dBTP; quieter is allowed)`);
+  else rule(Math.abs(m.I - tgt.I) <= 1 && m.TP <= tgt.TP + 0.05, `master ${m.I} LUFS integrated, ${m.TP} dBTP (no voice: target ${tgt.I} LUFS within 1 LU, at most ${tgt.TP} dBTP)`);
   // How hard the limiter works: the summed stems at the master's gain, against the ceiling, in 10 ms blocks.
   const pre = [0, 1].map((c) => Float64Array.from(st.vo[c], (v, i) => v + st.music[c][i] + st.sfx[c][i] + st.beds[c][i]));
   const g = Math.pow(10, (m.I - meanLevel(pre)) / 20);
