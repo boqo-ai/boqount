@@ -243,6 +243,8 @@ not on the line: it goes in the log under Owed. So `none` fits only a run that w
 **The GitHub and push lines:** each GitHub write's line and each push's line (SKILL.md → Rules) is said as its own text
 immediately before its tool call, verbatim. It may be repeated above the report, in the order of the acts, where it is
 not counted; it is never put inside a slot. A comment that then has no reply keeps its line, and Numbers says `not sent`.
+The lock's claim and release (SKILL.md → Rules → The lock) push only their own file and have no line; the release
+follows the full Save. A stale lock taken over is named in the report and in the log entry.
 
 **The blocks** come after the Auto line, each under its name, in this order, and are **not counted in the 300 words**.
 A block with nothing in it is left out.

@@ -80,11 +80,16 @@ and the calibration count are the whole account's.
 
 Any file named here or below that does not exist yet: run its fallback and name it in the report as "not built".
 
+Every mode that writes (all but `status` and a bare `config`) takes the lock first, as the day's step 1 does, and
+releases it at its full Save (Rules → The lock). `status` reads `node <skill>/tools/account-lock.mjs status` and names
+the holder in its report when someone holds it.
+
 ## The day
 
 1. **Sync:** `mkdir -p .boqo-upload marketing/evidence`; in a git repository, the folder's `.gitignore` holds the line
-   `.boqo-upload/` (added, and the file created, when it is missing, whatever `git_commit` says); then, with
-   `git_push: on`, `git pull --rebase --autostash` (Save's conflict rule).
+   `.boqo-upload/` (added, and the file created, when it is missing, whatever `git_commit` says); then **the lock**,
+   `node <skill>/tools/account-lock.mjs claim` (Rules → The lock), and only on `"ok":true`, with `git_push: on`,
+   `git pull --rebase --autostash` (Save's conflict rule).
 2. **Read** the morning read, then `posting.md` → Start: which channels go through boqo today and which by hand; for
    the boqo ones the login, the schema lines, the posting setup, the one schedule read, and the reconcile of every
    record in flight; for the by-hand ones the posts still `handed`. No other outward call goes before it.
@@ -147,7 +152,19 @@ Any file named here or below that does not exist yet: run its fallback and name 
      stop, report;
   5. immediately before the push, as its own text: "Pushing <n> commit(s) to <remote>/<branch> as <git user.name>.";
   6. `git push`, to the current branch's upstream; a rejected push pulls once more, then pushes;
-  7. never `--force`.
+  7. never `--force`;
+  8. at the run's end (step 13, or a writing mode's last Save), whatever `git_commit` says:
+     `node <skill>/tools/account-lock.mjs release`.
+- **The lock.** When several people run this account from their own machines, sharing it through one remote,
+  `marketing/lock.md` on that remote says who runs it now, and only `<skill>/tools/account-lock.mjs` writes it (a push
+  of its own, so it needs no Save and no "Pushing" line). An account that is not shared needs none: outside a
+  repository, with no upstream, or with `git_push` not `on`, the tool answers `"needed":false` and the run goes on.
+  `claim` answers `"ok":false` with the holder and `until` when someone else holds it: stop before any outward call,
+  write nothing, and report "<holder> on <host> runs the account until <until>". A lock past its `until` (default
+  6 h) is stale and `claim` takes it over, naming whose it was (`replaced`): say so in the report and the log. A run
+  still going near `until` claims again (it renews). Freeing someone else's fresh lock (`release --force`) is the
+  human's step, never yours. With the remote unreachable, `claim` fails (exit 1): the run goes no further than
+  `status` would.
 - **Writes** stay in `marketing/` and `brand/<slug>/`, plus the working folder `production.md` names for a post
   being made. Derived media go to `marketing/media/`; upload replies (signed URLs) go to `.boqo-upload/` only. Material
   that is not the brand's is never committed: its folder is git-ignored, its `SOURCES.md` excepted (`film.md` →
@@ -188,6 +205,7 @@ written in the config's `language`; with it empty, in the language the person wr
 | "Once I get the answer, I'll send the captions" | The approval message holds every part now (`gate.md`) |
 | "Nothing is scheduled before approval, so the queue and the log are enough" | Each planned post gets its record and its ledger rows at step 7 |
 | "I'll write the status once it's all done" | Write and commit each status before its call (`posting.md`) |
+| "Their lock is surely left over, I'll free it" | A fresh lock is theirs: stop and report it. Only a lock past its `until` is taken over, and only by `claim` |
 | "`list_schedule` shows it" (no `from`) | Read from 48 hours back, or a post already out is posted twice |
 | "The user is in a hurry: all three today" | At most 2 a day on a channel, in the windows. The rest go to later days |
 | "Before I write anything, I'll read the brand kit, the hook bank and the strategy" | Six things. The hook bank comes through the strategy line; `research.md` never |
