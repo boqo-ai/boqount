@@ -1,4 +1,4 @@
-// A story film runs once (film.md → The story format). One world for each of the ten parts, each brought in on a
+// A story film runs once (story.md). One world for each of the ten parts, each brought in on a
 // spoken word by the move MOVES names (kit/WorldChange.tsx); the captions are one layer over every world and carry
 // the film on mute; the last world is the call, shown (kit/Call.tsx), held to the end. No seam, no hook drawn twice.
 //

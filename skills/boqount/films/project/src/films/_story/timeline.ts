@@ -1,4 +1,4 @@
-// The clock of a story film (film.md → The story format): ten parts, one world for each, every change on a spoken
+// The clock of a story film (story.md): ten parts, one world for each, every change on a spoken
 // word, and no loop. `film.mjs new <slug> --story` copies this skeleton; the starter (src/films/starter/) is a whole
 // film built on it.
 //

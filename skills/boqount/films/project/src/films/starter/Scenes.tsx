@@ -7,7 +7,7 @@ import {W4Notes, W5Sill, W6Week, W7Pair} from './WorldsB';
 import {W8App, W9Payoff, W10Call} from './WorldsC';
 import {DURATION, MOVES, PHRASES, WORLD, cueOf, wordOf} from './timeline';
 
-// A story film (film.md → The story format): it runs once. One world for each part, each change on a spoken word,
+// A story film (story.md): it runs once. One world for each part, each change on a spoken word,
 // by the move MOVES names (kit/WorldChange.tsx); the captions are one layer over every world and carry the film on
 // mute. No loop: no seam, no hook drawn twice; the last world is the call, shown, held to the end.
 export const Scenes: React.FC = () => (

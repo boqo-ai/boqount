@@ -38,7 +38,8 @@ call (`hooks.md` → The arc).
 
 The record (status `planned`, its Layer and its cost estimate) exists before any file under `films/`.
 
-1. **The film's folders:** `node <skill>/tools/film.mjs new <slug>` (The project). Its id is the slug in PascalCase.
+1. **The film's folders:** `node <skill>/tools/film.mjs new <slug>`, with `--story` for a `product` or `offer` film
+   (The project). Its id is the slug in PascalCase.
 2. **Hooks.** Read `brand/<slug>/style.md` → Language first. From the strategy line (a Hook bank row, or the series'
    fixed opening line for a `niche` film), write three hooks (frame 0 text and first line): for a `niche` film each with
    its seam line (`hooks.md`), for an opportunity story each a sourced number and its twist (`story.md`). Read each against `check.md`'s hook rule; the strongest that passes is the film's, and all three go
@@ -91,7 +92,7 @@ changes: `node <skill>/tools/film.mjs theme`.
 `audio/`; `media/` and `out/` come later) and the scenes in `films/project/src/films/<slug>/`, from a neutral template
 whose hook layer, seam and clock are already wired (`timeline.ts`, `Hook.tsx`, `Scenes.tsx`). That template,
 `_template`, is a `niche` film's. A `product` or `offer` film's scenes start from `films/project/src/films/_story/`
-instead: the captions (`Captions`), the world changes (`WorldChange`) and no loop machinery (`story.md` → Build and
+instead (`film.mjs new <slug> --story`, which also writes a sheet that does not loop): the captions (`Captions`), the world changes (`WorldChange`) and no loop machinery (`story.md` → Build and
 checks).
 
 **What the films read** (`npm run sync` copies it; every script runs it first): the brand's fonts from

@@ -84,7 +84,7 @@ A film modelled on a reference follows `film.md` → A reference.
 
 ## Build and checks
 
-- **The template:** the film's scenes start from `films/project/src/films/_story/` (`film.md` → The project), which
+- **The template:** `film.mjs new <slug> --story`; the scenes start from `films/project/src/films/_story/` (`film.md` → The project), which
   has the captions, the world changes and no loop machinery. The starter film (`films/starter/`) is a worked example of
   this format.
 - **Sound:** `film.md` → Sound, with `"loop": false`.
