@@ -3,7 +3,8 @@
 //
 //   node <skill>/tools/film.mjs init  [--dir <account>] [--from <films-dir>]   copy <skill>/films/ to <account>/films/ (never over an existing films/project), generate films/sfx/, apply the theme; prints the one command left as {"next": {"cwd", "command": [...]}}
 //   node <skill>/tools/film.mjs theme [--dir <account>]                        brand/<slug>/style.md's ```tokens block → films/project/src/lib/tokens.json
-//   node <skill>/tools/film.mjs new <slug> [--story] [--dir <account>]         films/<slug>/ (script, storyboard, audio skeletons), the scenes in films/project/src/films/<slug>/, registered in src/films/index.ts
+//   node <skill>/tools/film.mjs new <slug> [--story|--ig-story|--carousel] [--dir <account>]   films/<slug>/ (script, storyboard, audio skeletons), the scenes in films/project/src/films/<slug>/, registered in src/films/index.ts
+//   node <skill>/tools/film.mjs sfx <slug> [--dir <account>]                   the sounds of films/<slug>/audio/cues.json's beats → its sfx-cues.json (a story's rules checked first)
 //   node <skill>/tools/film.mjs glimpse [--dir <account>]                      checks films/glimpse/glimpse.json (the first look, onboarding.md → 2. Say it back, and show it), writes its sound sheet, prints the sound and render commands
 //
 // --dir defaults to the current folder: the account's files live where the agent was started, not beside this tool.
@@ -26,6 +27,21 @@
 // loop; id "Story", slug "_story"), its sound sheet says "loop": false, and its storyboard takes the starter's
 // headings (the starter is a story film). The starter is only the worked example: new reads its script and storyboard
 // for their headings when it is there, and works without it.
+// With --ig-story they start as a copy of src/films/_ig-story/ (an Instagram Story, production.md → Stories: 8 to 15 s, all
+// the words in within the first second, two or three sounds, no music, no voice; id "IgStory", slug "_ig-story"): its
+// clock, cues.json with its beats, becomes films/<slug>/audio/cues.json (the sync copies it back to the scenes), and its
+// sound sheet is written from those beats at once (sfx below). With --carousel they start as a copy of
+// src/films/_carousel/ (carousel.md: 1080×1440 stills, one frame per slide; id "Carousel", slug "_carousel"), and
+// films/<slug>/ gets sources.md and caption.txt instead of a script and audio.
+//
+// sfx reads films/<slug>/audio/cues.json's `beats` ({name: {t, kind?, sound?, fallback?, under?, gain?, align?,
+// until?}}, t and until in seconds) and writes one hit per beat with a `sound` into films/<slug>/audio/sfx-cues.json
+// (version 2), each marked `"beat": <name>`; the sheet's other hits, beds and music are kept. A library sound
+// (`<group>/<name>`) with no take in films/sounds/library.json is replaced by the beat's `fallback` (a kit or tonal
+// sound) and the answer says so; with no fallback it is an error. A cue sheet with `"format": "ig-story"` is checked
+// first: 8 to 15 s long, every `text` beat starting by 0.7 s (it rises over 0.3 s, so every word is in by 1 s), at most
+// three sounds, none from a music or voice group; then the sheet is written with no loop, at the story's quiet level
+// (-24 LUFS, -6 dBTP) unless the sheet already sets a target.
 //
 // glimpse checks films/glimpse/glimpse.json, which the agent writes from the deep read's notes:
 //   {"name": {"text", "source"}, "opening": {"text", "source"} | null, "lines": [{"text", "source"}, …2 to 4],
@@ -68,7 +84,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { run as runKit } from "./sfx-kit.mjs";
 
-const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--story] [--dir <account>] | glimpse [--dir <account>]";
+const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--story|--ig-story|--carousel] [--dir <account>] | sfx <slug> [--dir <account>] | glimpse [--dir <account>]";
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 // Folders under films/ that are not a film's: a slug may not take their name.
 const RESERVED_SLUGS = ["project", "sfx", "starter", "glimpse", "sounds"];
@@ -82,6 +98,10 @@ const HEX_ALPHA = /^#(?:[0-9a-fA-F]{4}|[0-9a-fA-F]{8})$/;
  * format), and with --story the story format's (a `product` or `offer` film: ten parts, scenes that change, no loop). */
 const TEMPLATE = { dir: "_template", id: "Template", slug: "_template" };
 const STORY = { dir: "_story", id: "Story", slug: "_story" };
+/** An Instagram Story (production.md → Stories), and a carousel of stills (carousel.md). */
+const IG_STORY = { dir: "_ig-story", id: "IgStory", slug: "_ig-story" };
+const CAROUSEL = { dir: "_carousel", id: "Carousel", slug: "_carousel" };
+const KINDS = { "--story": "story", "--ig-story": "ig-story", "--carousel": "carousel" };
 const RESERVED_WORDS = new Set(
   "break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof let new null package private protected public return static super switch this throw true try typeof var void while with yield await interface implements".split(" "),
 );
@@ -96,21 +116,22 @@ const readOptional = (path) => (existsSync(path) ? readFileSync(path, "utf8") : 
 
 function parseArgs(argv) {
   const [command, ...rest] = argv;
-  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir", "--story"], glimpse: ["--dir"] }[command];
+  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir", ...Object.keys(KINDS)], sfx: ["--dir"], glimpse: ["--dir"] }[command];
   if (!allowed) throw new Error(USAGE);
   const flags = {};
   const positional = [];
   for (let i = 0; i < rest.length; i++) {
-    if (rest[i] === "--story" && allowed.includes("--story")) {
-      if (flags["--story"] !== undefined) throw new Error(USAGE);
-      flags["--story"] = true;
+    if (rest[i] in KINDS && allowed.includes(rest[i])) {
+      if (flags.kind !== undefined) throw new Error(`one of --story, --ig-story and --carousel at most. ${USAGE}`);
+      flags.kind = KINDS[rest[i]];
     } else if (rest[i].startsWith("--")) {
       if (!allowed.includes(rest[i]) || rest[i + 1] === undefined || flags[rest[i]] !== undefined) throw new Error(USAGE);
       flags[rest[i]] = rest[++i];
     } else positional.push(rest[i]);
   }
-  if (positional.length !== (command === "new" ? 1 : 0)) {
-    if (command === "new" && positional.length === 0) throw new Error(`new needs a slug. ${USAGE}`);
+  const takesSlug = command === "new" || command === "sfx";
+  if (positional.length !== (takesSlug ? 1 : 0)) {
+    if (takesSlug && positional.length === 0) throw new Error(`${command} needs a slug. ${USAGE}`);
     throw new Error(USAGE);
   }
   return { command, flags, slug: positional[0] };
@@ -262,6 +283,9 @@ function importName(slug, taken) {
 const STORYBOARD_HEADINGS = "# Starter — storyboard (9:16)\n## The locked-format points\n## The chain\n## Sound\n";
 const STORY_HEADINGS = "# Starter — storyboard (9:16)\n## The story-format points\n## The worlds\n## Sound\n";
 const SCRIPT_LABELS = "Structure:\n";
+const CAROUSEL_SOURCES = "# <slug>: sources\n\nEvery outside claim on a slide: the slide, the claim, the source (a primary one), its date, the exact quote.\nA number with no credible source is dropped; an illustrative number reads as an example.\n\n| Slide | Claim | Source | Date | Quote |\n| --- | --- | --- | --- | --- |\n";
+const CAROUSEL_CAPTION = "The hook line.\n\n→ the facts, one a line\n\nThe turn.\nWhat it does, in plain words.\nThe payoff, in one line.\n\nSources: \n\n";
+const STORY_WORDS = "# <slug>: the story's words\n\nWhose words (the person's, or the step's idea they took):\nTrue on (a date, when a word like \"yesterday\" or \"right now\" is in it):\nThe link, if any (the person adds the sticker in the app):\n";
 const headingsOnly = (text, slug) =>
   text.split("\n").filter((l) => /^#{1,6}\s/.test(l)).map((l) => l.replace(/starter/gi, slug)).join("\n\n") + "\n";
 /** A script's skeleton: one numbered line, and each label (`Structure:`) with its text removed. */
@@ -271,8 +295,9 @@ const scriptSkeleton = (text) =>
 const QUOTED = (word) => new RegExp(`(["'])${word}\\1`, "g");
 const renamed = (text, id, slug, tpl = TEMPLATE) => text.replace(QUOTED(tpl.id), `$1${id}$1`).replace(QUOTED(tpl.slug), `$1${slug}$1`);
 
-async function newFilm(account, slug, story = false) {
-  const tpl = story ? STORY : TEMPLATE;
+async function newFilm(account, slug, kind = "loop") {
+  const story = kind === "story";
+  const tpl = { loop: TEMPLATE, story: STORY, "ig-story": IG_STORY, carousel: CAROUSEL }[kind];
   if (!slug || !SLUG.test(slug)) throw new Error(`${JSON.stringify(slug ?? "")} is not a slug: use a-z, 0-9 and single hyphens, e.g. dry-spell`);
   if (RESERVED_SLUGS.includes(slug)) throw new Error(`${slug} is a folder of the film project, not a film: choose another slug`);
   const project = join(account, "films/project");
@@ -306,12 +331,23 @@ async function newFilm(account, slug, story = false) {
   const taken = new Set([...lines.join("\n").matchAll(/\bas\s+(\w+)\s*\}/g)].map((m) => m[1]));
   const name = importName(slug, taken);
 
+  let sound = null;
   try {
-    mkdirSync(join(filmDir, "audio"), { recursive: true });
-    writeFileSync(join(filmDir, "script.txt"), scriptSkeleton(readOptional(join(starterFilm, "script.txt")) ?? SCRIPT_LABELS));
-    writeFileSync(join(filmDir, "STORYBOARD.md"), headingsOnly((story ? readOptional(join(starterFilm, "STORYBOARD.md")) : null) ?? (story ? STORY_HEADINGS : STORYBOARD_HEADINGS), slug));
-    writeFileSync(join(filmDir, "audio/cues.json"), JSON.stringify({ duration: 0, lines: [] }, null, 2) + "\n");
-    writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ version: 2, loop: !story, hits: [], beds: [], music: { segments: [] } }, null, 2) + "\n");
+    if (kind === "carousel") {
+      mkdirSync(filmDir, { recursive: true });
+      writeFileSync(join(filmDir, "sources.md"), CAROUSEL_SOURCES.replace("<slug>", slug));
+      writeFileSync(join(filmDir, "caption.txt"), CAROUSEL_CAPTION);
+    } else if (kind === "ig-story") {
+      mkdirSync(join(filmDir, "audio"), { recursive: true });
+      writeFileSync(join(filmDir, "audio/cues.json"), readFileSync(join(template, "cues.json"), "utf8"));
+      writeFileSync(join(filmDir, "words.md"), STORY_WORDS.replace("<slug>", slug));
+    } else {
+      mkdirSync(join(filmDir, "audio"), { recursive: true });
+      writeFileSync(join(filmDir, "script.txt"), scriptSkeleton(readOptional(join(starterFilm, "script.txt")) ?? SCRIPT_LABELS));
+      writeFileSync(join(filmDir, "STORYBOARD.md"), headingsOnly((story ? readOptional(join(starterFilm, "STORYBOARD.md")) : null) ?? (story ? STORY_HEADINGS : STORYBOARD_HEADINGS), slug));
+      writeFileSync(join(filmDir, "audio/cues.json"), JSON.stringify({ duration: 0, lines: [] }, null, 2) + "\n");
+      writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ version: 2, loop: !story, hits: [], beds: [], music: { segments: [] } }, null, 2) + "\n");
+    }
     for (const file of copyTree(template, scenesDir)) {
       if (/\.(ts|tsx)$/.test(file)) writeFileSync(file, renamed(readFileSync(file, "utf8"), id, slug, tpl));
     }
@@ -319,12 +355,88 @@ async function newFilm(account, slug, story = false) {
     lines.splice(at.listEnd[0], 0, `${indent}${name},`);
     lines.splice(at.importsEnd[0], 0, `import {film as ${name}} from './${slug}';`);
     writeFileSync(indexPath, lines.join("\n"));
+    if (kind === "ig-story") sound = beatSound(account, slug);
   } catch (e) {
     rmSync(filmDir, { recursive: true, force: true });
     rmSync(scenesDir, { recursive: true, force: true });
     throw e;
   }
-  return { command: "new", slug, id, format: story ? "story" : "loop", film: `films/${slug}`, scenes: `films/project/src/films/${slug}`, registered: true };
+  const made = { command: "new", slug, id, format: kind, film: `films/${slug}`, scenes: `films/project/src/films/${slug}`, registered: true };
+  if (kind === "ig-story") return { ...made, sound, next: `write the words in ${made.scenes}/Story.tsx (WORDS) and words.md; move beats in films/${slug}/audio/cues.json, then film.mjs sfx ${slug}` };
+  if (kind === "carousel") return { ...made, next: `write the slides in ${made.scenes}/slides.ts, the sources in films/${slug}/sources.md; render with npm run slides -- ${id} (carousel.md)` };
+  return made;
+}
+
+// ---------------------------------------------------------------- sfx
+
+/** A sound a story never takes: music and voices (a story is effects only). */
+const NOT_IN_A_STORY = /^(music|voice|vo)\//;
+const STORY_TARGET = { I: -24, TP: -6 };
+
+/** The rules of a story's clock (production.md → Stories). Throws naming the beat. */
+function checkStory(cues) {
+  const d = cues.duration;
+  if (typeof d !== "number" || d < 8 || d > 15) throw new Error(`a story is 8 to 15 s long: duration is ${JSON.stringify(d)}`);
+  const beats = Object.entries(cues.beats);
+  for (const [name, b] of beats) {
+    if (b.kind === "text" && b.t > 0.7) throw new Error(`the text beat ${name} starts at ${b.t} s: every word is on screen within the first second, so a text beat starts by 0.7 s (it rises over 0.3 s)`);
+  }
+  const sounds = beats.filter(([, b]) => b.sound !== undefined);
+  if (sounds.length > 3) throw new Error(`a story has two or three sounds at most, this one has ${sounds.length} (${sounds.map(([n]) => n).join(", ")}): one sound for the whole burst of words, never one per line`);
+  for (const [name, b] of sounds) {
+    for (const id of [b.sound, b.fallback]) if (id !== undefined && NOT_IN_A_STORY.test(id)) throw new Error(`the beat ${name} plays ${id}: a story has no music and no voice`);
+  }
+}
+
+/** The account's library: the ids that have at least one take. */
+function libraryIds(account) {
+  const text = readOptional(join(account, "films/sounds/library.json"));
+  const sounds = text === null ? {} : (JSON.parse(text).sounds ?? {});
+  return new Set(Object.entries(sounds).filter(([, s]) => (s.variants ?? []).length > 0).map(([id]) => id));
+}
+
+/** films/<slug>/audio/cues.json's beats → hits in its sfx-cues.json. Returns what it wrote. */
+function beatSound(account, slug) {
+  if (!slug || !SLUG.test(slug)) throw new Error(`${JSON.stringify(slug ?? "")} is not a slug`);
+  const audio = join(account, "films", slug, "audio");
+  const cuesPath = join(audio, "cues.json");
+  const text = readOptional(cuesPath);
+  if (text === null) throw new Error(`no films/${slug}/audio/cues.json`);
+  const cues = JSON.parse(text);
+  if (!cues.beats || typeof cues.beats !== "object") throw new Error(`films/${slug}/audio/cues.json has no beats: sfx places a sound on a beat ({"beats": {"<name>": {"t": <s>, "sound": "<id>"}}})`);
+  for (const [name, b] of Object.entries(cues.beats)) {
+    if (typeof b.t !== "number" || b.t < 0) throw new Error(`the beat ${name} needs a time t, in seconds`);
+    if (b.until !== undefined && !(typeof b.until === "number" && b.until > b.t)) throw new Error(`the beat ${name}: until is a time in seconds after its t`);
+  }
+  const story = cues.format === "ig-story";
+  if (story) checkStory(cues);
+  const have = libraryIds(account);
+  const swapped = [];
+  const hits = [];
+  for (const [name, b] of Object.entries(cues.beats)) {
+    if (b.sound === undefined) continue;
+    let sound = b.sound;
+    if (/^[a-z0-9_-]+\/[a-z0-9_-]+$/.test(sound) && !/^(kit|tone)\//.test(sound) && !have.has(sound)) {
+      if (b.fallback === undefined) throw new Error(`the beat ${name} plays ${sound}, which the library has no take of, and names no fallback: make it (soundlib.mjs gen) or give the beat a "fallback" from the kit`);
+      swapped.push({ beat: name, wanted: sound, plays: b.fallback });
+      sound = b.fallback;
+    }
+    const hit = { sound, at: b.t, beat: name };
+    for (const k of ["align", "under", "gain", "until"]) if (b[k] !== undefined) hit[k] = b[k];
+    if (hit.under === undefined && hit.gain === undefined) hit.under = 12;
+    hits.push(hit);
+  }
+  const sheetPath = join(audio, "sfx-cues.json");
+  const old = readOptional(sheetPath);
+  const sheet = old === null ? { version: 2, loop: !story, hits: [], beds: [], music: { segments: [] } } : JSON.parse(old);
+  if (sheet.version !== 2) throw new Error(`films/${slug}/audio/sfx-cues.json is not a version-2 sheet: sfx writes only version 2`);
+  if (story) {
+    sheet.loop = false;
+    sheet.target ??= STORY_TARGET;
+  }
+  sheet.hits = [...(sheet.hits ?? []).filter((h) => h.beat === undefined), ...hits].sort((a, b) => a.at - b.at);
+  writeFileSync(sheetPath, JSON.stringify(sheet, null, 2) + "\n");
+  return { sheet: `films/${slug}/audio/sfx-cues.json`, hits: hits.length, ...(swapped.length ? { fallback: swapped } : {}) };
 }
 
 // ---------------------------------------------------------------- glimpse
@@ -555,7 +667,8 @@ export async function run(argv, deps) {
       const from = flags["--from"] === undefined ? deps.films : resolve(deps.cwd, flags["--from"]);
       return ok(await init(account, from));
     }
-    if (command === "new") return ok(await newFilm(account, slug, flags["--story"] === true));
+    if (command === "new") return ok(await newFilm(account, slug, flags.kind ?? "loop"));
+    if (command === "sfx") return ok({ command: "sfx", slug, ...beatSound(account, slug) });
     if (command === "glimpse") return ok(glimpse(account));
     if (!existsSync(tokensPath(account))) throw needInit(account);
     return ok({ command: "theme", ...applyTheme(account, readTheme(account)) });

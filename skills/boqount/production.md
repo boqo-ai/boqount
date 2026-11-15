@@ -19,7 +19,7 @@ slideshow's files go to `marketing/media/<slug>/`.
 - The record's field is `Kind`. The ledger's `tier` column holds the kind, and so does the queue's `tier` column; a
   queue row's layer goes in its `layer` column, never in `note`. The queue's columns, in order: `slug | stage | type |
   rubric | tier | for | file | note | layer` (`templates/queue.md`).
-- **A post is a video file.** A carousel goes out only as a `slideshow`.
+- **A post is a video file.** A carousel goes out only as a `slideshow` (its slides are made by `carousel.md`).
 - A trend is an idea for a `film`: it carries the trend's mechanism, never its original subject or its sound.
 - **Every post has a layer**, whatever its kind (`niche`, `product` or `offer`, in the record's Layer field). A
   `file`, a clip or a slideshow takes the layer its content is: one that names or shows the product anywhere is not
