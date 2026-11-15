@@ -50,7 +50,8 @@ Windows WSL or Git Bash).
       install is a copied one (Updating, Removing): for each name whose link failed, copy its folder instead,
       `cp -R ~/.boqount/skills/<name> <skills>/<name>`.
 
-4. **Check the tools the skill uses.** Run `node --version` (it must be 20 or newer) and `ffmpeg -version`. Name
+4. **Check the tools the skill uses.** Run `node ~/.boqount/skills/boqount/tools/doctor.mjs` (it only looks, and names
+   the optional tools too), or when it cannot run, `node --version` (it must be 20 or newer) and `ffmpeg -version`. Name
    what is missing or too old and how the person installs it (for example `brew install node ffmpeg` on a Mac with
    Homebrew, the package manager on Linux, or nodejs.org and ffmpeg.org). Install nothing yourself. A missing tool
    does not stop the install: say what it is needed for and go on.

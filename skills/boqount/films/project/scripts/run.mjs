@@ -4,6 +4,8 @@
 //   npm run lint                      eslint and the type check
 //   npm run still  -- <Id> --frame=n  one frame → ../<slug>/out/<slug>-<n>.png (n counts 120ths of a second);
 //                                     add --safe to tint the bands the platforms cover (→ <slug>-<n>-safe.png)
+//   npm run still  -- <Id> --frames=a,b,c   many frames from one bundle and one browser (scripts/stills.mjs), the
+//                                     same names; --safe and --scale=<s> as for one
 //   npm run draft  -- <Id>            half scale, blended to 60 fps → ../<slug>/out/<slug>-draft.mp4
 //   npm run render -- <Id>            120 samples a second → ../<slug>/out/<slug>-120.mp4 (not a file to show:
 //                                     players take it for slow motion)
@@ -81,6 +83,16 @@ switch (cmd) {
     break;
   case 'still': {
     const f = film();
+    // --frames=a,b,c (or --frames a,b,c): many stills from one bundle
+    const at = extra.findIndex((a) => a === '--frames' || a.startsWith('--frames='));
+    if (at >= 0) {
+      const list = extra[at].startsWith('--frames=') ? extra[at].slice(9) : extra[at + 1];
+      if (!list || !/^\d+(,\d+)*$/.test(list)) fail('--frames takes whole numbers (120ths of a second), comma-separated: --frames=0,240,480');
+      const rest = extra.filter((a, i) => i !== at && !(extra[at] === '--frames' && i === at + 1));
+      sync();
+      run('node', [join(root, 'scripts/stills.mjs'), f.id, f.out, f.slug, list, ...rest]);
+      break;
+    }
     const n = extra.find((a) => a.startsWith('--frame='))?.slice(8) ?? '0';
     const safe = extra.includes('--safe');
     const rest = extra.filter((a) => !a.startsWith('--frame=') && a !== '--safe');

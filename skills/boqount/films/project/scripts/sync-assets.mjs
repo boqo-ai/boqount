@@ -5,8 +5,11 @@
 //   <account>/brand/<slug>/logo.svg|.png       → public/brand/
 //   <account>/brand/<slug>/media/              → public/brand/media/   (screenshots, recordings: kit/Kit.tsx Device)
 //   ../<film>/media/                           → public/media/<film>/
+//     a clip (.mp4 .mov .m4v) is served from media-120/<same path> instead when that copy is as new
+//     (tools/footage-120.mjs); a clip without one is named on a line of its own
 //   ../<film>/audio/mix.wav, vo.wav            → public/audio/<film>/
 //   ../<film>/audio/cues.json                  → src/films/<film>/cues.json   (for each film that has a scene folder)
+//   ../<film>/audio/said.json                  → src/films/<film>/said.json   (vo-check.mjs said; lib/cues.ts saidAt)
 //   ../glimpse/glimpse.json                    → src/films/glimpse/spec.json  (the first look's words and colours)
 //   ../glimpse/assets/fonts/*.ttf|otf|woff2    → public/fonts/                (its face, before the brand folder exists)
 //   ../glimpse/assets/logo.svg|.png            → public/glimpse/
@@ -47,10 +50,23 @@ const filesIn = (dir) =>
     : [];
 
 const done = [];
-/** Makes `to` hold exactly the files of `from` (none when `from` is null): copies and removes. */
-const mirror = (from, to, label) => {
+// A clip of footage plays at its own frame rate, which steps beside motion sampled 120 times a second. Its copy at 120
+// (`footage-120.mjs`, in a media-120/ folder beside media/) is served in its place when it is as new as the clip.
+const VIDEO = /\.(mp4|mov|m4v)$/i;
+const stepping = [];
+/** Makes `to` hold exactly the files of `from` (none when `from` is null): copies and removes. With `dense`, the folder
+ * of 120 fps copies: a clip that has a fresh one there is served from it. */
+const mirror = (from, to, label, dense = null) => {
   const want = new Set(filesIn(from));
-  for (const f of want) if (copy(join(from, f), join(to, f))) done.push(`${label}/${f}`);
+  for (const f of want) {
+    let src = join(from, f);
+    if (dense && VIDEO.test(f)) {
+      const fast = join(dense, f);
+      if (existsSync(fast) && statSync(fast).mtimeMs >= statSync(src).mtimeMs) src = fast;
+      else stepping.push(`${label}/${f}`);
+    }
+    if (copy(src, join(to, f))) done.push(`${label}/${f}`);
+  }
   for (const f of filesIn(to)) if (!want.has(f)) rmSync(join(to, f));
 };
 
@@ -108,12 +124,12 @@ if (existsSync(join(glimpse, 'glimpse.json')) && existsSync(join(root, 'src/film
 }
 
 // the brand's media, for every film
-mirror(brand && join(brand, 'media'), join(pub, 'brand/media'), 'brand/media');
+mirror(brand && join(brand, 'media'), join(pub, 'brand/media'), 'brand/media', brand && join(brand, 'media-120'));
 
 // each film's media, sound and cues
 const filmNames = readdirSync(films).filter((film) => film !== 'project' && isDir(join(films, film)));
 for (const film of filmNames) {
-  mirror(join(films, film, 'media'), join(pub, 'media', film), `media/${film}`);
+  mirror(join(films, film, 'media'), join(pub, 'media', film), `media/${film}`, join(films, film, 'media-120'));
   const audio = join(films, film, 'audio');
   if (!isDir(audio)) continue;
   for (const f of ['mix.wav', 'vo.wav']) {
@@ -127,6 +143,9 @@ for (const film of filmNames) {
   if (existsSync(join(audio, 'cues.json')) && existsSync(scenes)) {
     if (copy(join(audio, 'cues.json'), join(scenes, 'cues.json'))) done.push(`src/films/${film}/cues.json`);
   }
+  if (existsSync(join(audio, 'said.json')) && existsSync(scenes)) {
+    if (copy(join(audio, 'said.json'), join(scenes, 'said.json'))) done.push(`src/films/${film}/said.json`);
+  } else if (existsSync(join(scenes, 'said.json'))) rmSync(join(scenes, 'said.json'));
 }
 // media of a film that is gone
 for (const film of isDir(join(pub, 'media')) ? readdirSync(join(pub, 'media')) : []) {
@@ -135,3 +154,8 @@ for (const film of isDir(join(pub, 'media')) ? readdirSync(join(pub, 'media')) :
 
 console.log(done.length ? `synced: ${done.join(', ')}` : 'synced: nothing changed');
 if (fontNote) console.log(fontNote);
+if (stepping.length) {
+  stepping.sort();
+  const many = stepping.length > 1;
+  console.log(`footage: ${stepping.length} clip${many ? 's play at their' : ' plays at its'} own frame rate and step${many ? '' : 's'} beside the motion (${stepping.slice(0, 3).join(', ')}${stepping.length > 3 ? ', …' : ''}): node <skill>/tools/footage-120.mjs films/<slug> (or brand/<slug>) makes the 120 copy`);
+}

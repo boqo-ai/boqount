@@ -132,7 +132,13 @@ checks).
 
 **What the films read** (`npm run sync` copies it; every script runs it first): the brand's fonts from
 `brand/<slug>/fonts/`, its logo `brand/<slug>/logo.svg` or `.png`, its media from `brand/<slug>/media/`, the film's
-own `films/<slug>/media/`, and its `audio/mix.wav` and `cues.json`.
+own `films/<slug>/media/`, and its `audio/mix.wav`, `cues.json` and `said.json`.
+
+**Footage at 120.** A clip of footage (`.mp4`, `.mov`, `.m4v`) plays at its own frame rate, and a 30 fps clip steps
+beside motion sampled 120 times a second. `node <skill>/tools/footage-120.mjs films/<slug>` (or `brand/<slug>`) splits
+each clip at its cuts and brings every shot to 120 fps into `media-120/` (RIFE when installed, `--install` puts it in
+`~/.cache/boqount/rife`; else ffmpeg's interpolation), sound kept; `npm run sync` then serves that copy and names every
+clip still without one. Run it after a clip is added or changed, before the render.
 
 In `films/project`, by the film's id:
 
@@ -140,6 +146,7 @@ In `films/project`, by the film's id:
 |---|---|
 | `npm run lint` | nothing: eslint and the type check |
 | `npm run still -- <Id> --frame=<n>` | one frame, `films/<slug>/out/<slug>-<n>.png` (`n` counts 120ths of a second); `--safe` tints the bands the platforms cover |
+| `npm run still -- <Id> --frames=<a>,<b>,…` | many frames from one bundle and one browser, the same names (`--safe`, `--scale=<s>`): the stills at every cue |
 | `npm run draft -- <Id>` | `<slug>-draft.mp4`, half scale, 60 fps |
 | `npm run render -- <Id>` | `<slug>-120.mp4`, 120 samples a second: never shown, never posted (players take it for slow motion) |
 | `npm run feed -- <Id>` | `<slug>-feed.mp4`: the post's file |
@@ -204,7 +211,7 @@ and the library are `sound.md`. Here: the files, the sheet, the mix and the chec
   library lacks is a new entry in `spec.json`, then `gen --only <id>` and `build --only <id>`: it goes into the
   library, never into one film's folder.
 - **The tonal set:** pitched marks in the key of the film's music, synthesized for $0:
-  `node <skill>/tools/soundlib.mjs key audio/music/<file>` reads the music's likely key, then
+  `node <skill>/tools/soundlib.mjs key audio/music/<file>` reads the music's likely key and its tempo, then
   `node <skill>/tools/soundlib.mjs tone films/<slug>/audio <root> minor` (or `major`) writes `audio/tone/`: `pluck-1`
   to `pluck-6` (the scale going up), `blip-1` to `blip-3`, `bell-1`, `bell-5`, `confirm`, `resolve`, `deny`,
   `riser-1`, `riser-2` (1 and 2 s, ending dead: `"align": "sync"`), `fall`, `shimmer`, `sub`, `pad`. With no music, any
@@ -262,10 +269,21 @@ check it with `test -s`, never print it.
 3. `node <skill>/tools/eleven.mjs tts-lines films/<slug>/audio/vo-plan.json films/<slug>/audio/lines` (`--only <id>`
    for a retake), then `node <skill>/tools/vo-assemble.mjs films/<slug>/audio/vo-plan.json films/<slug>/audio/lines films/<slug>/audio`:
    `vo.wav` and `cues.json`.
-4. **Listen with tools:** a line whose last consonant comes back as a separate burst (a sound under 0.12 s after a
-   gap over 0.12 s) is re-taken; the assembled `vo.wav` is transcribed (`production.md` → The file's words) and
-   compared with the script word by word. Whisper also drops clean lines from a long file: when a line is missing,
-   cut that stretch and transcribe it alone before believing it. An approved take is reused for an identical line.
+4. **Listen with tools** (`<skill>/tools/vo-check.mjs`, each output pasted into the film's checks):
+   - **Before assembling:** `vo-check.mjs onsets <plan> <lines>` proposes where each word is heard (the alignment runs
+     late inside a line, most on a line's last word); read every `typical` proposal and each last word on
+     `vo-check.mjs contour <take.mp3> <from> <to>`, correct `lines/onsets.json`, then `vo-check.mjs fix <plan> <lines>`,
+     then vo-assemble.
+   - `vo-check.mjs tails <lines>`: a line whose last consonant comes back as a separate burst (a sound under 0.12 s
+     after a gap over 0.12 s) is re-taken.
+   - `vo-check.mjs said films/<slug>/audio` writes `said.json` (when each word has been said); a headline leaves at
+     `saidAt` of its last word (`makeCues(cues, said)`), never at its aligned end, which can run 0.5 s past the voice.
+   - `vo-check.mjs seam films/<slug>/audio` (a looping film): the pause the viewer hears at the loop point.
+   - `vo-check.mjs words films/<slug>/audio/vo.wav films/<slug>/audio/vo-plan.json` transcribes the voice (whisper-cli)
+     and compares it with the script word by word (`--alias <name>=<how whisper spells it>` for a brand name).
+     Whisper also drops clean lines from a long file: when a line is missing, cut that stretch and transcribe it alone
+     before believing it.
+   An approved take is reused for an identical line.
 5. **A voiced film needs the platform's AI label:** the record's `AI label: yes (synthetic voice)`
    (`posting.md` → The AI label). The person's own recorded voice is not synthetic, and is used only when they offer
    it.

@@ -25,14 +25,15 @@
 // missing); `"sfx": "<name>"` is a film's own file, looked up as mix.mjs does (<audio-dir>/sfx, then the kit).
 // Every sound missing anywhere is named in one error and nothing is mixed.
 //
-// Four lessons are built in, each with its test (tests/mix2.test.mjs):
+// Five lessons are built in, each with its test (tests/mix2.test.mjs):
 // - every sum starts with a silence as long as the film: ffmpeg's amix takes its timeline from its first input, and
 //   a first input trimmed with `from` moved its whole bus earlier by that sound's start time;
 // - no `apad` where two inputs meet (a padded stream fed with another into amix or a compressor made ffmpeg spin at
 //   full CPU now and then): every length comes from a generated silence, and each bus is its own ffmpeg run;
 // - the compressor's key is the voice summed onto a silence one second longer than the film, so a looping film's
 //   music does not stop where the voice stops;
-// - a build placed by its peak counts its `from`: the head it skips brings the peak that much nearer.
+// - a build placed by its peak counts its `from`: the head it skips brings the peak that much nearer;
+// - a stalled ffmpeg run is killed after BOQOUNT_MIX_STALL_S seconds (90) and run again, up to five times.
 //
 // Nothing goes through a shell; every name and number in the sheet is checked before it reaches a filter graph.
 import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
@@ -49,7 +50,10 @@ const NOMINAL = { typ: -20, peak: -12 };
 /** The limiter runs at this rate, so a peak between two samples (a true peak) is caught, not let through. */
 const OVERSAMPLE = 192000;
 const TAIL = 4; // seconds rendered past the end and folded onto the head when looping
-const STALL = 300_000; // ms: an ffmpeg run longer than this is a stall, reported as an error
+// An ffmpeg run that takes longer than this has stalled: now and then a run spins at full CPU and never ends, while the
+// same run again finishes in seconds. It is killed and run again, at most RETRIES times, then reported as an error.
+const STALL = Number(process.env.BOQOUNT_MIX_STALL_S ?? 90) * 1000; // ms
+const RETRIES = 5;
 const VARY = [0, 0.4, -0.3, 0.2, -0.5]; // semitones, by round: a take that comes round again is never the same pitch
 
 export function main(argv) {
@@ -95,7 +99,17 @@ export function main(argv) {
     return num(w.start, `cue ${spec} start`);
   };
   const opt = (value, fallback, field) => (value === undefined ? fallback : num(value, field));
-  const run = (args) => ffmpeg(["-v", "error", "-y", ...args], { timeout: STALL });
+  const stalls = [];
+  const run = (args) => {
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return ffmpeg(["-v", "error", "-y", ...args], { timeout: STALL });
+      } catch (e) {
+        if (!/did not finish/.test(e.message) || attempt > RETRIES) throw e;
+        stalls.push(attempt);
+      }
+    }
+  };
 
   // ── the voice, levelled and measured
   const stems = join(dir, "stems");
@@ -341,7 +355,8 @@ export function main(argv) {
     `mix.wav: ${hits.length} hits from ${takes} files, ${beds.length} backgrounds, ${segs.length} music segments; ` +
     `${voiced ? `voice typical ${voice.typ.toFixed(1)} LKFS` : "no voice (levelled against a nominal one)"}; ` +
     `before ${before.I} LUFS / ${before.TP} dBTP; after ${after.I} LUFS / ${after.TP} dBTP (target ${target.I} / ${target.TP})` +
-    (capped ? "; still more than 1 LU under the target after eight passes: the limiter could not hold the ceiling at that loudness" : "")
+    (capped ? "; still more than 1 LU under the target after eight passes: the limiter could not hold the ceiling at that loudness" : "") +
+    (stalls.length ? `; ${stalls.length} ffmpeg run${stalls.length > 1 ? "s" : ""} stalled past ${STALL / 1000} s and ran again` : "")
   );
 }
 

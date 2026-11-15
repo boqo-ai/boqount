@@ -7,11 +7,13 @@
     "node": "^20.19.0 || ^22.13.0 || >=24"
   },
   "dependencies": {
+    "@remotion/bundler": "4.0.543",
     "@remotion/cli": "4.0.543",
     "@remotion/fonts": "4.0.543",
     "@remotion/layout-utils": "4.0.543",
     "@remotion/media": "4.0.543",
     "@remotion/motion-blur": "4.0.543",
+    "@remotion/renderer": "4.0.543",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.543"

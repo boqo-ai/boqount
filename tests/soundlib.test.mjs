@@ -7,7 +7,7 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, writeFil
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { chroma, keysOf, toneSet } from "../skills/boqount/tools/soundlib.mjs";
+import { chroma, keysOf, tempo, toneSet } from "../skills/boqount/tools/soundlib.mjs";
 import { changes } from "../skills/boqount/tools/flashes.mjs";
 import { decode, spectrum, SR } from "../skills/boqount/tools/sound-lib.mjs";
 
@@ -152,4 +152,22 @@ t("flashes: a frame that swaps dark and bright five times a second fails; a slow
   const ends = film("ends.mp4", "if(gt(N\\,53)\\,if(mod(N\\,2)\\,235\\,16)\\,if(lt(N\\,6)\\,if(mod(N\\,2)\\,16\\,235)\\,16))");
   assert.equal(run(ends).status, 0);
   assert.equal(run(ends, "--loop").status, 1);
+});
+
+test("tempo: a kick every beat reads as its tempo; too short a file has none", () => {
+  const rate = 22050;
+  const kicks = (bpm, seconds) => {
+    const m = new Float32Array(rate * seconds);
+    const period = (60 / bpm) * rate;
+    for (let i = 0; i < m.length; i++) {
+      const t = (i % period) / rate;
+      m[i] = 0.8 * Math.sin(2 * Math.PI * 60 * (i / rate)) * Math.exp(-30 * t);
+    }
+    return m;
+  };
+  for (const bpm of [90, 120, 128]) {
+    const r = tempo(kicks(bpm, 20), rate);
+    assert.ok(Math.abs(r.bpm - bpm) / bpm < 0.02, `${bpm} read as ${r.bpm}`);
+  }
+  assert.equal(tempo(new Float32Array(rate), rate), null);
 });
