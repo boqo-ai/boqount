@@ -289,7 +289,7 @@ test("new creates the film's folder: emptied script and storyboard, audio skelet
   assert.deepEqual(board.split("\n").filter((l) => l.trim()), ["# Starter storyboard", "## Locked format", "## Chain", "## Sound"].map((h) => h.replace("Starter storyboard", "dry-spell storyboard")));
   assert.doesNotMatch(board, /plant|Frame 0|pop for/);
   assert.deepEqual(JSON.parse(read(dir, "films/dry-spell/audio/cues.json")), { duration: 0, lines: [] });
-  assert.deepEqual(JSON.parse(read(dir, "films/dry-spell/audio/sfx-cues.json")), { loop: true, hits: [], music: { segments: [] } });
+  assert.deepEqual(JSON.parse(read(dir, "films/dry-spell/audio/sfx-cues.json")), { version: 2, loop: true, hits: [], beds: [], music: { segments: [] } });
   assert.deepEqual(readdirSync(join(dir, "films/dry-spell/audio")).sort(), ["cues.json", "sfx-cues.json"]);
 });
 

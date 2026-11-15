@@ -1,0 +1,591 @@
+{
+ "_": "What the account's sound library asks ElevenLabs for (soundlib.mjs gen, a paid call per take, only on the person's word), and what build keeps. One entry a sound: id <group>/<name>; kind hit (a one-shot, trimmed to its onset), swell (grows to a point: the mixer can put that point on the cue) or bed (a long background, looped); is: what it is the sound of; prompt: the text sent; seconds; candidates: takes asked; keep: takes kept; use: what it is for (pick a sound by its use); slice: a tiny one-shot asked as several seconds of the same thing and cut into single events; loop: asked as a seamless loop; min/max: the length a kept take must have; minCentroid: how bright it must be (Hz); repeat: meant to run in a row (a counter); note: what to know before using it. A sound the library lacks is a new entry here, then gen --only <id> and build --only <id>.",
+ "sounds": [
+  {
+   "id": "ui/click",
+   "kind": "hit",
+   "is": "a single computer mouse click",
+   "prompt": "A computer mouse clicked five times, slowly, one single click and then a pause. Close-mic, dry, no reverb, no music.",
+   "seconds": 4,
+   "candidates": 2,
+   "keep": 4,
+   "use": "a pointer presses a button",
+   "slice": true
+  },
+  {
+   "id": "ui/tap",
+   "kind": "hit",
+   "is": "a fingertip tapping a phone screen once",
+   "prompt": "A fingertip tapping a glass phone screen five times, slowly, soft dull taps with a pause after each. Close-mic, dry, no reverb, no music.",
+   "seconds": 4,
+   "candidates": 2,
+   "keep": 4,
+   "use": "a finger touches a screen; a small thing touches down",
+   "slice": true
+  },
+  {
+   "id": "ui/key",
+   "kind": "hit",
+   "is": "one key pressed on a mechanical keyboard",
+   "prompt": "Typing slowly on a mechanical keyboard, one key press at a time with a pause after each. Close-mic, dry, no reverb, no music.",
+   "seconds": 4,
+   "candidates": 2,
+   "keep": 5,
+   "use": "one letter typed",
+   "slice": true
+  },
+  {
+   "id": "ui/typing",
+   "kind": "hit",
+   "is": "fast typing on a computer keyboard",
+   "prompt": "Fast continuous typing on a laptop keyboard, about ten keystrokes. Close-mic, dry, no reverb, no music, one take.",
+   "seconds": 1.6,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a field fills with typed text (cut it where the text ends)"
+  },
+  {
+   "id": "ui/switch",
+   "kind": "hit",
+   "is": "a light switch being flicked",
+   "prompt": "A light switch flicked on and off five times, slowly, with a pause after each sharp plastic click. Close-mic, dry, no reverb, no music.",
+   "seconds": 4,
+   "candidates": 2,
+   "keep": 3,
+   "use": "a state turns on or off; a tab changes",
+   "slice": true
+  },
+  {
+   "id": "ui/pop",
+   "kind": "hit",
+   "is": "a soft bubble pop",
+   "prompt": "A soft short bubble pop, light and round, like a UI element appearing. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 7,
+   "keep": 3,
+   "use": "a small element appears"
+  },
+  {
+   "id": "ui/pop-low",
+   "kind": "hit",
+   "is": "a low round bloop",
+   "prompt": "A low round soft \"bloop\", a deeper bubble sound, short. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a larger element appears; a card comes up"
+  },
+  {
+   "id": "ui/tick",
+   "kind": "hit",
+   "is": "a clock ticking once",
+   "prompt": "A wall clock ticking steadily: tick, tock, tick, tock. Close-mic, dry, no reverb, no music.",
+   "seconds": 4,
+   "candidates": 4,
+   "keep": 4,
+   "use": "a clock hand steps; a count advances by one",
+   "slice": true,
+   "max": 0.6
+  },
+  {
+   "id": "ui/counter",
+   "kind": "hit",
+   "is": "a split-flap display flipping numbers very fast",
+   "prompt": "A mechanical split-flap display flipping its numbers very fast, a rapid even flutter of small clicks. Close-mic, dry, no reverb, no music, one take.",
+   "seconds": 2.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a number counts up fast (cut it where the number lands)",
+   "repeat": true
+  },
+  {
+   "id": "ui/send",
+   "kind": "hit",
+   "is": "a short upward whoop of a message being sent",
+   "prompt": "A short soft \"whoop\" sound effect with a quick upward pitch sweep, a message sent sound of a chat app.",
+   "seconds": 0.5,
+   "candidates": 5,
+   "keep": 3,
+   "use": "a message or a comment is sent"
+  },
+  {
+   "id": "ui/notify",
+   "kind": "hit",
+   "is": "a soft two-note notification chime",
+   "prompt": "A soft pleasant two-note notification chime of a new message arriving, warm, short. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 1.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a message arrives",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "ui/error",
+   "kind": "hit",
+   "is": "a short low error buzz",
+   "prompt": "A short low muted \"denied\" buzz, two quick dull pulses, not harsh. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.6,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a thing is refused or shut"
+  },
+  {
+   "id": "ui/success",
+   "kind": "hit",
+   "is": "a bright positive confirmation blip",
+   "prompt": "A short bright positive confirmation blip, a small success sound. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.6,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a thing is done; a tick is drawn",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "ui/slide",
+   "kind": "swell",
+   "is": "a soft short swish of a panel sliding in",
+   "prompt": "A soft short swish of an interface panel sliding into place, smooth, gentle, no impact. Dry, no music.",
+   "seconds": 0.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a panel, a tag or a row slides in"
+  },
+  {
+   "id": "ui/progress",
+   "kind": "swell",
+   "is": "a synth tone gliding upward in pitch",
+   "prompt": "A smooth synth tone gliding steadily upward in pitch for one second, a power-up charge sound, ending cleanly.",
+   "seconds": 1.2,
+   "candidates": 4,
+   "keep": 2,
+   "use": "a bar fills (put its end on the moment the bar is full)",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "ui/shutter",
+   "kind": "hit",
+   "is": "a camera taking a photo",
+   "prompt": "A DSLR camera taking one photo, the shutter click.",
+   "seconds": 0.6,
+   "candidates": 5,
+   "keep": 2,
+   "use": "a moment is captured"
+  },
+  {
+   "id": "ui/scrub",
+   "kind": "swell",
+   "is": "a quick tape scrub rewind",
+   "prompt": "A quick tape rewind scrub, a short fast \"zip\" backwards. Dry, no music.",
+   "seconds": 0.6,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a range stretches back in time; a timeline is scrubbed"
+  },
+  {
+   "id": "ui/chat-flurry",
+   "kind": "hit",
+   "is": "a rapid flurry of many small message pops speeding up",
+   "prompt": "A rapid flurry of many small chat message pops arriving one after another, speeding up into a dense burst. Dry, no reverb, no music, no voices.",
+   "seconds": 2.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a chat fills fast (cut it where the burst ends)"
+  },
+  {
+   "id": "move/whoosh-air",
+   "kind": "swell",
+   "is": "a fast airy whoosh passing by",
+   "prompt": "A fast airy whoosh passing by, a smooth clean transition swish, no impact. Dry, no music.",
+   "seconds": 0.7,
+   "candidates": 7,
+   "keep": 4,
+   "use": "the camera pushes through to the next world",
+   "minCentroid": 300
+  },
+  {
+   "id": "move/whoosh-low",
+   "kind": "swell",
+   "is": "a deep heavy whoosh with a low rumble",
+   "prompt": "A deep heavy cinematic whoosh passing by with a low rumble, powerful, no impact at the end. Dry, no music.",
+   "seconds": 1.0,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a large thing passes; a hard change of world"
+  },
+  {
+   "id": "move/suck",
+   "kind": "swell",
+   "is": "a reverse suction whoosh pulling inward",
+   "prompt": "A reverse suction whoosh, air being pulled inward and cut off abruptly at its loudest point. Dry, no music.",
+   "seconds": 0.8,
+   "candidates": 3,
+   "keep": 2,
+   "use": "the camera pulls out; things are drawn into a point (put its end on the arrival)"
+  },
+  {
+   "id": "move/riser-short",
+   "kind": "swell",
+   "is": "a short rising tension sweep",
+   "prompt": "A short rising synth tension sweep, building fast and stopping abruptly at the top. No impact, no music, no drums.",
+   "seconds": 1.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "the half second before a reveal (put its end on the reveal)"
+  },
+  {
+   "id": "move/riser",
+   "kind": "swell",
+   "is": "a long rising tension riser",
+   "prompt": "A rising cinematic tension riser, noise and tone building steadily and stopping abruptly at the top. No impact, no drums, no music.",
+   "seconds": 2.5,
+   "candidates": 6,
+   "keep": 2,
+   "use": "the two seconds before the film's turn (put its end on the turn)"
+  },
+  {
+   "id": "move/downlifter",
+   "kind": "swell",
+   "is": "a falling sweep winding down",
+   "prompt": "A falling synth sweep, a downlifter winding down smoothly from high to low. No impact, no music.",
+   "seconds": 1.2,
+   "candidates": 6,
+   "keep": 2,
+   "use": "energy leaves: a thing shuts, a world goes dull",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "move/reverse-cymbal",
+   "kind": "swell",
+   "is": "a reversed cymbal swelling up",
+   "prompt": "A reversed cymbal swell rising to a sudden stop. No impact, no music.",
+   "seconds": 1.5,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a soft lead-in to a line or a scene (put its end on the first word)"
+  },
+  {
+   "id": "move/shimmer",
+   "kind": "swell",
+   "is": "a magical sparkling chime shimmer",
+   "prompt": "A bright magical sparkle shimmer, glittering chimes rising gently, short.",
+   "seconds": 1.0,
+   "candidates": 5,
+   "keep": 2,
+   "use": "a thing lights up or turns to the brand colour",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "move/glitch",
+   "kind": "hit",
+   "is": "a short digital glitch stutter",
+   "prompt": "A short digital glitch, a stutter of data noise. Dry, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a thing breaks, is refused, or a picture is interrupted"
+  },
+  {
+   "id": "move/tape-stop",
+   "kind": "swell",
+   "is": "a tape stop, a machine powering down",
+   "prompt": "A tape stop effect, a machine quickly powering down and slowing to a halt. Dry, no music.",
+   "seconds": 0.8,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a thing is stopped dead"
+  },
+  {
+   "id": "hit/thud",
+   "kind": "hit",
+   "is": "a soft low thud of a heavy object set down",
+   "prompt": "A soft low thud of a heavy object set down on a wooden table, short. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a card, a block or a number lands"
+  },
+  {
+   "id": "hit/boom",
+   "kind": "hit",
+   "is": "a deep cinematic impact boom",
+   "prompt": "A deep cinematic impact boom with a short tail, a trailer hit with a punchy mid-range body. No music, one-shot.",
+   "seconds": 1.5,
+   "candidates": 3,
+   "keep": 2,
+   "use": "one of the film's few full-frame hits"
+  },
+  {
+   "id": "hit/punch",
+   "kind": "hit",
+   "is": "a tight punchy drum-like hit",
+   "prompt": "A tight punchy short hit, like a trailer drum hit with a hard attack and no tail. Dry, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a number or a word lands hard"
+  },
+  {
+   "id": "hit/slam",
+   "kind": "hit",
+   "is": "a heavy metal door slamming shut",
+   "prompt": "A heavy metal vault door slamming shut, one hard slam with a short metallic ring. No music, one-shot.",
+   "seconds": 1.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a thing shuts for good"
+  },
+  {
+   "id": "hit/stamp",
+   "kind": "hit",
+   "is": "a rubber stamp pressed hard onto paper",
+   "prompt": "A rubber stamp pressed down hard onto paper on a desk, one thump. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 7,
+   "keep": 3,
+   "use": "a tag, a date or a verdict is stamped on"
+  },
+  {
+   "id": "hit/clank",
+   "kind": "hit",
+   "is": "a bright metallic clang",
+   "prompt": "A steel wrench dropped onto a metal plate: one bright metallic clang, short. Close-mic, dry, no music, one-shot.",
+   "seconds": 0.6,
+   "candidates": 5,
+   "keep": 3,
+   "use": "metal meets metal: a lock rattles, a thing bounces off",
+   "minCentroid": 1200
+  },
+  {
+   "id": "foley/lock-shut",
+   "kind": "hit",
+   "is": "a padlock clicking shut",
+   "prompt": "A metal padlock being locked, the shackle clicking shut firmly.",
+   "seconds": 0.6,
+   "candidates": 6,
+   "keep": 3,
+   "use": "a padlock closes"
+  },
+  {
+   "id": "foley/lock-open",
+   "kind": "hit",
+   "is": "a padlock springing open",
+   "prompt": "A steel padlock unlocking and springing open, a click and a small spring release. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.6,
+   "candidates": 6,
+   "keep": 2,
+   "use": "a padlock opens"
+  },
+  {
+   "id": "foley/lock-rattle",
+   "kind": "hit",
+   "is": "a metal chain and padlock rattling",
+   "prompt": "A metal padlock on a chain shaken twice, rattling.",
+   "seconds": 0.8,
+   "candidates": 5,
+   "keep": 2,
+   "use": "a locked thing is tried and does not open"
+  },
+  {
+   "id": "foley/paper",
+   "kind": "hit",
+   "is": "a single sheet of paper landing on a pile",
+   "prompt": "A single small sheet of paper flicked down onto a pile of paper, one light slap. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 5,
+   "keep": 4,
+   "use": "a receipt, a card or a page lands",
+   "min": 0.12
+  },
+  {
+   "id": "foley/cards",
+   "kind": "hit",
+   "is": "playing cards being dealt onto a table",
+   "prompt": "Dealing playing cards onto a table, five quick flicks.",
+   "seconds": 1.2,
+   "candidates": 5,
+   "keep": 2,
+   "use": "a row of things is dealt out"
+  },
+  {
+   "id": "foley/scissors",
+   "kind": "hit",
+   "is": "one snip of scissors",
+   "prompt": "One sharp snip of metal scissors cutting. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.5,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a cut is made"
+  },
+  {
+   "id": "foley/laptop-close",
+   "kind": "hit",
+   "is": "a laptop lid being closed",
+   "prompt": "Closing a laptop lid: a soft thump and a click.",
+   "seconds": 0.8,
+   "candidates": 5,
+   "keep": 2,
+   "use": "a laptop shuts"
+  },
+  {
+   "id": "foley/marker",
+   "kind": "swell",
+   "is": "a marker pen drawing one fast stroke",
+   "prompt": "A felt marker pen drawing one fast firm stroke across paper, a short squeaky scratch. Close-mic, dry, no music.",
+   "seconds": 0.5,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a line is struck through or drawn"
+  },
+  {
+   "id": "foley/swipe",
+   "kind": "swell",
+   "is": "a soft short brushing swipe",
+   "prompt": "A fingertip swiping across a touchscreen, one soft short brushing sound.",
+   "seconds": 0.5,
+   "candidates": 5,
+   "keep": 2,
+   "use": "a screen is swiped away"
+  },
+  {
+   "id": "foley/coin",
+   "kind": "hit",
+   "is": "a single coin dropping on a table",
+   "prompt": "A single coin dropped onto a wooden table, one bright ring. Close-mic, dry, no reverb, no music, one-shot.",
+   "seconds": 0.8,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a coin, a credit or a small prize lands",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "foley/cash",
+   "kind": "hit",
+   "is": "an old cash register ringing",
+   "prompt": "An old cash register \"ka-ching\": the bell and the drawer opening. No music, one-shot.",
+   "seconds": 1.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "money is made (only where the film may show money)",
+   "note": "carries a pitch of its own: under music, use the tonal set"
+  },
+  {
+   "id": "foley/heartbeat",
+   "kind": "hit",
+   "is": "a single heartbeat",
+   "prompt": "A single deep heartbeat, \"lub-dub\", with a soft mid-range knock so it reads on a small speaker. No music, one-shot.",
+   "seconds": 0.8,
+   "candidates": 3,
+   "keep": 2,
+   "use": "a held breath before a hit"
+  },
+  {
+   "id": "crowd/cheer",
+   "kind": "hit",
+   "is": "a crowd bursting into a cheer",
+   "prompt": "A crowd in a room suddenly bursting into an excited cheer, short. No music, no words.",
+   "seconds": 1.5,
+   "candidates": 3,
+   "keep": 2,
+   "use": "people react to a big moment"
+  },
+  {
+   "id": "crowd/gasp",
+   "kind": "hit",
+   "is": "a small group of people gasping",
+   "prompt": "A small group of people gasping in surprise at once, short. No music, no words.",
+   "seconds": 1.0,
+   "candidates": 3,
+   "keep": 2,
+   "use": "people are caught out"
+  },
+  {
+   "id": "amb/city-dusk",
+   "kind": "bed",
+   "is": "distant city traffic in the evening",
+   "prompt": "A calm distant city at dusk: far traffic hum, a few distant cars passing. Steady, no horns, no sirens, no voices, no music.",
+   "seconds": 12,
+   "candidates": 2,
+   "keep": 1,
+   "use": "a city seen from far",
+   "loop": true
+  },
+  {
+   "id": "amb/room",
+   "kind": "bed",
+   "is": "a quiet room with a computer fan humming",
+   "prompt": "A quiet room tone with a soft computer fan hum. Steady, no clicks, no voices, no music.",
+   "seconds": 10,
+   "candidates": 2,
+   "keep": 1,
+   "use": "one person at a desk",
+   "loop": true
+  },
+  {
+   "id": "amb/office-keys",
+   "kind": "bed",
+   "is": "several people typing on keyboards in a quiet office",
+   "prompt": "Several people typing on keyboards and clicking mice in a quiet office. Steady, no voices, no phones, no music.",
+   "seconds": 12,
+   "candidates": 2,
+   "keep": 1,
+   "use": "many people working at desks",
+   "loop": true
+  },
+  {
+   "id": "amb/night",
+   "kind": "bed",
+   "is": "crickets on a quiet night",
+   "prompt": "A quiet night heard through an open window: soft crickets, still air. Steady, no cars, no voices, no music.",
+   "seconds": 12,
+   "candidates": 2,
+   "keep": 1,
+   "use": "night; someone is asleep",
+   "loop": true
+  },
+  {
+   "id": "amb/morning",
+   "kind": "bed",
+   "is": "birds singing in the early morning",
+   "prompt": "Early morning birdsong heard through an open window, a few light birds, calm. Steady, no cars, no voices, no music.",
+   "seconds": 12,
+   "candidates": 2,
+   "keep": 1,
+   "use": "the morning after",
+   "loop": true
+  },
+  {
+   "id": "amb/crowd-murmur",
+   "kind": "bed",
+   "is": "an indoor crowd murmuring",
+   "prompt": "A large indoor crowd murmuring quietly while waiting. Steady, no words that can be made out, no music.",
+   "seconds": 12,
+   "candidates": 2,
+   "keep": 1,
+   "use": "many people waiting",
+   "loop": true,
+   "note": "can read as speech: never under a line that must be understood"
+  },
+  {
+   "id": "amb/screen",
+   "kind": "bed",
+   "is": "muffled video sound from a phone speaker",
+   "prompt": "Muffled excited chatter and video game sound effects playing from a phone speaker in a quiet room, lo-fi, indistinct, no clear words, no music.",
+   "seconds": 10,
+   "candidates": 3,
+   "keep": 1,
+   "use": "a video plays on a phone or a screen nearby",
+   "loop": true,
+   "note": "can read as speech: never under a line that must be understood"
+  },
+  {
+   "id": "foley/rustle",
+   "kind": "swell",
+   "is": "a short rustle of clothing",
+   "prompt": "A short rustle of clothing as a person moves an arm, soft fabric movement. Close-mic, dry, no music.",
+   "seconds": 0.6,
+   "candidates": 4,
+   "keep": 3,
+   "use": "a person moves: lifts a phone, turns, sits back"
+  }
+ ]
+}

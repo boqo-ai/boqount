@@ -13,7 +13,7 @@
 // There is no default voice: the brand chooses its own, and `--voice` names it (for tts-lines, else the plan's
 // `voice`; both are checked the same way). `tts` sends no voice settings (the
 // voice's own apply); `tts-lines` sends the plan's `voiceSettings` when it has them.
-//   node <skill>/tools/eleven.mjs sfx       <"prompt"> <out.mp3> [--seconds N]
+//   node <skill>/tools/eleven.mjs sfx       <"prompt"> <out.mp3> [--seconds N] [--influence 0-1] [--model ID] [--loop]
 //   node <skill>/tools/eleven.mjs music     <"prompt"> <out.mp3> [--seconds N]
 //
 // `tts` writes <prefix>.mp3, <prefix>.alignment.json (the raw character
@@ -194,10 +194,17 @@ async function ttsLines(args) {
   }
 }
 
+// `soundlib.mjs gen` asks for the library's takes through this command, one call a take.
 async function sfx(args) {
   const [prompt, out] = args;
   const seconds = flag(args, "seconds");
-  const body = { text: prompt, prompt_influence: 0.6 };
+  const influence = Number(flag(args, "influence", "0.6"));
+  if (!(influence >= 0 && influence <= 1)) throw new Plain("--influence is a number from 0 to 1");
+  const model = flag(args, "model");
+  if (model !== undefined && !/^[A-Za-z0-9_]+$/.test(model)) throw new Plain(`a model id is letters, digits and _, got ${JSON.stringify(model)}`);
+  const body = { text: prompt, prompt_influence: influence };
+  if (model) body.model_id = model;
+  if (args.includes("--loop")) body.loop = true; // a background that is to be looped seamlessly
   if (seconds) body.duration_seconds = Math.max(0.5, Number(seconds)); // API minimum is 0.5 s
   const res = await post(`/sound-generation?output_format=mp3_44100_192`, body, "audio/mpeg");
   writeFileSync(out, Buffer.from(await res.arrayBuffer()));

@@ -267,7 +267,7 @@ async function newFilm(account, slug) {
     writeFileSync(join(filmDir, "script.txt"), scriptSkeleton(readOptional(join(starterFilm, "script.txt")) ?? SCRIPT_LABELS));
     writeFileSync(join(filmDir, "STORYBOARD.md"), headingsOnly(readOptional(join(starterFilm, "STORYBOARD.md")) ?? STORYBOARD_HEADINGS, slug));
     writeFileSync(join(filmDir, "audio/cues.json"), JSON.stringify({ duration: 0, lines: [] }, null, 2) + "\n");
-    writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ loop: true, hits: [], music: { segments: [] } }, null, 2) + "\n");
+    writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ version: 2, loop: true, hits: [], beds: [], music: { segments: [] } }, null, 2) + "\n");
     for (const file of copyTree(template, scenesDir)) {
       if (/\.(ts|tsx)$/.test(file)) writeFileSync(file, renamed(readFileSync(file, "utf8"), id, slug));
     }
