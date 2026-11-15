@@ -16,8 +16,8 @@
 // - puts a build (`"align": "sync"`) on its cue by its peak, not its start;
 // - keeps four buses (voice, music, effects, backgrounds); the voice ducks the other three while it speaks;
 //   the music can dip for a moment (`music.dips`); a hit with `"duck": false` is not ducked;
-// - sums the stems, levels them to the target with one gain and limits only the peaks that gain pushes over the
-//   ceiling (default -14 LUFS integrated, -1 dBTP).
+// - sums the stems, levels them to the target with one gain and limits, oversampled, the peaks that gain pushes over
+//   the ceiling (default -14 LUFS integrated, -1 dBTP), with a voice or without one.
 //
 // Where a sound is: `"sound": "<group>/<name>"` from the account's library (<library>/library.json, default
 // <audio-dir>/../../sounds), `"sound": "kit/<name>"` from the synthesized kit (--sfx, default <audio-dir>/../../sfx),
@@ -45,8 +45,8 @@ const USAGE = "usage: mix2.mjs <audio-dir> [--sfx <dir>] [--library <dir>]";
 const SILENT = -60;
 /** The nominal voice a voice-free film is levelled against (its typical level, its peak), dB. */
 const NOMINAL = { typ: -20, peak: -12 };
-/** A voice-free mix is raised toward the target only until its peaks stand this far over the ceiling before the limiter. */
-const FREE_OVER = 3;
+/** The limiter runs at this rate, so a peak between two samples (a true peak) is caught, not let through. */
+const OVERSAMPLE = 192000;
 const TAIL = 4; // seconds rendered past the end and folded onto the head when looping
 const STALL = 300_000; // ms: an ffmpeg run longer than this is a stall, reported as an error
 const VARY = [0, 0.4, -0.3, 0.2, -0.5]; // semitones, by round: a take that comes round again is never the same pitch
@@ -291,30 +291,25 @@ export function main(argv) {
   const sum = `[0:a][1:a][2:a][3:a]amix=inputs=4:normalize=0:duration=first`;
   const before = ebur128(stemIn, `${sum}[pre]`);
   if (!Number.isFinite(before.I)) throw new Error("the mix is silent: nothing to level");
-  const lim = Math.pow(10, (target.TP - 0.6) / 20).toFixed(4);
+  // Voiced or not, the master reaches the target: a voice-free film carries its loudness in its music and backgrounds,
+  // and the limiter takes the peaks of the hits over them. The limiter works on an oversampled signal, so the true
+  // peak is caught where it forms; if one still slips past the ceiling, the ceiling comes down, never the loudness.
+  let ceiling = target.TP - 0.3;
   let gain = target.I - before.I;
-  let capped = false;
-  if (!voiced && before.TP + gain > target.TP + FREE_OVER) {
-    // A film with no voice and sparse hits would need its peaks crushed to reach the target: it stays quieter.
-    gain = target.TP + FREE_OVER - before.TP;
-    capped = true;
-  }
   let chain = "";
   let after = before;
-  for (let i = 0; i < 6; i++) {
-    chain = `volume=${gain.toFixed(2)}dB,alimiter=level_in=1:level_out=1:limit=${lim}:attack=2:release=60:level=disabled`;
+  for (let i = 0; i < 8; i++) {
+    const lim = Math.pow(10, ceiling / 20).toFixed(4);
+    chain = `volume=${gain.toFixed(2)}dB,aresample=${OVERSAMPLE},alimiter=level_in=1:level_out=1:limit=${lim}:attack=1:release=80:level=disabled,aresample=${SR}`;
     after = ebur128(stemIn, `${sum},${chain}[pre]`);
-    // The ceiling comes first: a sharp transient can slip through the limiter between samples, and then the whole mix
-    // comes down by what slipped through (the loudness falls short of the target by that much, and says so).
-    if (after.TP > target.TP + 0.05) {
-      gain -= after.TP - target.TP + 0.1;
-      capped = true;
-      continue;
-    }
-    if (capped || Math.abs(after.I - target.I) <= 0.15) break;
-    gain += target.I - after.I;
+    const over = after.TP - target.TP;
+    if (over > 0.05) ceiling -= over + 0.1;
+    const short = target.I - after.I;
+    if (over <= 0.05 && Math.abs(short) <= 0.15) break;
+    gain += short;
   }
-  run([...stemIn, "-filter_complex", `${sum},${chain},aresample=${SR}[o]`, "-map", "[o]", "-c:a", "pcm_s16le", join(dir, "mix.wav")]);
+  const capped = after.I < target.I - 1;
+  run([...stemIn, "-filter_complex", `${sum},${chain}[o]`, "-map", "[o]", "-c:a", "pcm_s16le", join(dir, "mix.wav")]);
 
   const r3 = (v) => +v.toFixed(3);
   const played = {
@@ -333,7 +328,7 @@ export function main(argv) {
     `mix.wav: ${hits.length} hits from ${takes} files, ${beds.length} backgrounds, ${segs.length} music segments; ` +
     `${voiced ? `voice typical ${voice.typ.toFixed(1)} LKFS` : "no voice (levelled against a nominal one)"}; ` +
     `before ${before.I} LUFS / ${before.TP} dBTP; after ${after.I} LUFS / ${after.TP} dBTP (target ${target.I} / ${target.TP})` +
-    (capped ? `; kept quieter than the target, for the ceiling's sake${voiced ? "" : ` (a voice-free mix is raised only until its peaks stand ${FREE_OVER} dB over the ceiling)`}` : "")
+    (capped ? "; still more than 1 LU under the target after eight passes: the limiter could not hold the ceiling at that loudness" : "")
   );
 }
 

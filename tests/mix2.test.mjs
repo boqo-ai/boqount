@@ -137,15 +137,38 @@ t("a sheet's names and numbers are checked before they reach a filter graph", ()
   }
 });
 
-t("a voice-free film is levelled against a nominal voice and kept under the ceiling, never crushed to reach the target", () => {
-  const { audio } = account({ voice: 0, sheet: { hits: [{ sound: "kit/pop", at: 0.5, under: 8 }, { sound: "kit/tick", at: 1.5, under: 18 }] } });
+t("a voice-free film reaches the target too: -14 LUFS within 1 LU, its true peak at most -1 dBTP, by the limiter", () => {
+  // A background under the whole film and sparse hits over it: the loudness is the background's, the hits' peaks are
+  // the limiter's. The old mixer kept such a film quieter (about -20 LUFS) for its peaks' sake.
+  const { audio } = account({
+    duration: 6,
+    voice: 0,
+    lib: { "amb/room": [sine(180, 6, 0.05)] },
+    sheet: { beds: [{ sound: "amb/room", at: 0, until: "end", under: 20 }], hits: [{ sound: "kit/pop", at: 0.5, under: 8 }, { sound: "kit/stamp", at: 2.5, under: 7 }, { sound: "kit/tick", at: 4.0, under: 18 }] },
+  });
   const r = mix(audio);
   assert.equal(r.status, 0, r.stderr);
   const played = JSON.parse(readFileSync(join(audio, "stems/played.json"), "utf8"));
   assert.equal(played.voice.nominal, true);
+  assert.ok(Math.abs(played.after.I + 14) <= 1, `integrated ${played.after.I}`);
   assert.ok(played.after.TP <= -0.95, `true peak ${played.after.TP}`);
+  assert.equal(played.after.capped, undefined);
+  // measured again on the file itself, not only on the mixer's own reading
+  const m = spawnSync("ffmpeg", ["-nostdin", "-i", join(audio, "mix.wav"), "-af", "ebur128=peak=true", "-f", "null", "-"], { encoding: "utf8" }).stderr;
+  const I = +/I:\s+(-?[\d.]+) LUFS/.exec(m.slice(m.lastIndexOf("Summary")))[1];
+  const TP = +/Peak:\s+(-?[\d.]+) dBFS/.exec(m.slice(m.lastIndexOf("Summary")))[1];
+  assert.ok(Math.abs(I + 14) <= 1, `file integrated ${I}`);
+  assert.ok(TP <= -0.95, `file true peak ${TP}`);
   const c = spawnSync("node", [join(tools, "soundcheck.mjs"), audio], { encoding: "utf8" });
   assert.match(c.stdout, /no voice/);
+});
+
+t("a voice-free film of sparse hits alone is still held under the ceiling", () => {
+  const { audio } = account({ voice: 0, sheet: { hits: [{ sound: "kit/pop", at: 0.5, under: 8 }, { sound: "kit/tick", at: 1.5, under: 18 }] } });
+  const r = mix(audio);
+  assert.equal(r.status, 0, r.stderr);
+  const played = JSON.parse(readFileSync(join(audio, "stems/played.json"), "utf8"));
+  assert.ok(played.after.TP <= -0.95, `true peak ${played.after.TP}`);
 });
 
 t("soundcheck: one line a rule, and a fail for the same file twice within a second", () => {

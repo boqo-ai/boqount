@@ -185,7 +185,8 @@ and the library are `sound.md`. Here: the files, the sheet, the mix and the chec
   `beds.wav` and `stems/played.json` (every hit as played: its time, sound, take, level and `"_"`). The voice is
   levelled lightly and measured; every sound is set against it; the master is -14 LUFS integrated, at most -1 dBTP,
   one gain and a limiter that takes only the peaks. A voice-free film has no `vo.wav`: it is set against a nominal
-  voice, and raised toward -14 LUFS only as far as its peaks allow (quieter rather than crushed).
+  voice and reaches the same -14 LUFS: its background and music carry the loudness, and the limiter (run oversampled,
+  so a peak between samples is caught) takes the hits' peaks over them.
 - **The sound check:** `node <skill>/tools/soundcheck.mjs films/<slug>/audio` prints one line a rule, `ok` or `FAIL`:
   the master's loudness and peak, how hard the limiter works, the mono fold-down, the music, the effects and the
   backgrounds against the voice, no file more than 8 % of the hits, no file twice within a second, at most seven hits
