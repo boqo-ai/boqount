@@ -223,4 +223,6 @@ Return, at the end of the note, under `## Directions`, two or three style direct
 sentence; how it differs from the niche's habit; real examples (links, with what the frame shows); what a post looks
 like in it on each channel; what it needs to produce and what it costs; proposed tokens (the keys of
 `templates/style.md` → Tokens, with a reason for each colour and font). A direction with no real example is not
-returned.
+returned. A direction may be built on a generated look (`<skill>/gen.md`: lucid, live-action, animated comic, vibe,
+integrated VFX, explainer props) only when a fal key is present (`test -s ~/.config/boqount/fal.key`, or `FAL_KEY`
+set; never printed); it says so, and gives a film's cost in it as an order of size, priced at its source that day.

@@ -22,6 +22,8 @@ The words follow `script.md`; a `product` or `offer` film follows `story.md` too
 A film with one of the brand's recurring characters reads their bible and memory first (`characters.md`). The kit's
 interface parts (`kit/Parts.tsx`: a pill, a toggle, an app window, a run of steps) and the brand's mark as a lit 3D
 object (`kit/Logo3D.tsx`; a PNG logo is traced first with `node <skill>/tools/trace-png.mjs`) are there to draw with.
+A film in a generated look (lucid, live-action, animated comic, vibe, integrated VFX, explainer props) follows `gen.md`
+and its look's file on top of this one, on the person's own key; without a key, no such look is offered.
 
 ## The locked format
 

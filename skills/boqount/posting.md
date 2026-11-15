@@ -256,7 +256,7 @@ By hand, the caption is the hand-over message's block (By hand, step 4), under t
 ## The AI label
 
 Keyed on the record's `AI label` line (`check.md` item 4): whether the post needs the platform's AI-content label (a
-synthetic voice, a realistic AI picture).
+synthetic voice, a realistic AI picture, generated photoreal footage: `gen.md` → The AI label).
 
 - **By hand, any platform:** the hand-over message tells the person to switch the label on.
 - **Instagram through boqo:** keyed on `Instagram AI label` in `state.md`.

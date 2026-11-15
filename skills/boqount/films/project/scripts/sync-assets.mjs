@@ -10,6 +10,7 @@
 //   ../<film>/audio/mix.wav, vo.wav            → public/audio/<film>/
 //   ../<film>/audio/cues.json                  → src/films/<film>/cues.json   (for each film that has a scene folder)
 //   ../<film>/audio/said.json                  → src/films/<film>/said.json   (vo-check.mjs said; lib/cues.ts saidAt)
+//   ../<film>/media/props/props.json           → src/films/<film>/props.json  (prop-prep.mjs; kit/Prop.tsx)
 //   ../glimpse/glimpse.json                    → src/films/glimpse/spec.json  (the first look's words and colours)
 //   ../glimpse/assets/fonts/*.ttf|otf|woff2    → public/fonts/                (its face, before the brand folder exists)
 //   ../glimpse/assets/logo.svg|.png            → public/glimpse/
@@ -130,6 +131,11 @@ mirror(brand && join(brand, 'media'), join(pub, 'brand/media'), 'brand/media', b
 const filmNames = readdirSync(films).filter((film) => film !== 'project' && isDir(join(films, film)));
 for (const film of filmNames) {
   mirror(join(films, film, 'media'), join(pub, 'media', film), `media/${film}`, join(films, film, 'media-120'));
+  // a film's generated props (tools/prop-prep.mjs): their sizes and screen rectangles, beside its scenes for kit/Prop.tsx
+  const props = join(films, film, 'media/props/props.json');
+  if (existsSync(props) && existsSync(join(root, 'src/films', film))) {
+    if (copy(props, join(root, 'src/films', film, 'props.json'))) done.push(`src/films/${film}/props.json`);
+  } else if (existsSync(join(root, 'src/films', film, 'props.json'))) rmSync(join(root, 'src/films', film, 'props.json'));
   const audio = join(films, film, 'audio');
   if (!isDir(audio)) continue;
   for (const f of ['mix.wav', 'vo.wav']) {

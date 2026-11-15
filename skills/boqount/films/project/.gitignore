@@ -8,5 +8,6 @@ out
 /public/
 /src/films/*/cues.json
 /src/films/*/said.json
+/src/films/*/props.json
 # The template's empty cue sheet is its own, not synced: `film.mjs new` copies it as the new film's first one.
 !/src/films/_template/cues.json

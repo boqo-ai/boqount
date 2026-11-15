@@ -16,7 +16,7 @@ ending one are theirs to say. Each lives in `brand/<slug>/characters/<name>/`:
 A character drawn in code (a component in the film project, in the brand's tokens) costs $0 and its look is the
 component itself: the bible names it (`films/project/src/films/<slug>/<Name>.tsx`, or a shared kit file). A generated
 look costs a paid generation per key frame on the person's own key, priced and approved like any paid take
-(`production.md` → Prices).
+(`production.md` → Prices; A generated look, below).
 
 ## Working with a character
 
@@ -45,3 +45,21 @@ situation, never the premise.
 - **One function of the product a film,** never two.
 - **The asker is the star of the ask; the character is the star of the delivery.** In the ask the character is at
   most a voice or a hand.
+
+## A generated look
+
+A character whose look is generated (a painted or photoreal figure, not a component in code) is made on the person's
+own key through `gen.md`, with its spend quoted and approved first (`gen.md` → Spend):
+
+1. **The bible's look and style paragraphs come first**, written with the person: what they are, their marks (the
+   sides, colours, numbers and props that tell them apart), the art style. They are pasted verbatim into every prompt,
+   theirs and every film's.
+2. **The model sheet:** a front, a side and a back view on one plain canvas, with the marks visible, two or three takes;
+   the person picks one, and it becomes `ref/sheet.png`. Then the key art (`ref/look.png`), made with the sheet as its
+   reference, and each recurring prop the same way. The prompts and every take stay in `gen/`, with their ledger.
+3. **Every film's key frame** gets `ref/sheet.png` and `ref/look.png` as references, and is checked against the sheet's
+   marks before it is animated (Working with a character, item 2).
+4. **A voice**, when the character speaks, is a voice id the person picks (`film.md` → The voice), written in the
+   bible; a talking face is lip-synced to it (`comic.md` → The render).
+5. **A new version** of the look is a new sheet in `ref/v<N>/`, on the person's word, and a line at the top of the
+   bible.
