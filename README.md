@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/media/demo.gif" width="400" alt="boqount in fifteen seconds: paste one line, the agent reads your project, makes a film from scratch, and you approve the post">
+  <img src=".github/media/demo.gif" width="400" alt="boqount in twenty seconds: paste one line, the agent reads your project, makes a film from scratch, you approve the post, and it measures the post and plans the next ones from it">
 </p>
 
 <h1 align="center">boqount</h1>
@@ -8,7 +8,7 @@
 It reads your project, makes films from scratch in your style, checks every post, asks you before anything goes
 out, and measures what worked.</p>
 
-<p align="center"><sub>The film in the demo is the example the skill ships, made for an invented plant app.</sub></p>
+<p align="center"><sub>The film in the demo is the example the skill ships, made for an invented plant app; its numbers are an example too.</sub></p>
 
 ## Start in three steps
 
