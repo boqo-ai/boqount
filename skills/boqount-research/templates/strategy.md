@@ -29,7 +29,8 @@ judged on its type's main metric against its norm. Sign-ups are read for a perio
 
 One pillar per type: what a post of that type is about, for whom, in its layer (`<skill>/hooks.md` → The arc). The
 layer suggests the type; the human picks the type at the gate.
-- **reach** (`niche`): <the viewer's world with no product in it, as the series in Rubrics>. Evidence: <…>
+- **reach** (`niche`): <the viewer's world with no product in it, as the series in Rubrics: what a film opens on,
+  and how long it runs>. Evidence: <…>
 - **awareness** (`product`): <the viewer's problem, with the product in the middle>. Evidence: <…>
 - **trust** (`product`): <…>. Evidence: <…>
 - **sale** (`offer`): <one real offer, said on its real date>. Evidence: <…>
@@ -43,7 +44,7 @@ opening line and numbering are also in `brand/<slug>/style.md` → Language; a c
 
 | Rubric | Layer and type | What it is | Format | Fixed opening line | Episodes | Evidence |
 |---|---|---|---|---|---|---|
-| `<series-slug>` | niche, reach | The series "<name>": <what one episode is> | <chain explainer \| dated news \| data story> | "<the line every episode opens on, with its slots>" | <how they are numbered, and where the number shows> | <…> |
+| `<series-slug>` | niche, reach | The series "<name>": <what one episode is> | <chain explainer \| dated news \| data story \| the opening>, <length in s, from the research> | "<the line every episode opens on, with its slots>" | <how they are numbered, and where the number shows> | <…> |
 | `<function-slug>` | product, awareness or trust; offer, sale | <the product function at work> | the opportunity story (`<skill>/story.md`) | the film's own hook | — | <…> |
 
 ### Code words
@@ -54,6 +55,13 @@ its row in `brand/<slug>/accounts.md` → DM automation; with no confirmed row, 
 | Rubric | Code word | Campaign |
 |---|---|---|
 | `<function-slug>` | <CODE> | `<function-slug>` (the rubric's own, shared by every post of it) |
+
+**The opening** is a series form: the first five parts of the opportunity story (`<skill>/story.md`) with
+no product in them: a number about an event everyone knows, a second sourced fact, the gap, the people the gap makes,
+and the opening for the viewer, which is its last line, never a product or a call. A length beyond `<skill>/hooks.md`
+→ Length, and an episode in the form `the opening`, are proposals to the human in the report: the rubric is written
+here as proposed, and an episode is built to it only on the human's word. A new series is judged after three
+episodes, not one.
 
 ## Format catalog
 
@@ -73,7 +81,8 @@ Drafts for `<skill>/check.md`, each with its number proved on screen. No hook ca
 ## Calendar
 
 Twelve weeks from <the Monday>, <YYYY-MM-DD> to <YYYY-MM-DD>. Every week is dated and has a hook; every dated
-moment names its source. An `offer` week stands on a real offer and its real date.
+moment names its source. An `offer` week stands on a real offer and its real date. An event everyone knows may carry
+several `niche` films, each on a different number: one hit is one post in many.
 
 | Week | Dates | Hook of the week | Layer | Type | Evidence |
 |---|---|---|---|---|---|

@@ -117,9 +117,30 @@ them travel with no product in them.
    would make it as (`film`, `clips`, `file`, `slideshow`) and at what cost.
 5. Trends with a date on them (a sound, a meme, a template): when they started, and whether they are rising or fading.
 6. What the niche's top posts share in their first second and their last, and how many of them ask for anything.
+7. Accounts of about our size (our followers or fewer) with a post far above their own usual, in the last 90 days:
+   for each such post, what it opens on at 0.0 s (said and on screen), its length, its subject, and where the niche
+   comes into its story; beside it, the median of the same account's other posts, so a hit is read against its own
+   account and not against ours.
+8. For each format and each of our series: the shortest and the longest of its spoken hits, and which proof at our
+   size it has and which it lacks (an example on the niche's own nouns, or only beside them).
 
 Sources to start from: the platform's public pages of creators and brands in the niche and beside it
 (`brand-book.md` → Segments and offers names who we serve); trend reports with dates; the platform's own trend pages.
+
+**What made a film with no product travel, in editions so far.** A prior, not a fact: it goes in the brief under
+Claims to test, both ways, and the note says whether it held this time.
+- The film opens, at 0.0 s, on a number or a loss about something everyone knows, said and on screen at once; the
+  niche comes inside the story, not in its first sentence. The event sets the ceiling and the first sentence picks the
+  winner: an event told with no number or loss, or a number with no event, stayed small on the same accounts.
+- "Everyone" means people outside the niche too. An event known only inside the niche (its own awards, its own
+  conference) is not one.
+- Spoken hits from small accounts ran 45 s and longer; very short chain explainers were rare among them. A length
+  above `<skill>/hooks.md` → Length is a proposal to the human, never written in as in force.
+- The same accounts' ordinary posts read one or two orders of magnitude below their hits: a hit is one post in many.
+  So a plan counts on several films per event, each on a different number, and a series is judged after three
+  episodes, not one.
+- A format that travels on a face on camera, another creator's footage or a person's name is reported, and left out
+  of the proposals when the brand book's Legal or Do and don't rule it out.
 
 ## 4. `competitors` — competitors' playbooks
 
@@ -145,8 +166,10 @@ Question: what is on the calendar for our audience in the 12 weeks from the next
 
 1. The dated moments (events, launches, holidays, sales days, platform recaps), each with its date, status tag and
    source, and its channel when it differs by channel.
-2. Dated things worth a `niche` episode: a platform change and the day it starts, a dated number about the viewer's
-   own world, a season, each read at its own source.
+2. Dated things worth a `niche` episode: a platform change and the day it starts, told as what the viewer loses or
+   gets; a dated number about the viewer's own world; a season; each read at its own source. An event everyone knows
+   (a launch, a final, a holiday) comes before one known only inside the niche, and gets more than one hook, each on a
+   different number, its dates and its numbers to be read again on the day its film is cut.
 3. **A dated 12-week calendar**: week, dates, the moment(s) with their sources, a hook, the layer and the type it
    serves.
 4. Our own dated moments: offers and their deadlines (brand-book → Facts, read at the source), product launches.
