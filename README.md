@@ -73,20 +73,20 @@ Optional:
 
 The agent copies the skill to your machine and starts onboarding in the folder you opened it in:
 
-1. It asks once whether its files may be created in this folder, and whether to commit them.
-2. It reads your project: the README and docs, the site's pages, prices, the product's own words, the logo and
-   colours, earlier marketing, recent changes, and your public profiles.
-3. It says back what it understood, with a source for each point, and asks what is wrong.
-4. It shows you a first short film in your brand's colours and words, if you want films made here (the film project
-   needs about 1 GB and your yes). It is a first look, never posted.
-5. It asks only what no file could tell it: what the account sells and to whom, what is off limits, which channels,
-   the budget, how many posts you want to approve before it may post alone, how you count sign-ups, who answers a
-   comment that asks for the link (a DM automation you run, or you by hand), your time zone and when to post.
-6. It drafts a brand kit from all that for your approval.
-7. It researches a strategy with you: the account's goal, named series, a twelve-week calendar, benchmarks from
-   sources, and two or three style directions on real examples to choose from.
-8. It drafts your profile's bio, link and pins for you to set, and proposes a first week of three posts. Nothing is
-   posted during onboarding.
+1. It says what the next few minutes give you, then asks two yes-questions: may its files go in this folder, and may
+   it set up the film project (about 1 GB, installed in the background while it reads).
+2. It reads your project, every area at once: the README and docs, the site's pages, prices, the product's own words,
+   the logo, app icon, colours and fonts, earlier marketing, recent changes, and your public profiles.
+3. It shows you what it understood: a 16-second first look at your brand moving, in your own colours, logo, screens
+   and words, each line with its source, plus a short say-back. You say what is wrong. It is a draft, never posted.
+4. It asks one round of questions, each with a proposed answer you can just say yes to: what the account sells and to
+   whom, what is off limits, the channels, the budget, how many posts you approve before it may post alone, who
+   answers a comment that asks for the link (a DM automation you run, or you by hand), when to post.
+5. It drafts your brand kit for your approval.
+6. It researches a strategy with you: the account's goal, named series, a twelve-week calendar, sourced benchmarks,
+   and two or three style directions on real examples to choose from.
+7. It renders the starter film and drafts your profile's bio, link and pins for you to set.
+8. It proposes a first week of three posts. Nothing is posted during onboarding.
 
 Onboarding and research may start several helper agents at once, which uses more of your plan.
 
