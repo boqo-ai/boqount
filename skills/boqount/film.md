@@ -239,7 +239,8 @@ message) and what to watch for.
   6 % of a side (`--safe` stills: `motion.md` → Layout); the frame still full; text at its size; the loop's step no
   bigger than its neighbours' (a `niche` film); no single-frame pop; nothing flashes (`motion.md` → Nothing flashes:
   where a run of moments passes, stills of every frame across it, each run read for a large area going dark and
-  bright and back).
+  bright and back; and measured on the feed file: `node <skill>/tools/flashes.mjs films/<slug>/out/<slug>-feed.mp4`,
+  with `--loop` for a looping film, its output pasted).
 - **Real labels, read again.** Before a film shows a panel of the product, its page or app is read again and the
   labels on screen are the ones read, with the date (`motion.md` → Real labels).
 - **The film's own checks, reported.** Before the approval message, every check (the lint, the probe, the loop, the

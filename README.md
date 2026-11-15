@@ -44,7 +44,8 @@ It posts at most twice a day on a channel, only in the time windows you set, wit
 ## What it makes
 
 - **Films from scratch,** drawn in code in a Remotion project in your folder, in your brand's style, with on-screen
-  words and a synthesized sound kit, in two shapes:
+  words and sound placed to the picture (a free synthesized kit, or a larger library you generate with your own
+  ElevenLabs key), in two shapes:
   - **episodes of your niche series,** 27 to 30 seconds, that loop and never show the product: one travelling camera
     through one world, each step shown happening rather than labelled, something new for the eye about every second;
   - **films that show your product,** 60 to 85 seconds, in the "opportunity story" format: a sourced number about

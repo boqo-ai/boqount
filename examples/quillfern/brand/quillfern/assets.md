@@ -36,7 +36,8 @@ Font files live in `brand/quillfern/fonts/`. A font other than Inter in `style.m
 
 ## Sounds
 
-- The synthesized sound kit, `films/sfx/` (made by `film.mjs init`; no licence needed). No music saved.
+- The synthesized sound kit, `films/sfx/` (made by `film.mjs init`; no licence needed). No generated library yet
+  (`films/sounds/`: generating one is a paid call on the human's ElevenLabs key, not asked for). No music saved.
 
 ## Product screen recordings
 

@@ -84,8 +84,9 @@ Two or more things that repeat in every post, so the account is recognisable wit
 
 - **Voice:** voice-free: text on screen and the on-screen seam. Source: the human (2026-11-09).
 - **Music:** none. A source's song is never the bed. Source: the human (2026-11-09).
-- **Sound effects:** a hit on every visible action, from the kit in `films/sfx/`; soft ticks for the days, one
-  `drop` for the water. Source: `notes-style.md` §2 (read 2026-11-10).
+- **Sound effects:** one sound for each event the eye follows, picked by what it is the sound of, at most six hero
+  hits a minute (`<skill>/sound.md`), from the kit in `films/sfx/` until the account has a library; soft ticks for
+  the days, one `drop` for the water. Source: `notes-style.md` §2 (read 2026-11-10).
 
 ## Not this
 
