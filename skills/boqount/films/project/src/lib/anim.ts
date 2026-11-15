@@ -26,6 +26,9 @@ export const lerp = (
 
 export const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 
+/** x held to 0..1. */
+export const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
+
 /** Seeded random in [lo, hi): the same value on every render. */
 export const rnd = (seed: string | number, lo = 0, hi = 1) => lo + random(seed) * (hi - lo);
 

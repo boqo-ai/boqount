@@ -1,0 +1,445 @@
+{
+ "voice": {
+  "typ": -20,
+  "peak": -12,
+  "nominal": true
+ },
+ "target": {
+  "I": -14,
+  "TP": -1
+ },
+ "after": {
+  "I": -19.7,
+  "TP": -1,
+  "capped": true
+ },
+ "dur": 69.26666666666667,
+ "loop": false,
+ "hits": [
+  {
+   "t": 0,
+   "sound": "kit/tick",
+   "take": "kit/tick.wav",
+   "db": -11.9,
+   "under": 18,
+   "len": 0.03,
+   "_": "the counter rolls toward nine on frame 0"
+  },
+  {
+   "t": 0.7,
+   "sound": "kit/stamp",
+   "take": "kit/stamp.wav",
+   "db": -12.1,
+   "under": 8,
+   "len": 0.25,
+   "_": "the counter lands on nine"
+  },
+  {
+   "t": 0.7,
+   "sound": "kit/sparkle",
+   "take": "kit/sparkle.wav",
+   "db": -22.4,
+   "under": 14,
+   "len": 0.7,
+   "_": "the nine lights up as it lands"
+  },
+  {
+   "t": 1.732,
+   "sound": "kit/rise",
+   "take": "kit/rise.wav",
+   "db": -22.7,
+   "under": 16,
+   "len": 1.1,
+   "_": "the trips grow past the week line"
+  },
+  {
+   "t": 3.56,
+   "sound": "kit/whoosh_big",
+   "take": "kit/whoosh_big.wav",
+   "db": -17.1,
+   "under": 12,
+   "len": 0.68,
+   "_": "the trips leave the frame to the right"
+  },
+  {
+   "t": 3.89,
+   "sound": "kit/pop",
+   "take": "kit/pop.wav",
+   "db": -15.3,
+   "under": 16,
+   "len": 0.09,
+   "_": "the plants that stay stand up on the sill"
+  },
+  {
+   "t": 5.43,
+   "sound": "kit/whoosh",
+   "take": "kit/whoosh.wav",
+   "db": -19.6,
+   "under": 14,
+   "len": 0.45,
+   "_": "the push through into the shelves"
+  },
+  {
+   "t": 6.52,
+   "sound": "kit/pop_hi",
+   "take": "kit/pop_hi.wav",
+   "db": -17.4,
+   "under": 18,
+   "len": 0.08,
+   "_": "the first plant pops onto the shelf"
+  },
+  {
+   "t": 9.51,
+   "sound": "kit/blip",
+   "take": "kit/blip.wav",
+   "db": -18.5,
+   "under": 16,
+   "len": 0.075,
+   "_": "the six schedule dots drop onto the plants"
+  },
+  {
+   "t": 10.31,
+   "sound": "kit/ding",
+   "take": "kit/ding.wav",
+   "db": -21.6,
+   "under": 14,
+   "len": 0.95,
+   "_": "the schedules count lands on six"
+  },
+  {
+   "t": 11.23,
+   "sound": "kit/whoosh",
+   "take": "kit/whoosh.wav",
+   "db": -19.6,
+   "under": 14,
+   "len": 0.45,
+   "_": "the push through onto the one plant"
+  },
+  {
+   "t": 13.52,
+   "sound": "kit/blip",
+   "take": "kit/blip.wav",
+   "db": -20.5,
+   "under": 18,
+   "len": 0.075,
+   "_": "the empty speech bubble rises from the leaves"
+  },
+  {
+   "t": 16.97,
+   "sound": "kit/drop",
+   "take": "kit/drop.wav",
+   "db": -16.5,
+   "under": 8,
+   "len": 0.6,
+   "_": "the leaves droop"
+  },
+  {
+   "t": 18.8,
+   "sound": "kit/tick",
+   "take": "kit/tick.wav",
+   "db": -11.9,
+   "under": 18,
+   "len": 0.03,
+   "_": "the days-since-water count turns over"
+  },
+  {
+   "t": 20.16,
+   "sound": "kit/whoosh_big",
+   "take": "kit/whoosh_big.wav",
+   "db": -19.1,
+   "under": 14,
+   "len": 0.68,
+   "_": "the pull-out to the wall of notes"
+  },
+  {
+   "t": 20.49,
+   "sound": "kit/tap",
+   "take": "kit/tap.wav",
+   "db": -11.6,
+   "under": 16,
+   "len": 0.045,
+   "_": "the first note is pinned"
+  },
+  {
+   "t": 22.01,
+   "sound": "kit/pop_hi",
+   "take": "kit/pop_hi.wav",
+   "db": -17.4,
+   "under": 18,
+   "len": 0.08,
+   "_": "a note is pinned"
+  },
+  {
+   "t": 23.44,
+   "sound": "kit/stamp",
+   "take": "kit/stamp.wav",
+   "db": -16,
+   "under": 18,
+   "len": 0.25,
+   "_": "the last note is pinned"
+  },
+  {
+   "t": 25.72,
+   "sound": "kit/error",
+   "take": "kit/error.wav",
+   "db": -16.3,
+   "under": 8,
+   "len": 0.35,
+   "_": "the question marks flare red"
+  },
+  {
+   "t": 26.07,
+   "sound": "kit/drop",
+   "take": "kit/drop.wav",
+   "db": -22.5,
+   "under": 14,
+   "len": 0.6,
+   "_": "the snake plant's note falls off the wall"
+  },
+  {
+   "t": 26.52,
+   "sound": "kit/whoosh",
+   "take": "kit/whoosh.wav",
+   "db": -19.6,
+   "under": 14,
+   "len": 0.45,
+   "_": "the pull-out to the full windowsill"
+  },
+  {
+   "t": 31.007,
+   "sound": "kit/rise",
+   "take": "kit/rise.wav",
+   "db": -20.7,
+   "under": 14,
+   "len": 1.1,
+   "_": "the twelve water days lift into the cloud"
+  },
+  {
+   "t": 33.12,
+   "sound": "kit/sparkle",
+   "take": "kit/sparkle.wav",
+   "db": -24.4,
+   "under": 16,
+   "len": 0.7,
+   "_": "the cloud is full"
+  },
+  {
+   "t": 34.05,
+   "sound": "kit/typing",
+   "take": "kit/typing.wav",
+   "db": -16.7,
+   "under": 20,
+   "len": 0.5,
+   "_": "the days of the calendar slide in"
+  },
+  {
+   "t": 36.86,
+   "sound": "kit/drop",
+   "take": "kit/drop.wav",
+   "db": -22.5,
+   "under": 14,
+   "len": 0.6,
+   "_": "the water starts falling into Saturday"
+  },
+  {
+   "t": 38.05,
+   "sound": "kit/pop",
+   "take": "kit/pop.wav",
+   "db": -15.3,
+   "under": 16,
+   "len": 0.09,
+   "_": "the last drop lands in Saturday"
+  },
+  {
+   "t": 38.81,
+   "sound": "kit/lock",
+   "take": "kit/lock.wav",
+   "db": -11.6,
+   "under": 8,
+   "len": 0.2,
+   "_": "you leave: the week away locks in, no water"
+  },
+  {
+   "t": 39.47,
+   "sound": "kit/tap",
+   "take": "kit/tap.wav",
+   "db": -11.6,
+   "under": 14,
+   "len": 0.045,
+   "_": "the cut to the fern and the cactus"
+  },
+  {
+   "t": 41.48,
+   "sound": "kit/error",
+   "take": "kit/error.wav",
+   "db": -24.3,
+   "under": 16,
+   "len": 0.35,
+   "_": "the fern's leaves brown"
+  },
+  {
+   "t": 43.91,
+   "sound": "kit/blip",
+   "take": "kit/blip.wav",
+   "db": -18.5,
+   "under": 16,
+   "len": 0.075,
+   "_": "water spreads in the cactus's saucer"
+  },
+  {
+   "t": 45.09,
+   "sound": "kit/stamp",
+   "take": "kit/stamp.wav",
+   "db": -12.1,
+   "under": 8,
+   "len": 0.25,
+   "_": "the strike through Saturday"
+  },
+  {
+   "t": 45.09,
+   "sound": "kit/error",
+   "take": "kit/error.wav",
+   "db": -22.3,
+   "under": 14,
+   "len": 0.35,
+   "_": "Saturday is struck out"
+  },
+  {
+   "t": 47.5,
+   "sound": "kit/ding",
+   "take": "kit/ding.wav",
+   "db": -21.6,
+   "under": 14,
+   "len": 0.95,
+   "_": "each plant's own schedule drops in"
+  },
+  {
+   "t": 48.43,
+   "sound": "kit/whoosh_big",
+   "take": "kit/whoosh_big.wav",
+   "db": -17.1,
+   "under": 12,
+   "len": 0.68,
+   "_": "the push through into the product's name"
+  },
+  {
+   "t": 48.58,
+   "sound": "kit/pop_hi",
+   "take": "kit/pop_hi.wav",
+   "db": -15.4,
+   "under": 16,
+   "len": 0.08,
+   "_": "the name lands"
+  },
+  {
+   "t": 50.41,
+   "sound": "kit/toggle",
+   "take": "kit/toggle.wav",
+   "db": -10.5,
+   "under": 18,
+   "len": 0.065,
+   "_": "the plant list slides into the app"
+  },
+  {
+   "t": 52.34,
+   "sound": "kit/ding",
+   "take": "kit/ding.wav",
+   "db": -15.6,
+   "under": 8,
+   "len": 0.95,
+   "_": "the one reminder arrives"
+  },
+  {
+   "t": 55.46,
+   "sound": "kit/lock",
+   "take": "kit/lock.wav",
+   "db": -16.4,
+   "under": 18,
+   "len": 0.2,
+   "_": "the other rows turn to not today"
+  },
+  {
+   "t": 58.18,
+   "sound": "kit/tap",
+   "take": "kit/tap.wav",
+   "db": -11.6,
+   "under": 12,
+   "len": 0.045,
+   "_": "the tap on Done"
+  },
+  {
+   "t": 58.33,
+   "sound": "kit/toggle",
+   "take": "kit/toggle.wav",
+   "db": -10.5,
+   "under": 16,
+   "len": 0.065,
+   "_": "the check draws on"
+  },
+  {
+   "t": 59.29,
+   "sound": "kit/tick",
+   "take": "kit/tick.wav",
+   "db": -11.9,
+   "under": 18,
+   "len": 0.03,
+   "_": "the count rolls back to zero"
+  },
+  {
+   "t": 59.813,
+   "sound": "kit/rise",
+   "take": "kit/rise.wav",
+   "db": -20.7,
+   "under": 14,
+   "len": 1.1,
+   "_": "the pull-out back to the windowsill"
+  },
+  {
+   "t": 62.48,
+   "sound": "kit/pop",
+   "take": "kit/pop.wav",
+   "db": -15.3,
+   "under": 16,
+   "len": 0.09,
+   "_": "the water days drop back into their pots"
+  },
+  {
+   "t": 64.37,
+   "sound": "kit/sparkle",
+   "take": "kit/sparkle.wav",
+   "db": -18.4,
+   "under": 10,
+   "len": 0.7,
+   "_": "the cloud is gone"
+  },
+  {
+   "t": 65.68,
+   "sound": "kit/typing",
+   "take": "kit/typing.wav",
+   "db": -12.7,
+   "under": 16,
+   "len": 0.5,
+   "_": "FERN is typed into the comment field"
+  },
+  {
+   "t": 66.19,
+   "sound": "kit/toggle",
+   "take": "kit/toggle.wav",
+   "db": -10.5,
+   "under": 14,
+   "len": 0.065,
+   "_": "the comment is sent"
+  },
+  {
+   "t": 67.64,
+   "sound": "kit/lock",
+   "take": "kit/lock.wav",
+   "db": -11.6,
+   "under": 12,
+   "len": 0.2,
+   "_": "the reply arrives"
+  }
+ ],
+ "beds": [],
+ "dips": []
+}

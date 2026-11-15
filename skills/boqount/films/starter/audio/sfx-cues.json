@@ -1,419 +1,312 @@
 {
-  "_": "Version 2 (film.md → Sound). Every visible action has its sound, from the synthesized kit (kit/<name>: tools/sfx-kit.mjs) since the starter asks for nothing paid; with a library, pick library sounds by their use instead. `at` is seconds, or \"line.word\" plus `offset`. Written from the anchors of src/films/starter/timeline.ts: when an anchor moves, move its hit. A voice-free film keeps each hit's `gain`: there is no voice to set `under` against.",
+  "_": "Every hit is the sound of something on screen (\"_\" says what). Kit sounds only ($0): tools/sfx-kit.mjs. `at` is a cue \"<line>.<word>\" (that word's start in cues.json) plus `offset`; `under` is dB under the voice's typical level by tier (motion.md → Sound follows the picture); a voice-free film is set against a nominal voice. Written from the cues of src/films/starter/timeline.ts and its worlds: when a beat moves, move its hit.",
   "version": 2,
-  "loop": true,
+  "loop": false,
+  "target": {
+    "I": -14,
+    "TP": -1
+  },
+  "music": {
+    "segments": []
+  },
+  "beds": [],
   "hits": [
     {
       "sound": "kit/tick",
-      "at": 0.54,
-      "gain": -25,
-      "_": "the count rolls to 7 (a night passes)"
+      "at": 0.0,
+      "under": 18,
+      "_": "the counter rolls toward nine on frame 0"
     },
     {
-      "sound": "kit/tick",
-      "at": 0.65,
-      "gain": -29,
-      "_": "the dry soil cracks open"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 0.85,
-      "gain": -30,
-      "_": "another crack"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 1.05,
-      "gain": -31,
-      "_": "another crack"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 1.291,
-      "gain": -25,
-      "_": "the count rolls to 8 (a night passes)"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 1.783,
-      "gain": -26,
-      "_": "the title leaves"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "stake.0",
-      "gain": -24,
-      "_": "\"It\" rises"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "stake.1",
-      "gain": -24,
-      "_": "\"can't\" rises"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "stake.2",
-      "gain": -24,
-      "_": "\"tell\" rises"
-    },
-    {
-      "sound": "kit/blip",
-      "at": 2.517,
-      "gain": -24,
-      "_": "the drooping leaf shivers"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "stake.3",
-      "gain": -24,
-      "_": "\"you.\" rises"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 2.783,
-      "gain": -25,
-      "_": "the count rolls to 9 (a night passes)"
-    },
-    {
-      "sound": "kit/drop",
-      "at": 2.783,
-      "gain": -14,
-      "_": "hit 1: the leaf lets go"
-    },
-    {
-      "sound": "kit/error",
-      "at": 2.817,
-      "gain": -20,
-      "_": "hit 1: the red vignette"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 3.083,
-      "gain": -26,
-      "_": "the camera tilts down after the falling leaf"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 3.6,
-      "gain": -26,
-      "_": "line 2 leaves"
-    },
-    {
-      "sound": "kit/blip",
-      "at": 3.667,
-      "gain": -20,
-      "_": "the phone's screen wakes, its light on the sill"
-    },
-    {
-      "sound": "kit/whoosh_big",
-      "at": 3.767,
-      "gain": -19,
-      "_": "the reminder slides in; the camera pushes in on it"
-    },
-    {
-      "sound": "kit/pop_hi",
-      "at": "turn.0",
-      "gain": -20,
-      "_": "\"Quillfern\" rises"
-    },
-    {
-      "sound": "kit/lock",
-      "at": 3.9,
-      "gain": -19,
-      "_": "the phone buzzes"
-    },
-    {
-      "sound": "kit/ding",
-      "at": 3.95,
-      "gain": -16,
-      "_": "the reminder's icon rings"
-    },
-    {
-      "sound": "kit/lock",
-      "at": 4.133,
-      "gain": -21,
-      "_": "the phone buzzes again"
-    },
-    {
-      "sound": "kit/pop",
-      "at": "turn.1",
-      "gain": -22,
-      "_": "\"remembers.\" rises"
-    },
-    {
-      "sound": "kit/pop",
-      "at": 4.583,
-      "gain": -27,
-      "_": "the Done disc pulses"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 5.183,
-      "gain": -26,
-      "_": "line 3 leaves"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 5.35,
-      "gain": -28,
-      "_": "the camera pushes onto Done; the finger comes in"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "payoff.0",
-      "gain": -25,
-      "_": "\"You\" rises"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "payoff.1",
-      "gain": -25,
-      "_": "\"water\" rises"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "payoff.2",
-      "gain": -25,
-      "_": "\"it\" rises"
-    },
-    {
-      "sound": "kit/tap",
-      "at": 5.9,
-      "gain": -14,
-      "_": "the finger taps Done"
-    },
-    {
-      "sound": "kit/toggle",
-      "at": 5.95,
-      "gain": -16,
-      "_": "the check draws"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.009,
-      "gain": -27,
-      "_": "the count rolls back to 8"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.044,
-      "gain": -27,
-      "_": "the count rolls back to 7"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.06,
-      "gain": -27,
-      "_": "the count rolls back to 6"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.072,
-      "gain": -27,
-      "_": "the count rolls back to 5"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.082,
-      "gain": -27,
-      "_": "the count rolls back to 4"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.091,
-      "gain": -27,
-      "_": "the count rolls back to 3"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.101,
-      "gain": -27,
-      "_": "the count rolls back to 2"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.115,
-      "gain": -27,
-      "_": "the count rolls back to 1"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 6.139,
-      "gain": -27,
-      "_": "the count rolls back to 0"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 6.167,
-      "gain": -20,
-      "_": "the drop is flicked toward the pot, the camera follows"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "payoff.3",
-      "gain": -25,
-      "_": "\"on\" rises"
-    },
-    {
-      "sound": "kit/drop",
-      "at": 6.5,
-      "gain": -12,
-      "_": "hit 2: the water lands on \"time.\""
-    },
-    {
-      "sound": "kit/rise",
-      "at": 6.55,
-      "gain": -18,
-      "_": "the wet patch spreads through the soil"
-    },
-    {
-      "sound": "kit/pop",
-      "at": 6.633,
-      "gain": -23,
-      "_": "leaf 1 lifts"
-    },
-    {
-      "sound": "kit/pop_hi",
-      "at": 6.75,
-      "gain": -23,
-      "_": "leaf 2 lifts"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 6.767,
-      "gain": -28,
-      "_": "the camera pulls out to the whole plant"
-    },
-    {
-      "sound": "kit/pop",
-      "at": 6.867,
-      "gain": -23,
-      "_": "leaf 3 lifts"
-    },
-    {
-      "sound": "kit/pop_hi",
-      "at": 6.983,
-      "gain": -23,
-      "_": "leaf 4 lifts"
-    },
-    {
-      "sound": "kit/pop_hi",
-      "at": 7.2,
-      "gain": -20,
-      "_": "the new leaf starts to unfurl"
+      "sound": "kit/stamp",
+      "at": "hook.2",
+      "offset": 0.1,
+      "under": 8,
+      "_": "the counter lands on nine"
     },
     {
       "sound": "kit/sparkle",
-      "at": 7.5,
-      "gain": -14,
-      "_": "hit 3: the new leaf opens, the burst"
+      "at": "hook.2",
+      "offset": 0.1,
+      "under": 14,
+      "_": "the nine lights up as it lands"
     },
     {
-      "sound": "kit/toggle",
-      "at": 8.333,
-      "gain": -30,
-      "_": "the phone's screen goes back to sleep"
+      "sound": "kit/rise",
+      "at": "hook.9",
+      "under": 16,
+      "align": "sync",
+      "_": "the trips grow past the week line"
     },
     {
-      "sound": "kit/whoosh",
-      "at": 8.583,
-      "gain": -26,
-      "_": "line 4 leaves"
-    },
-    {
-      "sound": "kit/drop",
-      "at": 8.7,
-      "gain": -30,
-      "_": "a bead drips from a leaf onto the sill"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "seam.0",
-      "gain": -24,
-      "_": "\"A\" rises"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "seam.1",
-      "gain": -24,
-      "_": "\"week\" rises"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 9.35,
-      "gain": -27,
-      "_": "the camera pushes in on the count"
-    },
-    {
-      "sound": "kit/tap",
-      "at": "seam.2",
-      "gain": -24,
-      "_": "\"later…\" rises"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 9.714,
-      "gain": -25,
-      "_": "the count rolls to 1 (a night passes)"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 10.097,
-      "gain": -25,
-      "_": "the count rolls to 2 (a night passes)"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 10.503,
-      "gain": -25,
-      "_": "the count rolls to 3 (a night passes)"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 10.75,
-      "gain": -27,
-      "_": "the camera sets off toward the soil"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 10.938,
-      "gain": -25,
-      "_": "the count rolls to 4 (a night passes)"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 11.267,
-      "gain": -24,
-      "_": "\"A week later…\" leaves upward"
-    },
-    {
-      "sound": "kit/tick",
-      "at": 11.411,
-      "gain": -25,
-      "_": "the count rolls to 5 (a night passes)"
-    },
-    {
-      "sound": "kit/whoosh",
-      "at": 11.567,
-      "gain": -22,
-      "_": "the title rises"
+      "sound": "kit/whoosh_big",
+      "at": "twist.0",
+      "under": 12,
+      "_": "the trips leave the frame to the right"
     },
     {
       "sound": "kit/pop",
-      "at": 11.833,
-      "gain": -20,
-      "_": "\"thirsty.\" lands: the title is whole on frame 0"
+      "at": "twist.1",
+      "under": 16,
+      "_": "the plants that stay stand up on the sill"
+    },
+    {
+      "sound": "kit/whoosh",
+      "at": "proof.0",
+      "offset": -0.07,
+      "under": 14,
+      "_": "the push through into the shelves"
+    },
+    {
+      "sound": "kit/pop_hi",
+      "at": "proof.3",
+      "under": 18,
+      "_": "the first plant pops onto the shelf"
+    },
+    {
+      "sound": "kit/blip",
+      "at": "proof.11",
+      "under": 16,
+      "_": "the six schedule dots drop onto the plants"
+    },
+    {
+      "sound": "kit/ding",
+      "at": "proof.13",
+      "under": 14,
+      "_": "the schedules count lands on six"
+    },
+    {
+      "sound": "kit/whoosh",
+      "at": "catch.0",
+      "offset": -0.07,
+      "under": 14,
+      "_": "the push through onto the one plant"
+    },
+    {
+      "sound": "kit/blip",
+      "at": "silent.2",
+      "under": 18,
+      "_": "the empty speech bubble rises from the leaves"
+    },
+    {
+      "sound": "kit/drop",
+      "at": "late.5",
+      "under": 8,
+      "_": "the leaves droop"
     },
     {
       "sound": "kit/tick",
-      "at": 11.936,
-      "gain": -25,
-      "_": "the count rolls to 6 (a night passes)"
+      "at": "late.10",
+      "under": 18,
+      "_": "the days-since-water count turns over"
+    },
+    {
+      "sound": "kit/whoosh_big",
+      "at": "left.0",
+      "offset": -0.07,
+      "under": 14,
+      "_": "the pull-out to the wall of notes"
+    },
+    {
+      "sound": "kit/tap",
+      "at": "left.1",
+      "under": 16,
+      "_": "the first note is pinned"
+    },
+    {
+      "sound": "kit/pop_hi",
+      "at": "left.5",
+      "under": 18,
+      "_": "a note is pinned"
+    },
+    {
+      "sound": "kit/stamp",
+      "at": "left.9",
+      "under": 18,
+      "_": "the last note is pinned"
+    },
+    {
+      "sound": "kit/error",
+      "at": "guess.4",
+      "under": 8,
+      "_": "the question marks flare red"
+    },
+    {
+      "sound": "kit/drop",
+      "at": "guess.4",
+      "offset": 0.35,
+      "under": 14,
+      "_": "the snake plant's note falls off the wall"
+    },
+    {
+      "sound": "kit/whoosh",
+      "at": "you.0",
+      "offset": -0.07,
+      "under": 14,
+      "_": "the pull-out to the full windowsill"
+    },
+    {
+      "sound": "kit/rise",
+      "at": "carry.7",
+      "under": 14,
+      "align": "sync",
+      "_": "the twelve water days lift into the cloud"
+    },
+    {
+      "sound": "kit/sparkle",
+      "at": "carry.10",
+      "under": 16,
+      "_": "the cloud is full"
+    },
+    {
+      "sound": "kit/typing",
+      "at": "most.0",
+      "offset": 0.1,
+      "under": 20,
+      "_": "the days of the calendar slide in"
+    },
+    {
+      "sound": "kit/drop",
+      "at": "sunday.1",
+      "under": 14,
+      "_": "the water starts falling into Saturday"
+    },
+    {
+      "sound": "kit/pop",
+      "at": "sunday.4",
+      "under": 16,
+      "_": "the last drop lands in Saturday"
+    },
+    {
+      "sound": "kit/lock",
+      "at": "sunday.6",
+      "under": 8,
+      "_": "you leave: the week away locks in, no water"
+    },
+    {
+      "sound": "kit/tap",
+      "at": "result.0",
+      "under": 14,
+      "_": "the cut to the fern and the cactus"
+    },
+    {
+      "sound": "kit/error",
+      "at": "result.6",
+      "under": 16,
+      "_": "the fern's leaves brown"
+    },
+    {
+      "sound": "kit/blip",
+      "at": "result.13",
+      "under": 16,
+      "_": "water spreads in the cactus's saucer"
+    },
+    {
+      "sound": "kit/stamp",
+      "at": "turn.1",
+      "under": 8,
+      "_": "the strike through Saturday"
+    },
+    {
+      "sound": "kit/error",
+      "at": "turn.1",
+      "under": 14,
+      "_": "Saturday is struck out"
+    },
+    {
+      "sound": "kit/ding",
+      "at": "turn.8",
+      "under": 14,
+      "_": "each plant's own schedule drops in"
+    },
+    {
+      "sound": "kit/whoosh_big",
+      "at": "name.0",
+      "offset": -0.07,
+      "under": 12,
+      "_": "the push through into the product's name"
+    },
+    {
+      "sound": "kit/pop_hi",
+      "at": "name.0",
+      "offset": 0.08,
+      "under": 16,
+      "_": "the name lands"
+    },
+    {
+      "sound": "kit/toggle",
+      "at": "name.5",
+      "under": 18,
+      "_": "the plant list slides into the app"
+    },
+    {
+      "sound": "kit/ding",
+      "at": "remind.3",
+      "under": 8,
+      "_": "the one reminder arrives"
+    },
+    {
+      "sound": "kit/lock",
+      "at": "remind.12",
+      "under": 18,
+      "_": "the other rows turn to not today"
+    },
+    {
+      "sound": "kit/tap",
+      "at": "done.1",
+      "under": 12,
+      "_": "the tap on Done"
+    },
+    {
+      "sound": "kit/toggle",
+      "at": "done.1",
+      "offset": 0.15,
+      "under": 16,
+      "_": "the check draws on"
+    },
+    {
+      "sound": "kit/tick",
+      "at": "done.4",
+      "under": 18,
+      "_": "the count rolls back to zero"
+    },
+    {
+      "sound": "kit/rise",
+      "at": "payoff.0",
+      "under": 14,
+      "align": "sync",
+      "_": "the pull-out back to the windowsill"
+    },
+    {
+      "sound": "kit/pop",
+      "at": "payoff.4",
+      "under": 16,
+      "_": "the water days drop back into their pots"
+    },
+    {
+      "sound": "kit/sparkle",
+      "at": "payoff.10",
+      "under": 10,
+      "_": "the cloud is gone"
+    },
+    {
+      "sound": "kit/typing",
+      "at": "cta.1",
+      "under": 16,
+      "_": "FERN is typed into the comment field"
+    },
+    {
+      "sound": "kit/toggle",
+      "at": "cta.2",
+      "under": 14,
+      "_": "the comment is sent"
+    },
+    {
+      "sound": "kit/lock",
+      "at": "cta.7",
+      "offset": -0.07,
+      "under": 12,
+      "_": "the reply arrives"
     }
-  ],
-  "beds": [],
-  "music": {
-    "segments": []
-  }
+  ]
 }

@@ -1,65 +1,67 @@
 # Starter — storyboard (9:16)
 
-Quillfern, a plant-care app that reminds you when to water. Script: `script.txt` (five lines, voice-free: the words
-are on screen at reading speed). Cues: `audio/cues.json` (12.0 s). Composition `Starter`, 1080×1920 on a 60-unit time
-base, sampled at 120 a second; `DURATION` 720 frames = 12.0 s (360 frames at 30 fps). Scenes:
-`project/src/films/starter/` (`timeline.ts` holds every anchor, each pinned to a cue word, and the camera's keys;
-`layout.ts` the world's geometry).
+Quillfern, a plant-care app that reminds you when to water (the boqount example: the brand, its survey and its
+numbers are invented). Script: `script.txt` (19 lines, 175 words). Voice-free as it ships: the captions carry every
+word, timed at speaking pace in `audio/cues.json` (69.24 s), so the film reads on mute and takes a voice later (the
+cues move with it). Composition `Starter`, 1080×1920 on a 60-unit time base, sampled at 120 a second; `DURATION`
+4,156 frames = 69.27 s (2,078 frames at 30 fps). Scenes: `project/src/films/starter/` (`timeline.ts` holds the cues,
+where each world starts and the captions' phrases; `WorldsA.tsx`, `WorldsB.tsx`, `WorldsC.tsx` the ten worlds;
+`draw.tsx` the drawn things).
 
-Layer: **product** (the viewer's problem, with the product in the middle): warm-up 1, stake 2, bridge 3 (the product
-first named), payoff 4, seam 5; no urgency line and no call to action.
+Layer: **product**, in the story format of `film.md`: hook, proof, catch, who is left, where you
+come in, what most do, turn, the product at work, payoff, call. The product is named once, in part 8. One call, the
+last line: "Comment FERN, and I'll send you the link." (`brand/quillfern/accounts.md` → DM automation: the person
+answers each comment by hand).
 
-The film's one idea: a plant cannot say it is thirsty, so it wilts and loses a leaf; Quillfern remembers the day for
-you; you water on time and it lifts; a week later it is thirsty again, which is where the film began.
+The film's one idea: nearly every summer trip outlasts a plant's patience; whoever is left keeps a dozen schedules
+in their head and waters everything at once; Quillfern keeps one schedule for each plant, so nobody has to.
 
-## The locked-format points
+## The story-format points
 
-1. **A hook a stranger understands.** "Your plant is thirsty." Everyone owns a plant or has killed one; the hook names
-   the loss in the second person and does not name the product. The stake comes in line 2 ("It can't tell you."),
-   the product in the bridge (line 3), never earlier.
-2. **Frame 0 finished and moving.** The two-tone title "Your plant / is thirsty." (132 px, "thirsty." on the accent highlighter, its one highlighted word) is
-   whole on frame 0, over the plant already wilting on its sill, the camera mid-push onto its dry soil, the phone
-   beside it rolling its "Days since water" count from 6 to 7.
-3. **One world, one travelling camera, no cuts.** Everything is one drawn windowsill (the plant in its pot, a phone
-   propped beside it, a small cactus, a window with the low sun, a beam of light with dust in it), seen through one
-   camera (`kit/Camera.tsx`) that pushes in on what each line names and pulls out to the whole. The through-line
-   object is the plant; the phone is where the app keeps the count and shows the reminder. The window, the beam and
-   the dust sit at their own depths, so every move has parallax. Each row below names what it inherits (←), what it
-   hands on (→), its camera and its demonstration.
-4. **The seam, on screen.** Line 5, "A week later…", is left unfinished; as the film loops, frame 0's title finishes
-   it: "A week later… your plant is thirsty." The story is a cycle, so the loop is the story: the last seconds dry the
-   plant back into frame 0's pose.
-5. **The picture loops by construction.** The world is drawn from story time alone (`timeline.ts` `story()`), which
-   wraps at the seam onto the same moment (the plant just watered, standing), so the picture has no join. The
-   camera's keys loop on the film's frames (`loop={DURATION}`): its push onto the soil runs straight through frame 0.
-   `Hook.tsx` (the words) is drawn twice: at the head on film frames, and over the tail shifted by −DURATION.
-6. **A length the feeds can loop.** 12.0 s = 360 frames at 30 fps exactly.
+1. **Frame 0 is the number, already moving.** A large counter is rolling up to "9 in 10" on the first frame, over
+   ten bars of summer trips growing past a dashed "1 week" line; the source line ("Source: Quillfern travel survey,
+   example data, Nov 2026") rises under it by 0.07 s; the caption "NINE IN TEN" is whole. No title card, no product.
+2. **One world for each part, the change on a spoken word.** Ten worlds, a change every 4 to 12 s (most 6 to 9),
+   ending four frames before its line's first word: a pan of 0.27 s (`push`: the old world travels out to the left
+   as the new one comes in from the right; `pull`: the same the other way), or a hard cut (`kit/WorldChange.tsx`).
+   In a pan the two worlds are side by side and opaque, never one over the other, and nothing fades, so no two
+   worlds' words are seen at once and no change flashes; a still taken mid-pan shows the 60 fps blend's smear. Inside a world, one camera (`kit/Camera.tsx`)
+   pushes in on what the line names.
+3. **The captions carry it on mute.** Two or three words at a time, each word on its own cue, heavy capitals (118 px
+   design size, shrunk to fit 800 px), white with the key word in the accent, one fixed place for the whole film
+   (baseline y 1114, 58 % down; the plate y 960–1210), never two blocks, nothing else in the band
+   (`kit/Captions.tsx`).
+4. **One picture per sentence.** A counter and bars, a shelf that counts, a leaf that droops, a wall of notes, a
+   cloud of water days, a calendar, two pots, an app, the call. Each shows its sentence as it is said.
+5. **Each world its own two colours**, from the style tokens (below). The product's world is the brand's own look.
+6. **It does not loop.** No seam, no hook drawn twice, `"loop": false`; the last world is the call, shown (FERN
+   typed and sent, the reply arriving), held 1.2 s after the last word. No logo card, no link on screen.
 
-No call to action: no comment line, no link, no sign-up, in picture or words. **Three full-frame hits:** the leaf
-lets go (danger, with a shake), the water lands (accent, a ring from the soil), the new leaf opens (accent2, the
-film's one burst). Every headline is drawn over the camera, inside the safe zone (y 270–1248, x 65–1015: clear of
-the top 14 %, the bottom 35 % and 6 % of each side), 120–132 px, on a soft shade so it reads over any part of the
-world; the world itself fills the frame to its edges. The phone's words are world px read at the camera's push
-(2.75–3.1×: 36–50 px on screen), framed so the card and the count below it sit between the headline and the bottom
-band.
+Every word a viewer must read is inside the safe zone (y 270–1248, x 65–1015); the picture has y 270–960, the
+caption band below it. Text other than the captions is 36 px or more.
 
-## The chain
+## The worlds
 
-| # | Time | Line | Camera | Demonstration | ← inherits | → hands on |
+| # | Time | Lines | Colours | Camera | Demonstration | Into it |
 |---|---|---|---|---|---|---|
-| S1 | 0.0–2.0 | 1 "Your plant is thirsty." | push in on the dry soil and the drooping leaf (a move that began on the tail), then hold, creeping closer | On "thirsty." the dry soil cracks open, crack by crack across its grains; the leaves hang, their tips browning; the phone's count rolls 6 → 7 → 8, the window dimming for each night; dust drifts in the beam. The title leaves upward through its masks at 1.78 s. | the tail's push and the drying plant (the loop) | the close-up on the soil and the leaf |
-| S2 | 2.0–3.7 | 2 "It can't tell you." | hold on the leaf, then tilt down after it as it falls past the sill | On "tell" the outermost leaf shivers; on "you." it lets go (**hit 1**: shake, red vignette), turns and falls past the sill's edge and out of frame as the count reaches 9. | the close-up, the drooping leaf | the empty stem, the phone at the frame's edge |
-| S3 | 3.7–5.4 | 3 "Quillfern remembers." | push in on the phone's reminder as it arrives, then hold, creeping closer | The phone's screen wakes and its light spills onto the sill; the reminder ("Quillfern · now", "Water your plant", "Today, 9:00") slides down onto the lock screen; the phone buzzes twice and the reminder's drop icon rings; on "remembers." its Done disc pulses. The count beneath it reads 9. | the phone, lit | the reminder and its Done disc |
-| S4 | 5.4–9.1 | 4 "You water it on time." | push in on Done; follow the drop across to the pot; pull out to the whole plant standing | A fingertip comes down on Done on "it": it presses, ripples, the check draws, and the count rolls back 9 → 0. The card's drop lifts off its icon and arcs from the phone into the pot, the camera following it, and lands on "time." (**hit 2**): a splash, ripples, the wet patch spreading through the soil and washing the cracks away. The leaves lift one by one with beads of water on them, the camera pulling out; a new leaf unfurls where the old one fell (**hit 3**: the burst). A bead drips off a leaf onto the sill; the reminder is gone and the phone's screen goes back to sleep. | the reminder, the drooping plant | the watered plant standing, the count at 0 |
-| S5 | 9.1–12.0 | 5 "A week later…" | push in on the count beside the plant, then set off toward the soil (the push that runs through frame 0) | The days roll by on the phone, 0 → 6, the room dimming for each night and the beam swinging with the sun; the wet patch dries, the leaves start to hang and yellow. The line leaves, and the title rises so that it is whole on frame 0. | the watered plant | frame 0 (the loop) |
+| 1 | 0.00–5.43 | 1–2 "Nine in ten summer trips…" / "Your plants aren't coming." | accent2, accent | holds, then pushes in on the sill (1 → 1.08) | The counter rolls to 9 as "ten" is read; ten bars grow, nine past the "1 week" line, one short. On "Your" the trips leave to the right one after another and the line goes; on "plants" five pots stand up on the sill, staying. | frame 0 |
+| 2 | 5.43–11.23 | 3 "The same survey counted twelve plants…" | accent2, accent | slow push (1 → 1.05) | Twelve plants pop onto three shelves as "counted twelve plants" is read, the count beside "plants" rolling 0 → 12; on "six" a coloured dot drops onto each plant, six colours, and "6 schedules" rolls in. | push |
+| 3 | 11.23–20.16 | 4–6 "But here's the catch." / "A plant can't tell you it's thirsty." / "By the time a leaf droops…" | accent2, danger | holds, then pushes in on the soil (1 → 1.32) | One plant in a low beam of sun. On "can't" an empty speech bubble rises from the leaves, its three dots lighting, and closes unsaid; on "droops" the leaves hang and brown, the soil cracks; "days since water" (top right, the style's device) rolls 0 → 4 on "dry for days". | push |
+| 4 | 20.16–26.52 | 7–8 "So whoever waters them while you're away keeps track by memory." / "Plenty of them just guess." | muted, accent2 | drifts out (1.03 → 1) | The first note is on the wall as the world arrives; five more are pinned one by one ("Fern — Tuesday?", "Cactus — ages ago", "Monstera — Sat?"…); on "guess" every question mark flares red and the snake plant's note falls off the wall. | pull |
+| 5 | 26.52–33.88 | 9–10 "If your windowsill is full, that's you." / "Twelve plants means twelve water days…" | accent, ink | pulls out from the pots to the whole window (1.5 → 1) | A full windowsill, twelve pots. On "twelve water days" a drop lifts from each pot into a cloud above the sill, one after another, each landing on its own day (Mon, Tue, Wed…). | pull |
+| 6 | 33.88–39.40 | 11–12 "But most people do the same thing." / "They water everything the morning they leave." | accent2, muted | a small push and back (1 → 1.04 → 1) | A big "Sat" cell and a week of small ones beside it (Sun … Sat, "no water"). Twelve drops fall into Saturday on "water everything"; on "leave" "you leave" appears and the week's "no water" lights day by day. | push |
+| 7 | 39.40–48.43 | 13–14 "A week later, the fern is dry, and the cactus is sitting in water." / "So stop watering on a schedule that isn't theirs." | danger, accent | holds on both, a small push on the turn (1 → 1.05) | A fern and a cactus, each under a "Saturday" tag. On "dry" the fern browns and hangs; on "water" the cactus's saucer fills. On "stop" a line strikes through both tags; on "theirs" each gets its own: "every 4 days", "every 3 weeks". | hard cut |
+| 8 | 48.43–60.84 | 15–17 "Quillfern keeps one schedule for each plant." / "It sends one reminder…" / "Tap Done, and its count starts again." | accent, accent2 | holds, then pushes in a little on Done (1 → 1.07) | The name, large, on its word; it docks into the app's header as the plant list slides in, each with its schedule. On "reminder" one card arrives: "Fern · water day", "4 days since water"; on "none" the other rows turn to "not today". On "Done" the disc is pressed, its check draws, the count rolls back to 0. | push |
+| 9 | 60.84–65.18 | 18 "Twelve plants, and not one water day left in your head." | accent, accent2 | eases out (1.08 → 1) | The windowsill again, every plant upright; on "not one" the twelve water days drop out of the cloud back into their pots, and the cloud goes on "head". | pull |
+| 10 | 65.18–69.27 | 19 "Comment FERN, and I'll send you the link." | accent, canvas | a slow push under the hold (1 → 1.03) | A comment field rises; FERN is typed letter by letter on "FERN", sent on "and", and goes up to the top; on "link" the reply "Here's your link" arrives under it from the brand's mark, and holds 1.2 s. | hard cut |
 
 ## Sound
 
-Voice-free, no music: the soundtrack is the synthesized kit only (`audio/sfx-cues.json`, 68 hits, `"loop": true`),
-mixed by `tools/mix.mjs` over the film's length. Every visible action has its sound: a `tap` as each word rises, a
-`tick` for each day the count rolls through (a fast ratchet as it rolls back to 0) and for each crack of the soil,
-`whoosh` on every exit and on each move of the camera, `blip` as the leaf shivers and as the phone wakes, `drop` +
-`error` as the leaf lets go (hit 1), `whoosh_big` as the reminder slides in, `lock` for each buzz, `ding` as its icon
-rings, `pop` as Done pulses, `tap` + `toggle` on Done, `drop` + `rise` as the water lands and spreads (hit 2),
-`pop`/`pop_hi` as each leaf lifts and as the new one starts, `sparkle` as it opens (hit 3), a quiet `toggle` as the
-screen sleeps and a quiet `drop` for the drip, and `whoosh` + `pop` as the title rises into frame 0.
+No voice and no music as it ships: the kit's sixteen synthesized sounds only ($0), on a version-2 sheet
+(`audio/sfx-cues.json`, `"loop": false`, 47 hits, each one's `"_"` naming what it is the sound of). Six hero hits
+(8 dB under the voice or closer): the counter landing on 9 (with a sparkle layered on it), the leaves drooping, the
+question marks flaring, the week away locking in, the strike through Saturday (with its error layer), the one
+reminder arriving. Every world change has its move (`whoosh`, `whoosh_big`, or a `rise` placed by its peak); the
+call has its typing, its send and its reply. Checked with the sound check: no file more than three times, none twice
+within a second, at most three hits in any second, six hero hits, each present on a phone. Nobody has listened to it
+at speed.

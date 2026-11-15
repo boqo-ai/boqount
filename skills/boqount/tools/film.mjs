@@ -3,7 +3,7 @@
 //
 //   node <skill>/tools/film.mjs init  [--dir <account>] [--from <films-dir>]   copy <skill>/films/ to <account>/films/ (never over an existing films/project), generate films/sfx/, apply the theme; prints the one command left as {"next": {"cwd", "command": [...]}}
 //   node <skill>/tools/film.mjs theme [--dir <account>]                        brand/<slug>/style.md's ```tokens block → films/project/src/lib/tokens.json
-//   node <skill>/tools/film.mjs new <slug> [--dir <account>]                   films/<slug>/ (script, storyboard, audio skeletons), the scenes in films/project/src/films/<slug>/, registered in src/films/index.ts
+//   node <skill>/tools/film.mjs new <slug> [--story] [--dir <account>]         films/<slug>/ (script, storyboard, audio skeletons), the scenes in films/project/src/films/<slug>/, registered in src/films/index.ts
 //
 // --dir defaults to the current folder: the account's files live where the agent was started, not beside this tool.
 // --from defaults to the skill's own films/ folder, found relative to this file (../films).
@@ -19,10 +19,12 @@
 // and nothing is written.
 //
 // new refuses a slug that exists or is not made of a-z, 0-9 and single hyphens, and an id (the slug in PascalCase)
-// another film already has. The new film's scenes start as a copy of src/films/_template/ (a neutral skeleton that is
-// never registered itself), with its id "Template" and slug "_template" renamed wherever they are quoted. The starter
-// is only the worked example: new reads its script and storyboard for their headings when it is there, and works
-// without it.
+// another film already has. The new film's scenes start as a copy of src/films/_template/ (a neutral looping skeleton
+// that is never registered itself), with its id "Template" and slug "_template" renamed wherever they are quoted.
+// With --story they start as a copy of src/films/_story/ instead (the story format: ten parts, one world each, no
+// loop; id "Story", slug "_story"), its sound sheet says "loop": false, and its storyboard takes the starter's
+// headings (the starter is a story film). The starter is only the worked example: new reads its script and storyboard
+// for their headings when it is there, and works without it.
 //
 // Prints one JSON line and exits 0, or exits 1 with {"error": …}. The tests are tests/film.test.mjs.
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, copyFileSync, realpathSync } from "node:fs";
@@ -31,7 +33,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { run as runKit } from "./sfx-kit.mjs";
 
-const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--dir <account>]";
+const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--story] [--dir <account>]";
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 // Folders under films/ that are not a film's: a slug may not take their name.
 const RESERVED_SLUGS = ["project", "sfx", "starter"];
@@ -41,8 +43,10 @@ const TOKEN_KEYS = [...COLOR_KEYS, ...FONT_KEYS, "radius", "motion"];
 const MOTIONS = ["snappy", "smooth", "bouncy"];
 const HEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 const HEX_ALPHA = /^#(?:[0-9a-fA-F]{4}|[0-9a-fA-F]{8})$/;
-/** The folder `new` copies, and the id and slug it renames there. */
+/** The folders `new` copies, and the id and slug it renames there: the looping skeleton (a `niche` film, the locked
+ * format), and with --story the story format's (a `product` or `offer` film: ten parts, scenes that change, no loop). */
 const TEMPLATE = { dir: "_template", id: "Template", slug: "_template" };
+const STORY = { dir: "_story", id: "Story", slug: "_story" };
 const RESERVED_WORDS = new Set(
   "break case catch class const continue debugger default delete do else enum export extends false finally for function if import in instanceof let new null package private protected public return static super switch this throw true try typeof var void while with yield await interface implements".split(" "),
 );
@@ -57,12 +61,15 @@ const readOptional = (path) => (existsSync(path) ? readFileSync(path, "utf8") : 
 
 function parseArgs(argv) {
   const [command, ...rest] = argv;
-  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir"] }[command];
+  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir", "--story"] }[command];
   if (!allowed) throw new Error(USAGE);
   const flags = {};
   const positional = [];
   for (let i = 0; i < rest.length; i++) {
-    if (rest[i].startsWith("--")) {
+    if (rest[i] === "--story" && allowed.includes("--story")) {
+      if (flags["--story"] !== undefined) throw new Error(USAGE);
+      flags["--story"] = true;
+    } else if (rest[i].startsWith("--")) {
       if (!allowed.includes(rest[i]) || rest[i + 1] === undefined || flags[rest[i]] !== undefined) throw new Error(USAGE);
       flags[rest[i]] = rest[++i];
     } else positional.push(rest[i]);
@@ -218,6 +225,7 @@ function importName(slug, taken) {
 }
 // The starter's skeletons when its files are gone: the same headings and labels.
 const STORYBOARD_HEADINGS = "# Starter — storyboard (9:16)\n## The locked-format points\n## The chain\n## Sound\n";
+const STORY_HEADINGS = "# Starter — storyboard (9:16)\n## The story-format points\n## The worlds\n## Sound\n";
 const SCRIPT_LABELS = "Structure:\n";
 const headingsOnly = (text, slug) =>
   text.split("\n").filter((l) => /^#{1,6}\s/.test(l)).map((l) => l.replace(/starter/gi, slug)).join("\n\n") + "\n";
@@ -226,14 +234,15 @@ const scriptSkeleton = (text) =>
   ["1.", "", ...text.split("\n").map((l) => /^[A-Za-z][A-Za-z ]*:/.exec(l)?.[0]).filter(Boolean)].join("\n") + "\n";
 /** The template's id and slug, quoted in its code, become the new film's. */
 const QUOTED = (word) => new RegExp(`(["'])${word}\\1`, "g");
-const renamed = (text, id, slug) => text.replace(QUOTED(TEMPLATE.id), `$1${id}$1`).replace(QUOTED(TEMPLATE.slug), `$1${slug}$1`);
+const renamed = (text, id, slug, tpl = TEMPLATE) => text.replace(QUOTED(tpl.id), `$1${id}$1`).replace(QUOTED(tpl.slug), `$1${slug}$1`);
 
-async function newFilm(account, slug) {
+async function newFilm(account, slug, story = false) {
+  const tpl = story ? STORY : TEMPLATE;
   if (!slug || !SLUG.test(slug)) throw new Error(`${JSON.stringify(slug ?? "")} is not a slug: use a-z, 0-9 and single hyphens, e.g. dry-spell`);
   if (RESERVED_SLUGS.includes(slug)) throw new Error(`${slug} is a folder of the film project, not a film: choose another slug`);
   const project = join(account, "films/project");
   const indexPath = join(project, "src/films/index.ts");
-  const template = join(project, "src/films", TEMPLATE.dir);
+  const template = join(project, "src/films", tpl.dir);
   const starterFilm = join(account, "films/starter");
   if (!existsSync(indexPath) || !isDir(template)) throw needInit(account);
   const filmDir = join(account, "films", slug);
@@ -246,9 +255,9 @@ async function newFilm(account, slug) {
     if (other === id) throw new Error(`the id ${id} is already the film ${dir.name}'s: choose another slug`);
   }
   const templateIndex = readOptional(join(template, "index.ts")) ?? "";
-  const ID = new RegExp(`\\bid:\\s*(["'])${TEMPLATE.id}\\1`);
-  const SLUG_PROP = new RegExp(`\\bslug:\\s*(["'])${TEMPLATE.slug}\\1`);
-  if (!ID.test(templateIndex) || !SLUG_PROP.test(templateIndex)) throw new Error(`${template}/index.ts has no id: "${TEMPLATE.id}" and slug: "${TEMPLATE.slug}" to rename`);
+  const ID = new RegExp(`\\bid:\\s*(["'])${tpl.id}\\1`);
+  const SLUG_PROP = new RegExp(`\\bslug:\\s*(["'])${tpl.slug}\\1`);
+  if (!ID.test(templateIndex) || !SLUG_PROP.test(templateIndex)) throw new Error(`${template}/index.ts has no id: "${tpl.id}" and slug: "${tpl.slug}" to rename`);
 
   const lines = readFileSync(indexPath, "utf8").split("\n");
   const at = Object.fromEntries(Object.entries(MARKERS).map(([name, marker]) => [name, lines.flatMap((l, i) => (l.trim() === marker ? [i] : []))]));
@@ -265,11 +274,11 @@ async function newFilm(account, slug) {
   try {
     mkdirSync(join(filmDir, "audio"), { recursive: true });
     writeFileSync(join(filmDir, "script.txt"), scriptSkeleton(readOptional(join(starterFilm, "script.txt")) ?? SCRIPT_LABELS));
-    writeFileSync(join(filmDir, "STORYBOARD.md"), headingsOnly(readOptional(join(starterFilm, "STORYBOARD.md")) ?? STORYBOARD_HEADINGS, slug));
+    writeFileSync(join(filmDir, "STORYBOARD.md"), headingsOnly((story ? readOptional(join(starterFilm, "STORYBOARD.md")) : null) ?? (story ? STORY_HEADINGS : STORYBOARD_HEADINGS), slug));
     writeFileSync(join(filmDir, "audio/cues.json"), JSON.stringify({ duration: 0, lines: [] }, null, 2) + "\n");
-    writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ version: 2, loop: true, hits: [], beds: [], music: { segments: [] } }, null, 2) + "\n");
+    writeFileSync(join(filmDir, "audio/sfx-cues.json"), JSON.stringify({ version: 2, loop: !story, hits: [], beds: [], music: { segments: [] } }, null, 2) + "\n");
     for (const file of copyTree(template, scenesDir)) {
-      if (/\.(ts|tsx)$/.test(file)) writeFileSync(file, renamed(readFileSync(file, "utf8"), id, slug));
+      if (/\.(ts|tsx)$/.test(file)) writeFileSync(file, renamed(readFileSync(file, "utf8"), id, slug, tpl));
     }
     const indent = /^\s*/.exec(lines[at.listEnd[0]])[0];
     lines.splice(at.listEnd[0], 0, `${indent}${name},`);
@@ -280,7 +289,7 @@ async function newFilm(account, slug) {
     rmSync(scenesDir, { recursive: true, force: true });
     throw e;
   }
-  return { command: "new", slug, id, film: `films/${slug}`, scenes: `films/project/src/films/${slug}`, registered: true };
+  return { command: "new", slug, id, format: story ? "story" : "loop", film: `films/${slug}`, scenes: `films/project/src/films/${slug}`, registered: true };
 }
 
 // ---------------------------------------------------------------- the command
@@ -294,7 +303,7 @@ export async function run(argv, deps) {
       const from = flags["--from"] === undefined ? deps.films : resolve(deps.cwd, flags["--from"]);
       return ok(await init(account, from));
     }
-    if (command === "new") return ok(await newFilm(account, slug));
+    if (command === "new") return ok(await newFilm(account, slug, flags["--story"] === true));
     if (!existsSync(tokensPath(account))) throw needInit(account);
     return ok({ command: "theme", ...applyTheme(account, readTheme(account)) });
   } catch (e) {
