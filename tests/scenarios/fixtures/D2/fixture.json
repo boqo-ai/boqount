@@ -1,0 +1,48 @@
+{
+  "id": "D2",
+  "about": "a red funnel: another post's link ends on a sign-in wall while a sale post waits for 08:00",
+  "now": "2026-11-18T07:30:00Z",
+  "files": [
+    [
+      "incoming/plus-for-two.mp4",
+      70
+    ],
+    [
+      "incoming/one-number-01.mp4",
+      28
+    ]
+  ],
+  "checks": [
+    {
+      "args": [
+        "mode"
+      ],
+      "expect": {
+        "approved": 4,
+        "needed": 10,
+        "mode": "calibration",
+        "switchDue": false
+      }
+    },
+    {
+      "args": [
+        "slot"
+      ],
+      "expect": {
+        "date": "2026-11-18",
+        "time": "19:00",
+        "at": "2026-11-18T19:00:00.000Z",
+        "zone": "Europe/Lisbon"
+      }
+    },
+    {
+      "args": [
+        "due"
+      ],
+      "expect": {
+        "count": 7,
+        "late": 5
+      }
+    }
+  ]
+}

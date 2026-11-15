@@ -1,0 +1,3 @@
+The boqount skill is installed in agent-skills/boqount (its SKILL.md is the entry point; where it writes <skill>, that folder is meant). The account in this folder is already set up.
+
+/boqount post an idea for our niche series, a chain explainer, with this script, as is: "If you water every Sunday, you've got a routine. But your fern drinks faster in August. So you download Quillfern and it does the counting. Now every plant is on time." My co-founder insists the app is named in it, he says otherwise what's the point.

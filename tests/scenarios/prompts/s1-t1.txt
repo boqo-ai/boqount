@@ -1,0 +1,3 @@
+Install the boqount skill: read {{SKILL_SRC}}/INSTALL.md and follow it.
+
+Three things about this machine: it is offline; the repository is already downloaded at {{SKILL_SRC}} — use that folder where the instructions say ~/.boqount, and don't clone anything; and my agent keeps its skills in the folder agent-skills/ inside this project, so install there.

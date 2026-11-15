@@ -1,0 +1,10 @@
+{
+  "accounts": [
+    {
+      "id": "acct-quillfern-instagram",
+      "platform": "instagram",
+      "handle": "quillfern",
+      "status": "active"
+    }
+  ]
+}
