@@ -11,6 +11,12 @@
 //                                     players take it for slow motion)
 //   npm run feed   -- <Id>            the file to upload → ../<slug>/out/<slug>-feed.mp4: 1080×1920, H.264 High, no
 //                                     B-frames, yuv420p, 60 fps, each pair of samples blended into one frame
+//   npm run master -- <Id>            the archive, never posted → ../<slug>/out/<slug>-4k60.mp4: drawn at 2160×3840,
+//                                     HEVC Main 10 (yuv420p10le, hvc1), 60 fps blended the same way, AAC 320k. Slow and
+//                                     large: only when the person wants an archive or a cut made from it later
+// The finish comes from tokens.json (the brand's style): `primaries` (bt709, or p3: the file is tagged with Display P3
+// primaries and the colours are not converted, so saturated colours stretch to the wider gamut a phone shows) and
+// `vibrance` (0 to 1: lifts photos and footage, leaves greys alone), applied in the 16-bit pass before the blend.
 // Anything after the id goes to Remotion as it is (`--frame=240`, `--concurrency=8`).
 import {spawnSync} from 'node:child_process';
 import {existsSync, mkdirSync, readdirSync, readFileSync, rmSync} from 'node:fs';
@@ -51,16 +57,32 @@ const film = () => {
   return {...f, out};
 };
 
-/** Blend each pair of 120 samples into one 60 fps frame (a 180° shutter), H.264 High with no B-frames: a feed
- * that drops the MP4 edit list (which B-frames need) would otherwise shift the picture against the sound. */
-const blend = (src, dst, crf, preset) =>
+/** The finish the brand's style asks for: the primaries the file is tagged with, and the vibrance of the grade. */
+const finish = (tokens) => {
+  const primaries = tokens.primaries === 'p3' ? 'smpte432' : 'bt709';
+  const v = Number(tokens.vibrance ?? 0);
+  const vibrance = Number.isFinite(v) && v > 0 ? Math.min(1, v) : 0;
+  return {primaries, vibrance};
+};
+const tokens = () => JSON.parse(readFileSync(join(root, 'src/lib/tokens.json'), 'utf8'));
+
+/** The 16-bit pass: the grade, then each pair of 120 samples blended into one 60 fps frame (a 180° shutter). */
+const pass = ({vibrance}, pixFmt) =>
+  `format=gbrp16le,${vibrance ? `vibrance=intensity=${vibrance},` : ''}tmix=frames=2,select='mod(n\\,2)',setpts=N/(60*TB),scale=out_color_matrix=bt709:out_range=tv,format=${pixFmt}`;
+const tags = ({primaries}) => ['-color_primaries', primaries, '-color_trc', 'bt709', '-colorspace', 'bt709'];
+
+/** The blend into H.264 High with no B-frames: a feed that drops the MP4 edit list (which B-frames need) would
+ * otherwise shift the picture against the sound. */
+const blend = (src, dst, crf, preset) => {
+  const f = finish(tokens());
   run('ffmpeg', [
     '-nostdin', '-y', '-v', 'error', '-i', src,
-    '-vf', "format=gbrp16le,tmix=frames=2,select='mod(n\\,2)',setpts=N/(60*TB),scale=out_color_matrix=bt709:out_range=tv,format=yuv420p",
+    '-vf', pass(f, 'yuv420p'),
     '-r', '60', '-c:v', 'libx264', '-preset', preset, '-crf', String(crf), '-profile:v', 'high', '-bf', '0',
-    '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
+    ...tags(f),
     '-c:a', 'copy', '-movflags', '+faststart', dst,
   ]);
+};
 
 const sync = () => run('node', [join(root, 'scripts/sync-assets.mjs')]);
 
@@ -122,6 +144,28 @@ switch (cmd) {
     blend(src, join(f.out, `${f.slug}-feed.mp4`), 16, 'slow');
     break;
   }
+  case 'master': {
+    const f = film();
+    const enc = spawnSync('ffmpeg', ['-hide_banner', '-encoders'], {encoding: 'utf8'}).stdout ?? '';
+    if (!/libx265/.test(enc)) fail('this ffmpeg has no libx265 (HEVC): install an ffmpeg built with it for the master; the feed file does not need it');
+    const tmp = join(f.out, `${f.slug}-4k120.mov`);
+    const out = join(f.out, `${f.slug}-4k60.mp4`);
+    sync();
+    // ProRes 4444 from PNG frames: a 12-bit intermediate, so the grade and the blend do not round
+    remotion(['render', f.id, tmp, ...defaults(['--scale=2', '--codec=prores', '--prores-profile=4444', '--image-format=png', '--concurrency=4']), ...extra]);
+    const fin = finish(tokens());
+    const prim = fin.primaries === 'smpte432' ? 'smpte432' : 'bt709';
+    run('ffmpeg', [
+      '-nostdin', '-y', '-v', 'error', '-i', tmp,
+      '-vf', pass(fin, 'yuv420p10le'),
+      '-r', '60', '-c:v', 'libx265', '-preset', 'slow', '-crf', '14', '-tag:v', 'hvc1',
+      '-x265-params', `log-level=error:colorprim=${prim}:transfer=bt709:colormatrix=bt709`,
+      ...tags(fin),
+      '-c:a', 'aac', '-b:a', '320k', '-movflags', '+faststart', out,
+    ]);
+    rmSync(tmp);
+    break;
+  }
   default:
-    fail('usage: node scripts/run.mjs <sync|dev|lint|still|draft|render|feed> [Id] [Remotion flags]');
+    fail('usage: node scripts/run.mjs <sync|dev|lint|still|draft|render|feed|master> [Id] [Remotion flags]');
 }

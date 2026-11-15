@@ -252,6 +252,12 @@ test("theme reads fonts, with or without quotes, and writes every colour as six-
   assert.equal(tokens(dir).ink, "#FAFAF9");
 });
 
+test("theme writes the finish: primaries and vibrance", async () => {
+  const { dir } = await initialized({ style: "```tokens\nprimaries: p3\nvibrance: 0.3\n```\n" });
+  assert.equal(tokens(dir).primaries, "p3");
+  assert.equal(tokens(dir).vibrance, 0.3);
+});
+
 test("theme with no style.md, or a style.md without a tokens block, changes nothing and says why", async () => {
   for (const style of [null, "# Quillfern style\n\nNo tokens here.\n"]) {
     const { dir } = await initialized({ style });
@@ -282,6 +288,9 @@ test("theme names the line of an unknown key or a bad value, and writes nothing"
     ["```tokens\nradius: wide\n```\n", /line 4.*radius.*number/i],
     ["```tokens\nradius: -4\n```\n", /line 4.*radius/],
     ["```tokens\nmotion: wobbly\n```\n", /line 4.*motion.*snappy.*smooth.*bouncy/],
+    ["```tokens\nprimaries: rec2020\n```\n", /line 4.*primaries.*bt709.*p3/],
+    ["```tokens\nvibrance: 1.5\n```\n", /line 4.*vibrance.*0 to 1/],
+    ["```tokens\nvibrance: lots\n```\n", /line 4.*vibrance/],
     ["```tokens\naccent #fff\n```\n", /line 4/],
     ["```tokens\naccent: #aaa\naccent: #bbb\n```\n", /line 5.*accent.*twice|line 5.*duplicate/i],
     ["```tokens\nfont_text:\n```\n", /line 4.*font_text/],

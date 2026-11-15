@@ -49,6 +49,8 @@ call (`hooks.md` → The arc).
 
 The record (status `planned`, its Layer and its cost estimate) exists before any file under `films/`.
 
+0. **Ask about a meme, a trend or a reference** before any hook, on every film (`reference.md` → Ask first, on every film); study what comes
+   back (`reference.md`) before step 2.
 1. **The film's folders:** `node <skill>/tools/film.mjs new <slug>`, with `--story` for a `product` or `offer` film
    (The project). Its id is the slug in PascalCase.
 2. **Hooks.** Read `brand/<slug>/style.md` → Language first. From the strategy line (a Hook bank row, or the series'
@@ -150,6 +152,7 @@ In `films/project`, by the film's id:
 | `npm run draft -- <Id>` | `<slug>-draft.mp4`, half scale, 60 fps |
 | `npm run render -- <Id>` | `<slug>-120.mp4`, 120 samples a second: never shown, never posted (players take it for slow motion) |
 | `npm run feed -- <Id>` | `<slug>-feed.mp4`: the post's file |
+| `npm run master -- <Id>` | `<slug>-4k60.mp4`: the archive (The finish), never posted |
 | `npm run dev` | nothing: Remotion Studio |
 
 **The file.** The platforms play at most 60 fps, so the project renders 120 samples a second and the feed blends each
@@ -157,6 +160,26 @@ pair into one frame. A platform that drops the MP4 edit list shifts the picture 
 B-frames, so it has none. The feed file must read, in `probe.txt` (Stills): `h264`, `High`, `yuv420p`, `1080x1920`,
 `60/1`, and a frame count equal to the film's length × 60; `mix.wav` is exactly the film's length. The check then
 probes it (`check.md`).
+
+**The finish.** Two tokens of the brand's style set it (`brand/<slug>/style.md` → tokens, applied by `film.mjs theme`),
+read by `draft`, `feed` and `master`; neither is on by default:
+- `primaries: p3` tags the file with Display P3 primaries (transfer and matrix stay bt709) and does not convert the
+  colours: the browser draws sRGB values, so every saturated colour stretches to the wider gamut a phone's screen
+  shows, while greys and white stay. A deliberate stretch, not a colour-managed conversion: tokens are then picked by
+  how they look in the finished file on a phone, not by their hex. Set it only after the person has compared a P3 file
+  beside a bt709 one on their phone and picked it.
+- `vibrance: <0 to 1>` grades in the 16-bit pass before the blend: it lifts photos and footage and leaves greys; tokens
+  already at the edge of sRGB barely move. Picked by the person from a still sheet at 0, 0.3 and 0.6.
+
+`npm run master` is an archive and the source of a later cut, made only when the person asks for one: drawn at
+2160×3840 (layouts stay 1080×1920; `--scale=2`), a 12-bit ProRes intermediate, graded and blended in 16-bit, HEVC Main
+10 (`yuv420p10le`, `hvc1`), 60 fps, AAC 320k. Its probe must read `hevc`, `Main 10`, `yuv420p10le`, `2160x3840`,
+`60/1`, the primaries the style sets, and the film's length × 60 frames. It never goes to a platform: they play at most
+1080p and 60 fps, and a 120 fps file opens as slow motion on a phone. What it buys is type and vectors drawn at real
+4K, and gradients, glows and vignettes that do not band when compressed.
+
+**The platform's copy** is measured after the film is posted (`measure.md` → The platform's copy): a platform
+re-encodes every upload, and what it does to the start, the length or the sound shows only in its copy.
 
 ## Sound
 
@@ -494,7 +517,7 @@ When the post is a film played on a computer screen and filmed with a phone (a l
 
 ## A reference
 
-A film modelled on another film (a reference the person shows, a trend) takes its skeleton and its devices: the order
+How a reference, a trend or a meme is studied and carried in, beat by beat: `reference.md`. A film modelled on another film (a reference the person shows, a trend) takes its skeleton and its devices: the order
 of its parts, how its hook works, how its scenes change. Never its words, its pictures, its colours, its product or
 its numbers: its first number is replaced by a newer one from a source of the film's own, and its look is the brand's
 (`brand/<slug>/style.md`). A scene that redraws the reference's own picture (its set, its background, its signature
@@ -539,6 +562,7 @@ check, within the day's limits.
 | "The film is 70 s, so it needs a seam and a loop" | An opportunity story does not loop. It ends on the call, held about 1 s |
 | "Voice-free, so there is no seam" | The seam moves on screen: an unfinished last line that frame 0 finishes |
 | "The draft is fine to post" | Only `npm run feed`'s file. The 120-sample render plays as slow motion |
+| "The master is the best file, post that" | The master is the archive; only the feed file goes to a platform |
 | "A cut is cleaner here" | Carry an object across, and move the one camera (`motion.md` → Rich motion) |
 | "The labels update, that's the demonstration" | Show the thing happening, step by step, with the camera on it |
 | "I'll use the hex from the brand's site" | Tokens only, through `film.mjs theme` |

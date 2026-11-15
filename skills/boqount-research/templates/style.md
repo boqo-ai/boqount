@@ -36,6 +36,11 @@ font_text: <family>
 radius: <number>
 # motion: how things move: snappy, smooth or bouncy. Source: <…>
 motion: <snappy | smooth | bouncy>
+# primaries: bt709 (default), or p3: the file is tagged Display P3 and saturated colours stretch on a phone's wider
+# screen, unconverted; picked with the person from a side-by-side (film.md → The finish). Source: <…>
+primaries: <bt709 | p3>
+# vibrance: the grade, 0 (default) to 1: lifts photos and footage, leaves greys; picked from a 0 / 0.3 / 0.6 sheet. Source: <…>
+vibrance: <0 to 1>
 ```
 
 ## Look

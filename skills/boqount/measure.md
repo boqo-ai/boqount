@@ -193,6 +193,16 @@ Write the colour, its time and the red links to `state.md` → Funnel.
    source. Log it under Asked. Nothing waits for the rows: the roll-up reads `marketing/signups.csv` as it stands, and
    the next run's numbers include what the person typed (`kpi.md` → The weekly read).
 
+### The platform's copy
+
+Once per film and channel, at its first checkpoint after it posted: the platform re-encodes every upload, and a fault
+it adds (a doubled first frame, picture behind the sound, a length padded past the film's end, which breaks a loop)
+is in its copy only. `node <skill>/tools/platform-copy.mjs <the post's link, or the saved copy> --ours
+films/<slug>/out/<slug>-feed.mp4 --mix films/<slug>/audio/mix.wav` (yt-dlp downloads the account's own post when it is
+installed; otherwise the person saves the post's video once, or the line is `not measured: no copy`). Its three lines
+go into the record under Checks with the date. A fail is a `Learning:` line naming the fault and what the next export
+changes (`film.md` → The project → The file), never a re-upload of a post already out without the person's word.
+
 ## Screens (`/boqount screens`)
 
 Screenshots arrive in `marketing/evidence/<slug>/`, one file per screen and channel, from the human or the chat; typed

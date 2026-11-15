@@ -10,3 +10,6 @@ sounds/*
 !sounds/spec.json
 # A film's tonal set: mix.mjs makes it again from the sheet's "tone" key.
 */audio/tone/
+# A reference's study (reference.md): someone else's video, frames and words, kept only on this machine. Its beat map
+# goes into the film's record.
+*/reference/

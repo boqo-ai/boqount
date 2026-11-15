@@ -16,7 +16,8 @@
 // theme reads the slug from the `brand:` line of marketing/config.md, then the ```tokens block of brand/<slug>/style.md:
 // `key: value` lines (# starts a comment line) with the keys of tokens.json: canvas panel ink muted accent accent2 danger
 // (hex colours: #rgb or #rrggbb, written as #RRGGBB; a colour with alpha is refused), font_display font_text (a CSS
-// family name, quotes optional), radius (a number of px), motion (snappy, smooth or bouncy). The keys it sets replace those in tokens.json; the others keep their value. No style.md, or no
+// family name, quotes optional), radius (a number of px), motion (snappy, smooth or bouncy), primaries (bt709 or p3) and
+// vibrance (0 to 1), the finish the render's encode reads. The keys it sets replace those in tokens.json; the others keep their value. No style.md, or no
 // block in it, leaves the tokens as they are and says so. An unknown key or a bad value is an error naming the line,
 // and nothing is written.
 //
@@ -90,8 +91,10 @@ const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const RESERVED_SLUGS = ["project", "sfx", "starter", "glimpse", "sounds"];
 const COLOR_KEYS = ["canvas", "panel", "ink", "muted", "accent", "accent2", "danger"];
 const FONT_KEYS = ["font_display", "font_text"];
-const TOKEN_KEYS = [...COLOR_KEYS, ...FONT_KEYS, "radius", "motion"];
+const TOKEN_KEYS = [...COLOR_KEYS, ...FONT_KEYS, "radius", "motion", "primaries", "vibrance"];
 const MOTIONS = ["snappy", "smooth", "bouncy"];
+// The finish (film.md → The finish): the primaries the rendered file is tagged with, and the grade's vibrance.
+const PRIMARIES = ["bt709", "p3"];
 const HEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 const HEX_ALPHA = /^#(?:[0-9a-fA-F]{4}|[0-9a-fA-F]{8})$/;
 /** The folders `new` copies, and the id and slug it renames there: the looping skeleton (a `niche` film, the locked
@@ -166,6 +169,14 @@ function tokenValue(key, raw) {
   }
   if (key === "radius") {
     if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error(`radius must be a number of px, got ${JSON.stringify(raw)}`);
+    return Number(raw);
+  }
+  if (key === "primaries") {
+    if (!PRIMARIES.includes(raw)) throw new Error(`primaries must be one of ${PRIMARIES.join(", ")}, got ${JSON.stringify(raw)}`);
+    return raw;
+  }
+  if (key === "vibrance") {
+    if (!/^(0(\.\d+)?|1(\.0+)?)$/.test(raw)) throw new Error(`vibrance must be a number from 0 to 1, got ${JSON.stringify(raw)}`);
     return Number(raw);
   }
   if (!MOTIONS.includes(raw)) throw new Error(`motion must be one of ${MOTIONS.join(", ")}, got ${JSON.stringify(raw)}`);
