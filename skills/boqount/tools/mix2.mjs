@@ -16,14 +16,14 @@
 // - puts a build (`"align": "sync"`) on its cue by its peak, not its start;
 // - keeps four buses (voice, music, effects, backgrounds); the voice ducks the other three while it speaks;
 //   the music can dip for a moment (`music.dips`); a hit with `"duck": false` is not ducked;
-// - sums the stems, levels them to the target with one gain and limits only the peaks that gain pushes over the
-//   ceiling (default -14 LUFS integrated, -1 dBTP).
+// - sums the stems, levels them to the target with one gain and limits, oversampled, the peaks that gain pushes over
+//   the ceiling (default -14 LUFS integrated, -1 dBTP), with a voice or without one.
 //
 // Where a sound is: `"sound": "<group>/<name>"` from the account's library (<library>/library.json, default
 // <audio-dir>/../../sounds), `"sound": "kit/<name>"` from the synthesized kit (--sfx, default <audio-dir>/../../sfx),
-// `"sound": "tone/<name>"` from the film's tonal set (<audio-dir>/tone); `"sfx": "<name>"` is a film's own file,
-// looked up as mix.mjs does (<audio-dir>/sfx, then the kit). Every sound missing anywhere is named in one error and
-// nothing is mixed.
+// `"sound": "tone/<name>"` from the film's tonal set (<audio-dir>/tone, made from the sheet's `"tone"` key when it is
+// missing); `"sfx": "<name>"` is a film's own file, looked up as mix.mjs does (<audio-dir>/sfx, then the kit).
+// Every sound missing anywhere is named in one error and nothing is mixed.
 //
 // Four lessons are built in, each with its test (tests/mix2.test.mjs):
 // - every sum starts with a silence as long as the film: ffmpeg's amix takes its timeline from its first input, and
@@ -39,14 +39,15 @@ import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSyn
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { NAME, ID, SR, decode, ebur128, ffmpeg, sounds, windows400 } from "./sound-lib.mjs";
+import { tone as makeTone } from "./soundlib.mjs";
 
 const USAGE = "usage: mix2.mjs <audio-dir> [--sfx <dir>] [--library <dir>]";
 /** A voice quieter than this, in dBFS true peak, is no voice: a silent vo.wav made as a stand-in. */
 const SILENT = -60;
 /** The nominal voice a voice-free film is levelled against (its typical level, its peak), dB. */
 const NOMINAL = { typ: -20, peak: -12 };
-/** A voice-free mix is raised toward the target only until its peaks stand this far over the ceiling before the limiter. */
-const FREE_OVER = 3;
+/** The limiter runs at this rate, so a peak between two samples (a true peak) is caught, not let through. */
+const OVERSAMPLE = 192000;
 const TAIL = 4; // seconds rendered past the end and folded onto the head when looping
 const STALL = 300_000; // ms: an ffmpeg run longer than this is a stall, reported as an error
 const VARY = [0, 0.4, -0.3, 0.2, -0.5]; // semitones, by round: a take that comes round again is never the same pitch
@@ -61,9 +62,18 @@ export function main(argv) {
   if (positional.length !== 1 || positional[0].startsWith("--")) throw new Usage();
   const dir = resolve(positional[0]);
   const kitDir = resolve(flags.sfx ?? join(dir, "../../sfx"));
-  const lib = sounds({ audio: dir, kit: kitDir, ...(flags.library ? { library: resolve(flags.library) } : {}) });
   const cues = JSON.parse(readFileSync(join(dir, "cues.json"), "utf8"));
   const plan = JSON.parse(readFileSync(join(dir, "sfx-cues.json"), "utf8"));
+  // `"tone": "<root> <minor|major>"`: the film's tonal set, synthesized here ($0, the same key always gives the same
+  // sounds) when audio/tone/ has none yet, so a sheet that uses tone/<name> mixes on any machine without a step first.
+  if (plan.tone !== undefined) {
+    const [root, mode = "minor", ...rest] = String(plan.tone).trim().split(/\s+/);
+    if (rest.length) throw new Error(`tone must be "<root> <minor|major>", got ${JSON.stringify(plan.tone)}`);
+    const manifest = join(dir, "tone/tone.json");
+    const key = existsSync(manifest) ? JSON.parse(readFileSync(manifest, "utf8")).key : null;
+    if (key !== `${root} ${mode}`) makeTone([dir, root, mode]);
+  }
+  const lib = sounds({ audio: dir, kit: kitDir, ...(flags.library ? { library: resolve(flags.library) } : {}) });
   if (plan.version !== 2) throw new Error("sfx-cues.json is not a version-2 sheet: mix it with mix.mjs");
   if (!Array.isArray(plan.hits)) throw new Error("sfx-cues.json: hits must be a list");
   const loop = plan.loop === true;
@@ -213,9 +223,12 @@ export function main(argv) {
       const fi = opt(b.fadeIn, 0.3, `${p}.fadeIn`);
       const fo = opt(b.fadeOut, 0.3, `${p}.fadeOut`);
       const ms = Math.round(b.start * 1000);
+      // `pitch` (semitones) moves a pitched background, such as the tonal set's pad, to the chord of its world.
+      const st = opt(b.pitch, 0, `${p}.pitch`);
+      const shift = st ? `asetrate=${Math.round(SR * Math.pow(2, st / 12))},aresample=${SR},` : "";
       bedBus.inputs.push("-stream_loop", "-1", "-i", b.file);
       const eq = [b.hp !== undefined ? `highpass=f=${num(b.hp, `${p}.hp`)}` : "", b.lp !== undefined ? `lowpass=f=${num(b.lp, `${p}.lp`)}` : ""].filter(Boolean).map((x) => `${x},`).join("");
-      bedBus.f.push(`[${n}:a]aresample=${SR},aformat=channel_layouts=stereo,atrim=${from}:${(from + len).toFixed(3)},asetpts=PTS-STARTPTS,${eq}volume=${b.db.toFixed(2)}dB,afade=t=in:d=${fi},afade=t=out:st=${(len - fo).toFixed(3)}:d=${fo},adelay=${ms}|${ms}[b${n}]`);
+      bedBus.f.push(`[${n}:a]aresample=${SR},aformat=channel_layouts=stereo,${shift}atrim=${from}:${(from + len).toFixed(3)},asetpts=PTS-STARTPTS,${eq}volume=${b.db.toFixed(2)}dB,afade=t=in:d=${fi},afade=t=out:st=${(len - fo).toFixed(3)}:d=${fo},adelay=${ms}|${ms}[b${n}]`);
       labels.push(`[b${n}]`);
     });
     bedBus.f.push(`${anchor(bedBus.f)}${labels.join("")}amix=inputs=${labels.length + 1}:normalize=0:duration=first,equalizer=f=2200:t=o:w=1.6:g=-5[bedsum]`);
@@ -291,30 +304,25 @@ export function main(argv) {
   const sum = `[0:a][1:a][2:a][3:a]amix=inputs=4:normalize=0:duration=first`;
   const before = ebur128(stemIn, `${sum}[pre]`);
   if (!Number.isFinite(before.I)) throw new Error("the mix is silent: nothing to level");
-  const lim = Math.pow(10, (target.TP - 0.6) / 20).toFixed(4);
+  // Voiced or not, the master reaches the target: a voice-free film carries its loudness in its music and backgrounds,
+  // and the limiter takes the peaks of the hits over them. The limiter works on an oversampled signal, so the true
+  // peak is caught where it forms; if one still slips past the ceiling, the ceiling comes down, never the loudness.
+  let ceiling = target.TP - 0.3;
   let gain = target.I - before.I;
-  let capped = false;
-  if (!voiced && before.TP + gain > target.TP + FREE_OVER) {
-    // A film with no voice and sparse hits would need its peaks crushed to reach the target: it stays quieter.
-    gain = target.TP + FREE_OVER - before.TP;
-    capped = true;
-  }
   let chain = "";
   let after = before;
-  for (let i = 0; i < 6; i++) {
-    chain = `volume=${gain.toFixed(2)}dB,alimiter=level_in=1:level_out=1:limit=${lim}:attack=2:release=60:level=disabled`;
+  for (let i = 0; i < 8; i++) {
+    const lim = Math.pow(10, ceiling / 20).toFixed(4);
+    chain = `volume=${gain.toFixed(2)}dB,aresample=${OVERSAMPLE},alimiter=level_in=1:level_out=1:limit=${lim}:attack=1:release=80:level=disabled,aresample=${SR}`;
     after = ebur128(stemIn, `${sum},${chain}[pre]`);
-    // The ceiling comes first: a sharp transient can slip through the limiter between samples, and then the whole mix
-    // comes down by what slipped through (the loudness falls short of the target by that much, and says so).
-    if (after.TP > target.TP + 0.05) {
-      gain -= after.TP - target.TP + 0.1;
-      capped = true;
-      continue;
-    }
-    if (capped || Math.abs(after.I - target.I) <= 0.15) break;
-    gain += target.I - after.I;
+    const over = after.TP - target.TP;
+    if (over > 0.05) ceiling -= over + 0.1;
+    const short = target.I - after.I;
+    if (over <= 0.05 && Math.abs(short) <= 0.15) break;
+    gain += short;
   }
-  run([...stemIn, "-filter_complex", `${sum},${chain},aresample=${SR}[o]`, "-map", "[o]", "-c:a", "pcm_s16le", join(dir, "mix.wav")]);
+  const capped = after.I < target.I - 1;
+  run([...stemIn, "-filter_complex", `${sum},${chain}[o]`, "-map", "[o]", "-c:a", "pcm_s16le", join(dir, "mix.wav")]);
 
   const r3 = (v) => +v.toFixed(3);
   const played = {
@@ -333,7 +341,7 @@ export function main(argv) {
     `mix.wav: ${hits.length} hits from ${takes} files, ${beds.length} backgrounds, ${segs.length} music segments; ` +
     `${voiced ? `voice typical ${voice.typ.toFixed(1)} LKFS` : "no voice (levelled against a nominal one)"}; ` +
     `before ${before.I} LUFS / ${before.TP} dBTP; after ${after.I} LUFS / ${after.TP} dBTP (target ${target.I} / ${target.TP})` +
-    (capped ? `; kept quieter than the target, for the ceiling's sake${voiced ? "" : ` (a voice-free mix is raised only until its peaks stand ${FREE_OVER} dB over the ceiling)`}` : "")
+    (capped ? "; still more than 1 LU under the target after eight passes: the limiter could not hold the ceiling at that loudness" : "")
   );
 }
 

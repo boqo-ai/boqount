@@ -3,6 +3,7 @@
 // tokens recolour the film.
 import React from 'react';
 import {mix} from '../../lib/anim';
+import {useF} from '../../lib/scene';
 import {D, F, T, alpha, mixColor} from '../../lib/theme';
 
 export type Kind = 'leafy' | 'fern' | 'cactus' | 'snake';
@@ -141,3 +142,115 @@ export const Backdrop: React.FC<{a: string; b: string; hi?: number; lo?: number}
 export const Board: React.FC<{y: number; x0?: number; x1?: number}> = ({y, x0 = 20, x1 = 1060}) => (
   <div style={{position: 'absolute', left: x0, top: y, width: x1 - x0, height: 26, borderRadius: 8, background: mixColor(T.panel, T.ink, 0.06), boxShadow: `0 18px 30px ${alpha('#000000', 0.35)}`}} />
 );
+
+// ───────────── the room: what fills the frame under the caption band ─────────────
+// The picture uses the whole height: a surface the world stands on, big leaves in the foreground, light in the air.
+// None of it is text, so it may run behind the caption band (whose plate keeps the words readable) and through the
+// bottom 35 % that the feeds cover with their own buttons and captions.
+
+/** A tabletop or sill seen from a little above: a lit top face `depth` px deep at y, then its front face to the frame's
+ * bottom. Inside a Camera it moves with the world. */
+export const Surface: React.FC<{y: number; depth?: number; tone?: string}> = ({y, depth = 90, tone = mixColor(T.panel, T.accent2, 0.12)}) => (
+  <>
+    <div style={{position: 'absolute', left: -400, width: 1880, top: y, height: depth, background: `linear-gradient(to bottom, ${mixColor(tone, T.ink, 0.1)}, ${tone})`, boxShadow: `inset 0 3px 0 ${alpha(T.ink, 0.12)}`}} />
+    <div style={{position: 'absolute', left: -400, width: 1880, top: y + depth, height: 2400, background: `linear-gradient(to bottom, ${mixColor(tone, '#000000', 0.35)}, ${mixColor(T.canvas, '#000000', 0.3)} 700px)`}} />
+    {/* the light pooled on the top face */}
+    <div style={{position: 'absolute', left: 140, width: 800, top: y - 40, height: depth + 120, borderRadius: '50%', background: `radial-gradient(closest-side, ${alpha(T.accent2, 0.16)}, ${alpha(T.accent2, 0)})`}} />
+  </>
+);
+
+type Leaf = {x: number; a: number; len: number; w: number; ph: number; shade: number};
+const LEAVES: Leaf[] = [
+  {x: -70, a: 30, len: 560, w: 116, ph: 0.0, shade: 0.72},
+  {x: 10, a: 12, len: 430, w: 96, ph: 1.3, shade: 0.62},
+  {x: 90, a: 46, len: 330, w: 80, ph: 2.1, shade: 0.78},
+  {x: 1150, a: -32, len: 580, w: 120, ph: 0.7, shade: 0.7},
+  {x: 1070, a: -12, len: 420, w: 94, ph: 2.6, shade: 0.6},
+  {x: 990, a: -48, len: 320, w: 78, ph: 1.8, shade: 0.78},
+];
+
+/** Big leaves rising from under the frame's bottom corners, close to the lens: dark, a little soft, swaying slowly. They
+ * frame the world and give the bottom of the frame a picture without covering the middle. `drift` (px) moves them
+ * sideways with the camera (a near layer moves more). */
+export const Foliage: React.FC<{dry?: number; drift?: number; reach?: number}> = ({dry = 0, drift = 0, reach = 1}) => {
+  const f = useF();
+  return (
+    <div style={{position: 'absolute', inset: 0, overflow: 'hidden', filter: 'blur(3px)', pointerEvents: 'none'}}>
+      {LEAVES.map((l, i) => {
+        const sway = Math.sin((f / 120) * Math.PI * 0.42 + l.ph) * 3.2 + Math.sin((f / 120) * Math.PI * 0.17 + l.ph * 2) * 1.6;
+        const col = mixColor(leafColor(dry), T.canvas, l.shade);
+        const len = l.len * reach;
+        return (
+          <svg key={i} width={l.w * 2} height={len + 40} viewBox={`${-l.w} ${-len} ${l.w * 2} ${len + 40}`} style={{position: 'absolute', left: l.x - l.w + drift * (i % 2 ? 1.1 : 0.9), top: 1940 - len, overflow: 'visible', transformOrigin: '50% 100%', rotate: `${l.a + sway}deg`}}>
+            <path d={`M 0 30 C ${-l.w} ${-len * 0.25}, ${-l.w * 0.7} ${-len * 0.8}, 0 ${-len} C ${l.w * 0.7} ${-len * 0.8}, ${l.w} ${-len * 0.25}, 0 30 Z`} fill={col} />
+            <path d={`M 0 30 Q ${l.w * 0.08} ${-len * 0.5} 0 ${-len * 0.96}`} stroke={mixColor(col, '#000000', 0.3)} strokeWidth={6} fill="none" />
+          </svg>
+        );
+      })}
+    </div>
+  );
+};
+
+/** Dust in the light: small motes drifting up and sideways, each on its own slow path. Something always moves. */
+export const Motes: React.FC<{n?: number; color?: string; top?: number; bottom?: number}> = ({n = 22, color = T.accent2, top = 200, bottom = 1700}) => {
+  const f = useF();
+  return (
+    <>
+      {Array.from({length: n}, (_, i) => {
+        const s = (f / 120) * (8 + (i % 5) * 3);
+        const h = bottom - top;
+        const y = bottom - ((s * 6 + i * 157) % h);
+        const x = ((i * 389) % 1000) + 40 + Math.sin(f / 120 + i) * 30;
+        const r = 2 + (i % 3) * 1.6;
+        const tw = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(f / 50 + i * 1.7));
+        return <div key={i} style={{position: 'absolute', left: x, top: y, width: r * 2, height: r * 2, borderRadius: 99, background: alpha(color, tw), boxShadow: `0 0 ${r * 4}px ${alpha(color, tw * 0.6)}`}} />;
+      })}
+    </>
+  );
+};
+
+/** A watering can standing on a surface, its base's centre at (x, y); `s` scales it (1: about 300 px wide). */
+export const Can: React.FC<{x: number; y: number; s?: number; tilt?: number; style?: React.CSSProperties}> = ({x, y, s = 1, tilt = 0, style}) => {
+  const body = mixColor(T.accent, T.panel, 0.35);
+  return (
+    <svg width={320 * s} height={240 * s} viewBox="0 0 320 240" style={{position: 'absolute', left: x - 160 * s, top: y - 240 * s, overflow: 'visible', rotate: `${tilt}deg`, transformOrigin: '50% 100%', ...style}}>
+      <path d="M 110 70 Q 160 10 210 70" stroke={mixColor(body, '#000000', 0.25)} strokeWidth={16} fill="none" strokeLinecap="round" />
+      <path d="M 210 150 L 300 70 L 312 82 L 226 178 Z" fill={mixColor(body, '#000000', 0.15)} />
+      <ellipse cx={306} cy={74} rx={14} ry={9} fill={mixColor(body, T.ink, 0.2)} transform="rotate(-42 306 74)" />
+      <rect x={70} y={70} width={160} height={170} rx={28} fill={body} />
+      <rect x={70} y={70} width={44} height={170} rx={22} fill={alpha(T.ink, 0.1)} />
+      <rect x={70} y={96} width={160} height={14} fill={alpha('#000000', 0.12)} />
+    </svg>
+  );
+};
+
+/** A house key lying on a surface, its centre at (x, y). */
+export const Key: React.FC<{x: number; y: number; s?: number; rot?: number}> = ({x, y, s = 1, rot = -14}) => {
+  const metal = mixColor(T.accent2, T.ink, 0.25);
+  return (
+    <svg width={220 * s} height={90 * s} viewBox="0 0 220 90" style={{position: 'absolute', left: x - 110 * s, top: y - 45 * s, rotate: `${rot}deg`, overflow: 'visible'}}>
+      <circle cx={45} cy={45} r={38} fill={metal} />
+      <circle cx={45} cy={45} r={14} fill={T.canvas} />
+      <path d="M 80 38 L 210 38 L 210 52 L 196 52 L 196 66 L 182 66 L 182 52 L 168 52 L 168 62 L 156 62 L 156 52 L 80 52 Z" fill={metal} />
+    </svg>
+  );
+};
+
+/** A suitcase on its wheels, its base's centre at (x, y); `s` scales it (1: about 360 px wide). */
+export const Suitcase: React.FC<{x: number; y: number; s?: number; style?: React.CSSProperties}> = ({x, y, s = 1, style}) => {
+  const shell = mixColor(T.accent2, T.panel, 0.3);
+  return (
+    <svg width={360 * s} height={560 * s} viewBox="0 0 360 560" style={{position: 'absolute', left: x - 180 * s, top: y - 560 * s, overflow: 'visible', ...style}}>
+      <rect x={150} y={0} width={14} height={120} rx={6} fill={mixColor(T.muted, '#000000', 0.2)} />
+      <rect x={196} y={0} width={14} height={120} rx={6} fill={mixColor(T.muted, '#000000', 0.2)} />
+      <rect x={140} y={0} width={80} height={20} rx={10} fill={T.muted} />
+      <rect x={20} y={110} width={320} height={410} rx={42} fill={shell} />
+      {[90, 180, 270].map((cx) => (
+        <rect key={cx} x={cx - 6} y={130} width={12} height={370} rx={6} fill={alpha('#000000', 0.12)} />
+      ))}
+      <rect x={20} y={110} width={70} height={410} rx={35} fill={alpha(T.ink, 0.1)} />
+      <circle cx={80} cy={536} r={22} fill={mixColor(T.canvas, '#000000', 0.2)} />
+      <circle cx={280} cy={536} r={22} fill={mixColor(T.canvas, '#000000', 0.2)} />
+    </svg>
+  );
+};

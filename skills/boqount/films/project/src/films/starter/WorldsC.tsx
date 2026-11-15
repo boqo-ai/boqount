@@ -9,7 +9,7 @@ import {Call} from '../../kit/Call';
 import {Odo} from '../../kit/Fx';
 import {Done} from '../../kit/Kit';
 import {hasLogo, Logo} from '../../kit/Logo';
-import {Backdrop, Pot, type Kind} from './draw';
+import {Backdrop, Foliage, Motes, Pot, Surface, type Kind} from './draw';
 import {Sill} from './WorldsB';
 import {CODE, DURATION, WORLD, cue} from './timeline';
 
@@ -51,6 +51,9 @@ export const W8App: React.FC = () => {
     <>
       <Backdrop a={T.accent} b={T.accent2} hi={0.2} lo={0.1} />
       <Camera keys={[at(a, 540, 620, 1), at(cue('remind', 3), 540, 620, 1), at(cue('remind', 10), 540, 640, 1.04), at(tap - 20, 560, DONE_C[1] + 100, 1.06), at(cue('done', 6), 566, DONE_C[1] + 104, 1.07), at(WORLD.app[1], 540, 620, 1.05)]} aim={[540, 620]}>
+        <Surface y={1560} />
+        {/* the fern the reminder is about, on the table under the app: it lifts as it is watered */}
+        <Pot x={540} y={1720} s={1.9} kind="fern" dry={0.55 * (1 - done)} />
         {card > 0 && (
           <div style={{position: 'absolute', left: CARD.x, top: CARD.y + (1 - card) * 120, width: CARD.w, height: CARD.h, borderRadius: T.radius * 1.4, background: T.panel, boxShadow: `inset 0 0 0 2px ${D.line}, ${D.shadow}`, opacity: card}}>
             {ROWS.map((r, i) => {
@@ -87,6 +90,8 @@ export const W8App: React.FC = () => {
           </div>
         )}
       </Camera>
+      <Motes n={16} color={T.accent} />
+      <Foliage reach={0.75} dry={0} />
       {/* the name, large on its word, then docked into the header (over the camera: it stays put) */}
       <div style={{position: 'absolute', left: nameX, top: nameY, translate: `${mix(-50, 0, dock)}% 0`, display: 'flex', alignItems: 'center', gap: nameSize * 0.25, opacity: p(f, a - 20, 8), scale: `${bump(f, name + 2, 0.05)}`, transformOrigin: '0 50%'}}>
         {hasLogo() && <Logo height={nameSize * 1.05} />}
@@ -109,15 +114,32 @@ export const W9Payoff: React.FC = () => {
   return (
     <>
       <Backdrop a={T.accent} b={T.accent2} hi={0.22} lo={0.14} />
-      <Camera keys={[at(a, 540, 640, 1.08), at(WORLD.payoff[1], 540, 660, 1)]} aim={[540, 640]}>
+      <Camera keys={[at(a, 540, 960, 1.08), at(WORLD.payoff[1], 540, 990, 1)]} aim={[540, 960]}>
         <Sill lift={lift} cloud={cloud} healthy />
       </Camera>
+      <Motes color={T.accent} />
+      <Foliage reach={0.85} />
     </>
   );
 };
 
 // ───────────── 10. the call, shown ─────────────
 
-export const W10Call: React.FC = () => (
-  <Call code={CODE} type={cue('cta', 1)} send={cue('cta', 2)} reply={cue('cta', 7) - 4} from={WORLD.call[0]} end={DURATION} />
-);
+export const W10Call: React.FC = () => {
+  const f = useF();
+  const rise = p(f, WORLD.call[0], 24, EXPO);
+  return (
+    <>
+      <Call code={CODE} type={cue('cta', 1)} send={cue('cta', 2)} reply={cue('cta', 7) - 4} from={WORLD.call[0]} end={DURATION} />
+      {/* under the call, the plants it is for: all of them well, on the table */}
+      <div style={{position: 'absolute', inset: 0, translate: `0 ${(1 - rise) * 160}px`, opacity: rise}}>
+        <Surface y={1580} />
+        {(['fern', 'leafy', 'cactus', 'snake', 'leafy'] as Kind[]).map((k, i) => (
+          <Pot key={i} x={150 + i * 195} y={1610 + (i % 2) * 40} s={0.95} kind={k} />
+        ))}
+      </div>
+      <Motes color={T.accent} top={1100} />
+      <Foliage reach={0.7} />
+    </>
+  );
+};

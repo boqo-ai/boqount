@@ -1,11 +1,11 @@
 // Worlds 4 to 7: who is left (keeping track by memory, and guessing), where you come in (twelve water days carried in
 // your head), what most do (everything the morning they leave), and its result with the turn (a schedule of each plant's own).
 import React from 'react';
-import {EXPO, GRAVITY, INOUT, bump, lerp, mix, p, rnd} from '../../lib/anim';
+import {EXIT as EXIT_EASE, EXPO, GRAVITY, INOUT, bump, lerp, mix, p, rnd} from '../../lib/anim';
 import {useF} from '../../lib/scene';
 import {D, F, T, alpha, mixColor} from '../../lib/theme';
 import {Camera} from '../../kit/Camera';
-import {Backdrop, Board, Drop, Pot, Tag, type Kind} from './draw';
+import {Backdrop, Can, Drop, Foliage, Key, Motes, Pot, Suitcase, Surface, Tag, type Kind} from './draw';
 import {WORLD, cue} from './timeline';
 
 const at = (f0: number, x: number, y: number, scale: number) => ({at: f0, x, y, scale});
@@ -33,6 +33,9 @@ export const W4Notes: React.FC = () => {
     <>
       <Backdrop a={T.muted} b={T.accent2} hi={0.16} />
       <Camera keys={[at(a, 540, 610, 1.03), at(WORLD.notes[1], 540, 620, 1)]} aim={[540, 610]}>
+        <Surface y={1440} />
+        <Can x={300} y={1520} s={1.25} tilt={lerp(f, [guess, guess + 30], [0, -4], EXPO)} />
+        <Key x={760} y={1500} s={1.3} rot={-14 + 6 * Math.sin(f / 90)} />
         {NOTES.map((n, i) => {
           const col = i % 2;
           const row = Math.floor(i / 2);
@@ -46,7 +49,7 @@ export const W4Notes: React.FC = () => {
               style={{
                 position: 'absolute',
                 left: 85 + col * 470,
-                top: 300 + row * 215 + drop * 900,
+                top: 300 + row * 215 + drop * 760,
                 width: 440,
                 height: 190,
                 borderRadius: 10,
@@ -68,6 +71,8 @@ export const W4Notes: React.FC = () => {
           ) : null;
         })}
       </Camera>
+      <Motes n={16} color={T.muted} />
+      <Foliage reach={0.85} />
     </>
   );
 };
@@ -76,8 +81,9 @@ export const W4Notes: React.FC = () => {
 
 const SILL: Kind[] = ['leafy', 'cactus', 'fern', 'snake', 'leafy', 'fern', 'cactus', 'leafy', 'snake', 'fern', 'leafy', 'cactus'];
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Wed', 'Thu', 'Sat', 'Sun'];
-const potX = (i: number) => 110 + i * 78.2;
-const SILL_Y = 930;
+/** Twelve pots in two rows on the sill: six behind, six in front and bigger. [x, y, scale] of pot i. */
+const POS = (i: number): [number, number, number] => (i < 6 ? [150 + i * 156, 1390, 0.62] : [228 + (i - 6) * 156, 1580, 0.8]);
+const SILL_Y = 1390;
 /** Where drop i sits in the thought cloud. */
 const cell = (i: number): [number, number] => [190 + (i % 6) * 140, 420 + Math.floor(i / 6) * 150];
 
@@ -85,14 +91,15 @@ const cell = (i: number): [number, number] => [190 + (i % 6) * 140, 420 + Math.f
  * drop i from its pot up into the cloud; `cloud` 0..1 is the cloud's presence. */
 export const Sill: React.FC<{lift: (i: number) => number; cloud: number; healthy?: boolean}> = ({lift, cloud, healthy}) => (
   <>
-    {/* the window behind the sill: four panes in the low light */}
-    <div style={{position: 'absolute', left: 150, top: 220, width: 780, height: 660, borderRadius: 24, background: alpha(T.accent2, 0.08), boxShadow: `inset 0 0 0 14px ${mixColor(T.panel, T.ink, 0.05)}`}} />
-    <div style={{position: 'absolute', left: 533, top: 220, width: 14, height: 660, background: mixColor(T.panel, T.ink, 0.05)}} />
-    <div style={{position: 'absolute', left: 150, top: 543, width: 780, height: 14, background: mixColor(T.panel, T.ink, 0.05)}} />
-    <Board y={SILL_Y} x0={0} x1={1080} />
-    {SILL.map((k, i) => (
-      <Pot key={i} x={potX(i)} y={SILL_Y + 4} s={0.38} kind={k} dry={healthy ? 0 : 0.25} />
-    ))}
+    {/* the window behind the sill: four panes in the low light, the whole height above it */}
+    <div style={{position: 'absolute', left: 120, top: 200, width: 840, height: 1160, borderRadius: 24, background: `linear-gradient(to bottom, ${alpha(T.accent2, 0.1)}, ${alpha(T.accent, 0.06)})`, boxShadow: `inset 0 0 0 16px ${mixColor(T.panel, T.ink, 0.05)}`}} />
+    <div style={{position: 'absolute', left: 532, top: 200, width: 16, height: 1160, background: mixColor(T.panel, T.ink, 0.05)}} />
+    <div style={{position: 'absolute', left: 120, top: 772, width: 840, height: 16, background: mixColor(T.panel, T.ink, 0.05)}} />
+    <Surface y={SILL_Y - 4} depth={210} />
+    {SILL.map((k, i) => {
+      const [x, y, sc] = POS(i);
+      return <Pot key={i} x={x} y={y} s={sc} kind={k} dry={healthy ? 0 : 0.25} />;
+    })}
     {cloud > 0 && (
       <div style={{position: 'absolute', left: 95, top: 330, width: 890, height: 330, borderRadius: 120, background: alpha(mixColor(T.panel, T.ink, 0.1), 0.92), boxShadow: D.shadow, opacity: Math.min(1, cloud * 1.5), scale: `${mix(0.7, 1, cloud)}`, transformOrigin: '50% 100%'}} />
     )}
@@ -100,11 +107,12 @@ export const Sill: React.FC<{lift: (i: number) => number; cloud: number; healthy
       const t = lift(i);
       if (t <= 0) return null;
       const [cx, cy] = cell(i);
-      const x = mix(potX(i), cx, t);
-      const y = mix(SILL_Y - 90, cy, t) - Math.sin(Math.PI * t) * 80;
+      const [px, py, sc] = POS(i);
+      const x = mix(px, cx, t);
+      const y = mix(py - 190 * sc, cy, t) - Math.sin(Math.PI * t) * 120;
       return (
         <React.Fragment key={i}>
-          <Drop x={x} y={y} size={mix(26, 46, t)} />
+          <Drop x={x} y={y} size={mix(34, 50, t)} />
           {t > 0.9 && cloud > 0.5 && <div style={{position: 'absolute', left: cx - 60, width: 120, top: cy + 38, textAlign: 'center', fontFamily: F.text, fontWeight: 700, fontSize: 34, color: T.ink, opacity: (t - 0.9) * 10}}>{DAYS[i]}</div>}
         </React.Fragment>
       );
@@ -124,9 +132,11 @@ export const W5Sill: React.FC = () => {
   return (
     <>
       <Backdrop a={T.accent} b={T.ink} hi={0.14} lo={0.08} />
-      <Camera keys={[at(a, 540, 820, 1.5), at(cue('you', 2), 540, 760, 1.18), at(cue('carry', 0), 540, 640, 1), at(WORLD.sill[1], 540, 630, 1.02)]} aim={[540, 640]}>
+      <Camera keys={[at(a, 540, 1300, 1.45), at(cue('you', 2), 540, 1120, 1.16), at(cue('carry', 0), 540, 960, 1), at(WORLD.sill[1], 540, 950, 1.02)]} aim={[540, 960]}>
         <Sill lift={lift} cloud={cloud} />
       </Camera>
+      <Motes />
+      <Foliage reach={0.8} />
     </>
   );
 };
@@ -148,6 +158,10 @@ export const W6Week: React.FC = () => {
     <>
       <Backdrop a={T.accent2} b={T.muted} hi={0.16} />
       <Camera keys={[at(a, 540, 620, 1), at(t0, 540, 630, 1.04), at(leave, 540, 620, 1), at(WORLD.week[1], 540, 630, 1.03)]} aim={[540, 610]}>
+        <Surface y={1560} />
+        {/* the suitcase: in by the door as the morning starts, off to the right as they leave */}
+        <Suitcase x={mix(mix(-260, 330, p(f, a - 10, 26, EXPO)), 1500, p(f, leave + 2, 40, EXIT_EASE))} y={1600} s={1.05} style={{rotate: `${lerp(f, [leave, leave + 8, leave + 40], [0, -6, -4])}deg`, transformOrigin: '50% 100%'}} />
+        <Can x={800} y={1610} s={1.1} />
         {/* the one day: all the water goes in here */}
         <div style={{position: 'absolute', left: BIG.x, top: BIG.y, width: BIG.w, height: BIG.h, borderRadius: 28, background: alpha(T.accent2, 0.1), boxShadow: `inset 0 0 0 4px ${alpha(T.accent2, 0.7)}`, opacity: big, scale: `${mix(0.9, 1, big)}`}}>
           <div style={{position: 'absolute', left: 30, top: 24, fontFamily: F.text, fontWeight: 800, fontSize: 52, color: T.ink}}>Sat</div>
@@ -172,6 +186,8 @@ export const W6Week: React.FC = () => {
           );
         })}
       </Camera>
+      <Motes n={14} />
+      <Foliage reach={0.7} />
     </>
   );
 };
@@ -187,12 +203,12 @@ export const W7Pair: React.FC = () => {
   const own = p(f, cue('turn', 8) - 4, 14, EXPO);
   const tag = (x: number, own2: string) => (
     <>
-      <Tag x={x} y={300} size={40} color={T.accent2} style={{opacity: 1 - 0.5 * own}}>
+      <Tag x={x} y={300} size={44} color={T.accent2} style={{opacity: 1 - 0.5 * own}}>
         Saturday
         <div style={{position: 'absolute', left: 18, top: '50%', height: 6, width: `calc(${strike * 100}% - 36px)`, background: T.danger, borderRadius: 3}} />
       </Tag>
       {own > 0 && (
-        <Tag x={x} y={400 - (1 - own) * 40} size={40} color={T.accent} style={{opacity: own, scale: `${bump(f, cue('turn', 8) + 8, 0.06)}`}}>
+        <Tag x={x} y={410 - (1 - own) * 40} size={44} color={T.accent} style={{opacity: own, scale: `${bump(f, cue('turn', 8) + 8, 0.06)}`}}>
           {own2}
         </Tag>
       )}
@@ -201,13 +217,15 @@ export const W7Pair: React.FC = () => {
   return (
     <>
       <Backdrop a={T.danger} b={T.accent} hi={0.18} />
-      <Camera keys={[at(a, 540, 700, 1), at(cue('turn', 0), 540, 700, 1.05), at(WORLD.pair[1], 540, 690, 1.02)]} aim={[540, 680]}>
-        <Board y={924} x0={0} x1={1080} />
-        <Pot x={300} y={920} s={1.15} kind="fern" dry={fernDry} />
-        <Pot x={780} y={920} s={1.15} kind="cactus" water={water} />
+      <Camera keys={[at(a, 540, 960, 1), at(cue('turn', 0), 540, 960, 1.04), at(WORLD.pair[1], 540, 950, 1.02)]} aim={[540, 960]}>
+        <Surface y={1240} />
+        <Pot x={290} y={1250} s={2.5} kind="fern" dry={fernDry} />
+        <Pot x={790} y={1250} s={2.5} kind="cactus" water={water} />
       </Camera>
-      {tag(300, 'every 4 days')}
-      {tag(780, 'every 3 weeks')}
+      <Motes n={14} color={T.danger} />
+      <Foliage reach={0.6} dry={fernDry * 0.3} />
+      {tag(290, 'every 4 days')}
+      {tag(790, 'every 3 weeks')}
     </>
   );
 };

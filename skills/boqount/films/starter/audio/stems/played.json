@@ -9,9 +9,8 @@
   "TP": -1
  },
  "after": {
-  "I": -19.7,
-  "TP": -1,
-  "capped": true
+  "I": -14.1,
+  "TP": -1.1
  },
  "dur": 69.26666666666667,
  "loop": false,
@@ -19,7 +18,7 @@
   {
    "t": 0,
    "sound": "kit/tick",
-   "take": "kit/tick.wav",
+   "take": "sfx/tick.wav",
    "db": -11.9,
    "under": 18,
    "len": 0.03,
@@ -28,7 +27,7 @@
   {
    "t": 0.7,
    "sound": "kit/stamp",
-   "take": "kit/stamp.wav",
+   "take": "sfx/stamp.wav",
    "db": -12.1,
    "under": 8,
    "len": 0.25,
@@ -37,7 +36,7 @@
   {
    "t": 0.7,
    "sound": "kit/sparkle",
-   "take": "kit/sparkle.wav",
+   "take": "sfx/sparkle.wav",
    "db": -22.4,
    "under": 14,
    "len": 0.7,
@@ -46,7 +45,7 @@
   {
    "t": 1.732,
    "sound": "kit/rise",
-   "take": "kit/rise.wav",
+   "take": "sfx/rise.wav",
    "db": -22.7,
    "under": 16,
    "len": 1.1,
@@ -55,7 +54,7 @@
   {
    "t": 3.56,
    "sound": "kit/whoosh_big",
-   "take": "kit/whoosh_big.wav",
+   "take": "sfx/whoosh_big.wav",
    "db": -17.1,
    "under": 12,
    "len": 0.68,
@@ -64,7 +63,7 @@
   {
    "t": 3.89,
    "sound": "kit/pop",
-   "take": "kit/pop.wav",
+   "take": "sfx/pop.wav",
    "db": -15.3,
    "under": 16,
    "len": 0.09,
@@ -73,7 +72,7 @@
   {
    "t": 5.43,
    "sound": "kit/whoosh",
-   "take": "kit/whoosh.wav",
+   "take": "sfx/whoosh.wav",
    "db": -19.6,
    "under": 14,
    "len": 0.45,
@@ -82,7 +81,7 @@
   {
    "t": 6.52,
    "sound": "kit/pop_hi",
-   "take": "kit/pop_hi.wav",
+   "take": "sfx/pop_hi.wav",
    "db": -17.4,
    "under": 18,
    "len": 0.08,
@@ -91,7 +90,7 @@
   {
    "t": 9.51,
    "sound": "kit/blip",
-   "take": "kit/blip.wav",
+   "take": "sfx/blip.wav",
    "db": -18.5,
    "under": 16,
    "len": 0.075,
@@ -100,7 +99,7 @@
   {
    "t": 10.31,
    "sound": "kit/ding",
-   "take": "kit/ding.wav",
+   "take": "sfx/ding.wav",
    "db": -21.6,
    "under": 14,
    "len": 0.95,
@@ -109,7 +108,7 @@
   {
    "t": 11.23,
    "sound": "kit/whoosh",
-   "take": "kit/whoosh.wav",
+   "take": "sfx/whoosh.wav",
    "db": -19.6,
    "under": 14,
    "len": 0.45,
@@ -118,7 +117,7 @@
   {
    "t": 13.52,
    "sound": "kit/blip",
-   "take": "kit/blip.wav",
+   "take": "sfx/blip.wav",
    "db": -20.5,
    "under": 18,
    "len": 0.075,
@@ -127,7 +126,7 @@
   {
    "t": 16.97,
    "sound": "kit/drop",
-   "take": "kit/drop.wav",
+   "take": "sfx/drop.wav",
    "db": -16.5,
    "under": 8,
    "len": 0.6,
@@ -136,7 +135,7 @@
   {
    "t": 18.8,
    "sound": "kit/tick",
-   "take": "kit/tick.wav",
+   "take": "sfx/tick.wav",
    "db": -11.9,
    "under": 18,
    "len": 0.03,
@@ -145,7 +144,7 @@
   {
    "t": 20.16,
    "sound": "kit/whoosh_big",
-   "take": "kit/whoosh_big.wav",
+   "take": "sfx/whoosh_big.wav",
    "db": -19.1,
    "under": 14,
    "len": 0.68,
@@ -154,7 +153,7 @@
   {
    "t": 20.49,
    "sound": "kit/tap",
-   "take": "kit/tap.wav",
+   "take": "sfx/tap.wav",
    "db": -11.6,
    "under": 16,
    "len": 0.045,
@@ -163,7 +162,7 @@
   {
    "t": 22.01,
    "sound": "kit/pop_hi",
-   "take": "kit/pop_hi.wav",
+   "take": "sfx/pop_hi.wav",
    "db": -17.4,
    "under": 18,
    "len": 0.08,
@@ -172,7 +171,7 @@
   {
    "t": 23.44,
    "sound": "kit/stamp",
-   "take": "kit/stamp.wav",
+   "take": "sfx/stamp.wav",
    "db": -16,
    "under": 18,
    "len": 0.25,
@@ -181,7 +180,7 @@
   {
    "t": 25.72,
    "sound": "kit/error",
-   "take": "kit/error.wav",
+   "take": "sfx/error.wav",
    "db": -16.3,
    "under": 8,
    "len": 0.35,
@@ -190,7 +189,7 @@
   {
    "t": 26.07,
    "sound": "kit/drop",
-   "take": "kit/drop.wav",
+   "take": "sfx/drop.wav",
    "db": -22.5,
    "under": 14,
    "len": 0.6,
@@ -199,7 +198,7 @@
   {
    "t": 26.52,
    "sound": "kit/whoosh",
-   "take": "kit/whoosh.wav",
+   "take": "sfx/whoosh.wav",
    "db": -19.6,
    "under": 14,
    "len": 0.45,
@@ -208,7 +207,7 @@
   {
    "t": 31.007,
    "sound": "kit/rise",
-   "take": "kit/rise.wav",
+   "take": "sfx/rise.wav",
    "db": -20.7,
    "under": 14,
    "len": 1.1,
@@ -217,7 +216,7 @@
   {
    "t": 33.12,
    "sound": "kit/sparkle",
-   "take": "kit/sparkle.wav",
+   "take": "sfx/sparkle.wav",
    "db": -24.4,
    "under": 16,
    "len": 0.7,
@@ -226,7 +225,7 @@
   {
    "t": 34.05,
    "sound": "kit/typing",
-   "take": "kit/typing.wav",
+   "take": "sfx/typing.wav",
    "db": -16.7,
    "under": 20,
    "len": 0.5,
@@ -235,7 +234,7 @@
   {
    "t": 36.86,
    "sound": "kit/drop",
-   "take": "kit/drop.wav",
+   "take": "sfx/drop.wav",
    "db": -22.5,
    "under": 14,
    "len": 0.6,
@@ -244,7 +243,7 @@
   {
    "t": 38.05,
    "sound": "kit/pop",
-   "take": "kit/pop.wav",
+   "take": "sfx/pop.wav",
    "db": -15.3,
    "under": 16,
    "len": 0.09,
@@ -253,7 +252,7 @@
   {
    "t": 38.81,
    "sound": "kit/lock",
-   "take": "kit/lock.wav",
+   "take": "sfx/lock.wav",
    "db": -11.6,
    "under": 8,
    "len": 0.2,
@@ -262,7 +261,7 @@
   {
    "t": 39.47,
    "sound": "kit/tap",
-   "take": "kit/tap.wav",
+   "take": "sfx/tap.wav",
    "db": -11.6,
    "under": 14,
    "len": 0.045,
@@ -271,7 +270,7 @@
   {
    "t": 41.48,
    "sound": "kit/error",
-   "take": "kit/error.wav",
+   "take": "sfx/error.wav",
    "db": -24.3,
    "under": 16,
    "len": 0.35,
@@ -280,7 +279,7 @@
   {
    "t": 43.91,
    "sound": "kit/blip",
-   "take": "kit/blip.wav",
+   "take": "sfx/blip.wav",
    "db": -18.5,
    "under": 16,
    "len": 0.075,
@@ -289,7 +288,7 @@
   {
    "t": 45.09,
    "sound": "kit/stamp",
-   "take": "kit/stamp.wav",
+   "take": "sfx/stamp.wav",
    "db": -12.1,
    "under": 8,
    "len": 0.25,
@@ -298,7 +297,7 @@
   {
    "t": 45.09,
    "sound": "kit/error",
-   "take": "kit/error.wav",
+   "take": "sfx/error.wav",
    "db": -22.3,
    "under": 14,
    "len": 0.35,
@@ -307,7 +306,7 @@
   {
    "t": 47.5,
    "sound": "kit/ding",
-   "take": "kit/ding.wav",
+   "take": "sfx/ding.wav",
    "db": -21.6,
    "under": 14,
    "len": 0.95,
@@ -316,7 +315,7 @@
   {
    "t": 48.43,
    "sound": "kit/whoosh_big",
-   "take": "kit/whoosh_big.wav",
+   "take": "sfx/whoosh_big.wav",
    "db": -17.1,
    "under": 12,
    "len": 0.68,
@@ -325,7 +324,7 @@
   {
    "t": 48.58,
    "sound": "kit/pop_hi",
-   "take": "kit/pop_hi.wav",
+   "take": "sfx/pop_hi.wav",
    "db": -15.4,
    "under": 16,
    "len": 0.08,
@@ -334,7 +333,7 @@
   {
    "t": 50.41,
    "sound": "kit/toggle",
-   "take": "kit/toggle.wav",
+   "take": "sfx/toggle.wav",
    "db": -10.5,
    "under": 18,
    "len": 0.065,
@@ -343,7 +342,7 @@
   {
    "t": 52.34,
    "sound": "kit/ding",
-   "take": "kit/ding.wav",
+   "take": "sfx/ding.wav",
    "db": -15.6,
    "under": 8,
    "len": 0.95,
@@ -352,7 +351,7 @@
   {
    "t": 55.46,
    "sound": "kit/lock",
-   "take": "kit/lock.wav",
+   "take": "sfx/lock.wav",
    "db": -16.4,
    "under": 18,
    "len": 0.2,
@@ -361,7 +360,7 @@
   {
    "t": 58.18,
    "sound": "kit/tap",
-   "take": "kit/tap.wav",
+   "take": "sfx/tap.wav",
    "db": -11.6,
    "under": 12,
    "len": 0.045,
@@ -370,7 +369,7 @@
   {
    "t": 58.33,
    "sound": "kit/toggle",
-   "take": "kit/toggle.wav",
+   "take": "sfx/toggle.wav",
    "db": -10.5,
    "under": 16,
    "len": 0.065,
@@ -379,7 +378,7 @@
   {
    "t": 59.29,
    "sound": "kit/tick",
-   "take": "kit/tick.wav",
+   "take": "sfx/tick.wav",
    "db": -11.9,
    "under": 18,
    "len": 0.03,
@@ -388,7 +387,7 @@
   {
    "t": 59.813,
    "sound": "kit/rise",
-   "take": "kit/rise.wav",
+   "take": "sfx/rise.wav",
    "db": -20.7,
    "under": 14,
    "len": 1.1,
@@ -397,7 +396,7 @@
   {
    "t": 62.48,
    "sound": "kit/pop",
-   "take": "kit/pop.wav",
+   "take": "sfx/pop.wav",
    "db": -15.3,
    "under": 16,
    "len": 0.09,
@@ -406,7 +405,7 @@
   {
    "t": 64.37,
    "sound": "kit/sparkle",
-   "take": "kit/sparkle.wav",
+   "take": "sfx/sparkle.wav",
    "db": -18.4,
    "under": 10,
    "len": 0.7,
@@ -415,7 +414,7 @@
   {
    "t": 65.68,
    "sound": "kit/typing",
-   "take": "kit/typing.wav",
+   "take": "sfx/typing.wav",
    "db": -12.7,
    "under": 16,
    "len": 0.5,
@@ -424,7 +423,7 @@
   {
    "t": 66.19,
    "sound": "kit/toggle",
-   "take": "kit/toggle.wav",
+   "take": "sfx/toggle.wav",
    "db": -10.5,
    "under": 14,
    "len": 0.065,
@@ -433,13 +432,154 @@
   {
    "t": 67.64,
    "sound": "kit/lock",
-   "take": "kit/lock.wav",
+   "take": "sfx/lock.wav",
    "db": -11.6,
    "under": 12,
    "len": 0.2,
    "_": "the reply arrives"
   }
  ],
- "beds": [],
+ "beds": [
+  {
+   "sound": "tone/pad",
+   "from": 0,
+   "to": 5.7,
+   "under": 9,
+   "_": "the room's tone under world 1, the number"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 0,
+   "to": 5.7,
+   "under": 11,
+   "_": "the room's tone under world 1, the number, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 5.45,
+   "to": 11.5,
+   "under": 9,
+   "_": "the room's tone under world 2, the proof"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 5.45,
+   "to": 11.5,
+   "under": 11,
+   "_": "the room's tone under world 2, the proof, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 11.25,
+   "to": 20.43,
+   "under": 9,
+   "_": "the room's tone under world 3, the catch"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 11.25,
+   "to": 20.43,
+   "under": 11,
+   "_": "the room's tone under world 3, the catch, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 20.18,
+   "to": 26.79,
+   "under": 9,
+   "_": "the room's tone under world 4, who is left"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 20.18,
+   "to": 26.79,
+   "under": 11,
+   "_": "the room's tone under world 4, who is left, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 26.54,
+   "to": 34.15,
+   "under": 9,
+   "_": "the room's tone under world 5, where you come in"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 26.54,
+   "to": 34.15,
+   "under": 11,
+   "_": "the room's tone under world 5, where you come in, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 33.9,
+   "to": 39.67,
+   "under": 9,
+   "_": "the room's tone under world 6, what most do"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 33.9,
+   "to": 39.67,
+   "under": 11,
+   "_": "the room's tone under world 6, what most do, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 39.42,
+   "to": 48.7,
+   "under": 9,
+   "_": "the room's tone under world 7, the result, the turn"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 39.42,
+   "to": 48.7,
+   "under": 11,
+   "_": "the room's tone under world 7, the result, the turn, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 48.45,
+   "to": 61.11,
+   "under": 9,
+   "_": "the room's tone under world 8, the product at work"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 48.45,
+   "to": 61.11,
+   "under": 11,
+   "_": "the room's tone under world 8, the product at work, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 60.86,
+   "to": 65.45,
+   "under": 9,
+   "_": "the room's tone under world 9, the payoff"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 60.86,
+   "to": 65.45,
+   "under": 11,
+   "_": "the room's tone under world 9, the payoff, its second breath (half a swell later, so the pad never drops out)"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 65.2,
+   "to": 69.267,
+   "under": 9,
+   "_": "the room's tone under world 10, the call"
+  },
+  {
+   "sound": "tone/pad",
+   "from": 65.2,
+   "to": 69.267,
+   "under": 11,
+   "_": "the room's tone under world 10, the call, its second breath (half a swell later, so the pad never drops out)"
+  }
+ ],
  "dips": []
 }

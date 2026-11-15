@@ -154,7 +154,7 @@ and the library are `sound.md`. Here: the files, the sheet, the mix and the chec
     **`hp`**, **`lp`** filter it; **`fadeIn`**; **`duck: false`**: the voice does not push it down (a loop's riser
     under the hanging last line).
   - **`beds`**: backgrounds, looped from `at` to `until` with `fadeIn`/`fadeOut` (0.3 s), one per world that has a sound
-    of place. **`music.dips`**: the music drops by `db` for `len` seconds (`fade` 0.06 s), so a hit or a word stands
+    of place; `pitch` moves a pitched one (the tonal set's `pad`) to its world's chord. **`music.dips`**: the music drops by `db` for `len` seconds (`fade` 0.06 s), so a hit or a word stands
     alone. `sfxDuck`, `bedDuck` and `music.duckDb` set how hard the voice pushes each bus down while it speaks.
   - A sheet with no `version` is the first one (`{"sfx", "at", "offset", "gain"}` hits from the kit only): it still
     mixes as it did; a new film's sheet (`film.mjs new`) is version 2.
@@ -173,7 +173,10 @@ and the library are `sound.md`. Here: the files, the sheet, the mix and the chec
   `node <skill>/tools/soundlib.mjs tone films/<slug>/audio <root> minor` (or `major`) writes `audio/tone/`: `pluck-1`
   to `pluck-6` (the scale going up), `blip-1` to `blip-3`, `bell-1`, `bell-5`, `confirm`, `resolve`, `deny`,
   `riser-1`, `riser-2` (1 and 2 s, ending dead: `"align": "sync"`), `fall`, `shimmer`, `sub`, `pad`. With no music, any
-  root: the set only has to agree with itself.
+  root: the set only has to agree with itself. A sheet that names its key (`"tone": "A minor"`) gets the set made by
+  the mixer when `audio/tone/` lacks it. With no music file, the `pad` as beds, one chord a world, two layers half a
+  swell apart so it never drops out, is the film's bed for $0 (the starter's sheet does this); with no voice it stands
+  where the voice would, about 9 dB under the nominal one, and carries the loudness.
 - **Music** only from a file whose rights are listed (`brand/<slug>/assets.md` → Sounds), copied into `audio/music/`,
   or from a paid take reserved in the budget. With neither, no music: the hits and the backgrounds carry the film. No
   music file starts with its own dead air at frame 0: trim it with its segment's `from`. A source's song is never the
@@ -185,7 +188,8 @@ and the library are `sound.md`. Here: the files, the sheet, the mix and the chec
   `beds.wav` and `stems/played.json` (every hit as played: its time, sound, take, level and `"_"`). The voice is
   levelled lightly and measured; every sound is set against it; the master is -14 LUFS integrated, at most -1 dBTP,
   one gain and a limiter that takes only the peaks. A voice-free film has no `vo.wav`: it is set against a nominal
-  voice, and raised toward -14 LUFS only as far as its peaks allow (quieter rather than crushed).
+  voice and reaches the same -14 LUFS: its background and music carry the loudness, and the limiter (run oversampled,
+  so a peak between samples is caught) takes the hits' peaks over them.
 - **The sound check:** `node <skill>/tools/soundcheck.mjs films/<slug>/audio` prints one line a rule, `ok` or `FAIL`:
   the master's loudness and peak, how hard the limiter works, the mono fold-down, the music, the effects and the
   backgrounds against the voice, no file more than 8 % of the hits, no file twice within a second, at most seven hits
