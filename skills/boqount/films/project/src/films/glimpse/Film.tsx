@@ -22,6 +22,7 @@ import {useFontsLoaded} from '../../lib/fonts';
 import {useF, useStart} from '../../lib/scene';
 import {L} from '../../lib/theme';
 import {World, spans, Change} from '../../kit/WorldChange';
+import {Cursor, curve} from '../../kit/Cursor';
 import spec from './spec.json';
 import timeline from './timeline.json';
 
@@ -30,7 +31,7 @@ import timeline from './timeline.json';
 export type Said = {text: string; source: string; credit?: string | null};
 /** A real picture of the product at work: a screenshot or a short clip (.mp4/.webm, `clip` [from, to] s, at most 5 s,
  * muted). `line` is the index of one of the lines it shows happening, set above it; `caption` a short human credit. */
-export type Picture = {file: string; source: string; caption?: string | null; line?: number | null; clip?: [number, number] | null; frame?: 'window' | 'phone' | 'none'; crop?: [number, number, number, number]; focus?: [number, number]};
+export type Picture = {demo?: 'drag-snap' | null; file: string; source: string; caption?: string | null; line?: number | null; clip?: [number, number] | null; frame?: 'window' | 'phone' | 'none'; crop?: [number, number, number, number]; focus?: [number, number]};
 export type Spec = {
   name: Said;
   opening?: Said | null;
@@ -77,10 +78,18 @@ const mixHex = (a: string, b: string, t: number) => {
 const rgba = (hex: string, a: number) => `rgba(${rgb(hex).join(',')},${Math.min(1, Math.max(0, a))})`;
 
 const base = SPEC.colors ? {canvas: hex6(SPEC.colors.canvas), ink: hex6(SPEC.colors.ink), accent: hex6(SPEC.colors.accent)} : NEUTRAL;
-/** The accent carries type only where it reads on the canvas (3:1, large text); else the ink does. */
+/** The accent as it can be drawn on the canvas: itself when it reads there (3:1, large text), else lifted toward the
+ * ink just until it does, so it stays the brand's colour (a blue stays blue) and never turns into the ink. */
+const readable = (accent: string, canvas: string, ink: string) => {
+  for (let t = 0; t <= 1; t += 0.05) {
+    const c = mixHex(accent, ink, t);
+    if (contrast(c, canvas) >= 3) return c;
+  }
+  return ink;
+};
 const C = {
   ...base,
-  mark: contrast(base.accent, base.canvas) >= 3 ? base.accent : base.ink,
+  mark: readable(base.accent, base.canvas, base.ink),
   muted: mixHex(base.ink, base.canvas, 0.42),
   panel: mixHex(base.canvas, base.ink, 0.07),
   line: rgba(base.ink, 0.12),
@@ -282,6 +291,88 @@ const Name: React.FC = () => {
         </div>
         <div style={{position: 'absolute', left: L.W / 2 - 170, top: nameTop + h + 24, width: 340, height: 12, borderRadius: 6, background: C.mark, transform: `scaleX(${p(f, at + 40, 40, EXPO)})`}} />
       </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+/** Film frames (BASE) into a drag-snap world when each window lands: the sound sheet uses the same numbers. */
+export const SNAPS = (timeline as unknown as {demos: Record<string, {snaps: number[]}>}).demos['drag-snap'].snaps.map((x) => Math.round(x * 60));
+
+/** The action a line promises, drawn: on a screen in the brand's colours, a cursor takes a window by its title bar and
+ * drags it to the right edge; a footprint of the right half shows where it will go; let go, it snaps there. Then a
+ * second window goes to the top-left corner and snaps into that quarter. Generic: any "drag a thing to a place and it
+ * fits there" (windows to edges, cards to columns). The line it draws is set above it. */
+const DragSnap: React.FC<{line: number; n: number}> = ({line, n}) => {
+  const f = useF();
+  const start = useStart();
+  const t = f - start;
+  const said = SPEC.lines[line];
+  const head = useSet(said.text, W, 3, 76, 50, 820);
+  const headH = head.lines.length * head.size * 1.12;
+  // the screen
+  const sw = 940;
+  const sh = 600;
+  const sx = (L.W - sw) / 2;
+  const sy = L.top + 30 + headH + 110;
+  const bar = 34;
+  const inner = {x: sx + 16, y: sy + bar + 10, w: sw - 32, h: sh - bar - 26};
+  const settle = p(f, start, 40, EXPO);
+  const zoom = lerp(f, [start, start + 230], [1, 1.05], [INOUT]);
+  // window 1: centre → right half
+  const w1 = {w: 430, h: 300};
+  const from1 = {x: inner.x + inner.w / 2 - w1.w / 2 - 80, y: inner.y + 120};
+  const drag1 = p(f, start + 30, 60, INOUT);
+  const snap1 = p(f, start + SNAPS[0], 16, EXPO);
+  const grab1: [number, number] = [from1.x + w1.w - 70, from1.y + 18];
+  const edge1: [number, number] = [inner.x + inner.w - 6, inner.y + inner.h * 0.45];
+  const [c1x, c1y] = curve(grab1, edge1, 60, drag1);
+  const half = {x: inner.x + inner.w / 2 + 4, y: inner.y, w: inner.w / 2 - 4, h: inner.h};
+  const g1 = w1.w - 70;
+  const pos1 = snap1 > 0 ? {x: mix(c1x - g1, half.x, snap1), y: mix(c1y - 18, half.y, snap1), w: mix(w1.w, half.w, snap1), h: mix(w1.h, half.h, snap1)} : {x: c1x - g1, y: c1y - 18, w: w1.w, h: w1.h};
+  const foot1 = clamp01((t - 70) / 14) * (1 - snap1);
+  // window 2: lower left → top-left quarter
+  const w2 = {w: 380, h: 250};
+  const from2 = {x: inner.x + 40, y: inner.y + inner.h - w2.h - 20};
+  const drag2 = p(f, start + 112, 56, INOUT);
+  const snap2 = p(f, start + SNAPS[1], 16, EXPO);
+  const grab2: [number, number] = [from2.x + 60, from2.y + 18];
+  const edge2: [number, number] = [inner.x + 4, inner.y + 4];
+  const [c2x, c2y] = curve(grab2, edge2, -50, drag2);
+  const quarter = {x: inner.x, y: inner.y, w: inner.w / 2 - 4, h: inner.h / 2 - 4};
+  const pos2 = snap2 > 0 ? {x: mix(c2x - 60, quarter.x, snap2), y: mix(c2y - 18, quarter.y, snap2), w: mix(w2.w, quarter.w, snap2), h: mix(w2.h, quarter.h, snap2)} : {x: c2x - 60, y: c2y - 18, w: w2.w, h: w2.h};
+  const foot2 = clamp01((t - 150) / 14) * (1 - snap2);
+  const cur = t < 112 ? {x: c1x, y: c1y, press: t > 28 && t < SNAPS[0] ? 1 : 0} : {x: c2x, y: c2y, press: t > 110 && t < SNAPS[1] ? 1 : 0};
+  const Win: React.FC<{r: {x: number; y: number; w: number; h: number}; title: string; tone: string}> = ({r, title, tone}) => (
+    <div style={{position: 'absolute', left: r.x, top: r.y, width: r.w, height: r.h, borderRadius: 18, background: mixHex(C.canvas, C.ink, 0.1), border: `2px solid ${rgba(C.ink, 0.14)}`, boxShadow: `0 24px 60px ${rgba(C.deep, 0.6)}`, overflow: 'hidden'}}>
+      <div style={{height: 40, display: 'flex', alignItems: 'center', gap: 9, paddingLeft: 16, background: rgba(C.ink, 0.06)}}>
+        {['#FF5F57', '#FEBC2E', '#28C840'].map((c) => (
+          <div key={c} style={{width: 13, height: 13, borderRadius: 7, background: c}} />
+        ))}
+        <div style={{marginLeft: 12, fontFamily: TEXT, fontSize: 22, fontWeight: 600, color: C.muted, whiteSpace: 'nowrap'}}>{title}</div>
+      </div>
+      {[0.8, 0.6, 0.7, 0.45].map((w, i) => (
+        <div key={i} style={{margin: '18px 20px 0', height: 14, width: `${w * 100}%`, borderRadius: 7, background: i === 0 ? tone : rgba(C.ink, 0.12)}} />
+      ))}
+    </div>
+  );
+  const Foot: React.FC<{r: {x: number; y: number; w: number; h: number}; o: number}> = ({r, o}) => (
+    <div style={{position: 'absolute', left: r.x, top: r.y, width: r.w, height: r.h, borderRadius: 18, background: rgba(C.mark, 0.22 * o), border: `4px solid ${rgba(C.mark, 0.9 * o)}`}} />
+  );
+  return (
+    <AbsoluteFill>
+      <Backdrop glow={[n % 2 ? 300 : 780, 760]} />
+      <Rise set={head} top={L.top + 30} at={start + 6} step={3} weight={820} />
+      <Source said={{credit: said.credit}} y={L.top - 6 + headH + 30} at={start + 20} plate />
+      <div style={{position: 'absolute', inset: 0, transform: `translateY(${(1 - settle) * 90}px) scale(${mix(0.9, 1, settle) * zoom})`, transformOrigin: `540px ${sy + sh / 2}px`, opacity: clamp01(settle * 1.4)}}>
+        <div style={{position: 'absolute', left: sx, top: sy, width: sw, height: sh, borderRadius: 30, background: mixHex(C.canvas, '#000000', 0.25), border: `3px solid ${rgba(C.ink, 0.12)}`, boxShadow: `0 50px 120px ${rgba(C.deep, 0.75)}`, overflow: 'hidden'}}>
+          <div style={{height: bar, background: rgba(C.ink, 0.07)}} />
+        </div>
+        <Foot r={half} o={foot1} />
+        <Foot r={quarter} o={foot2} />
+        <Win r={pos2} title="Notes" tone={rgba(C.ink, 0.3)} />
+        <Win r={pos1} title={SPEC.name.text} tone={C.mark} />
+        <Cursor x={cur.x} y={cur.y} press={cur.press} size={58} />
+      </div>
     </AbsoluteFill>
   );
 };
@@ -508,7 +599,9 @@ export const Film: React.FC<{slug: string}> = ({slug}) => {
   return (
     <AbsoluteFill style={{background: C.canvas}}>
       {VARIANT.map(([w], i) => {
-        const body = w === 'opening' ? <Opening /> : w === 'name' ? <Name /> : w === 'picture' ? <PictureWorld pic={PICTURES[pic]} n={pic++} end={S[i][1]} /> : w === 'things' ? <Things /> : <Promise_ />;
+        const here = w === 'picture' ? PICTURES[pic] : null;
+        const n = w === 'picture' ? pic++ : 0;
+        const body = w === 'opening' ? <Opening /> : w === 'name' ? <Name /> : here?.demo ? <DragSnap line={here.line ?? 0} n={n} /> : here ? <PictureWorld pic={here} n={n} end={S[i][1]} /> : w === 'things' ? <Things /> : <Promise_ />;
         return (
           <World key={i} name={`${i + 1} ${TITLES[w]}`} span={S[i]} inn={i > 0 ? MOVES[i - 1] : undefined} out={i < VARIANT.length - 1 ? MOVES[i] : undefined}>
             {body}

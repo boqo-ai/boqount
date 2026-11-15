@@ -94,16 +94,21 @@ deep read's notes before any kit or style exists (`onboarding.md` → 2. Say it 
 pictures, colours, face and logo, each with a source, `node <skill>/tools/film.mjs glimpse` checks it, writes its sound
 and prints its render, and it draws in its own palette, not the style's tokens. It is never a post and never posted;
 `glimpse` is not a slug a film may take. What goes in it:
-- **The opening** is the product's own line with an action or a number in it: what it does to something ("Pick your
-  snap areas", "One reminder on the day a plant needs water") or a figure from their pages. Never a tagline of
-  qualities or terms ("Free and Open Source", "Simple. Fast. Private."): those read as a label, not a hook. With no
-  such line short enough, leave the opening out and the promise opens.
+- **The opening** is the product's own line with an action or a number in it, and its `kind` says which: `action`,
+  what it does to something ("Pick your snap areas", "One reminder on the day a plant needs water"), or `number`, a
+  figure from their pages ("9 in 10 trips last a week"). Never a tagline of qualities or terms ("Free and Open
+  Source", "Simple. Fast. Private.", "The best app for teams"): those read as a label, not a hook, and the checker
+  refuses them. With no such line short enough, leave the opening out and the promise opens.
 - **Pictures show the product doing what a line says,** in this order of preference: a demo clip of that action (a
   README GIF turned into a clip, `ffmpeg -i demo.gif -movflags +faststart -pix_fmt yuv420p -vf
   "scale=trunc(iw/2)*2:trunc(ih/2)*2" demo.mp4`, or a video on their site, at most 5 s, always muted), then the frames
-  of that action, then screenshots of the product in use from the README, docs or site. Each takes the `line` it
-  shows. The icon or logo is never a picture: it is the name's world. With no picture of the product at work, there
-  are no pictures and the words carry the middle.
+  of that action, then screenshots of the product in use from the README, docs or site, **cropped to the region that
+  shows the line** (at most half the picture's width: a whole settings window is unreadable on a phone). Each takes
+  the `line` it shows. When a line promises dragging something to a place where it fits (windows to screen edges,
+  cards to columns) and no clip of it exists, draw it: `{"demo": "drag-snap", "line": <n>}` is the kit's drawing of
+  that action in the brand's colours, a window dragged to an edge, its footprint, and the snap. The icon or logo is
+  never a picture: it is the name's world. With no picture of the product at work and no action to draw, there are no
+  pictures and the words carry the middle.
 - **On screen, a credit, never a path:** the words show the short human name of where they are from
   ("rectangleapp.com", "the README"); the name and the logo show none; the full source stays in the JSON.
 

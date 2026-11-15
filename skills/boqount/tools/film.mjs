@@ -45,6 +45,14 @@
 // (films/project/src/films/glimpse/timeline.json): a soft bed under it all, a pass on each change of world, a mark when
 // the name lands and when the promise does; kit and tonal sounds only, $0. Its answer gives the sound commands, in
 // order (the tonal set, then the mix), before the render.
+// It is made from the deep read, never instead of it: it refuses until the newest marketing/onboarding/<date>/ holds
+// the ten area notes (onboarding.md → 1), each read for real (at least 40 words, its `## Not found`, no "not read"
+// stub), every `source` in glimpse.json is found in those notes, and, when the folder's first progress line says
+// `git_commit: on` in a git repository, the notes are committed. The opening says its kind, "action" (what the product
+// does) or "number" (it has a figure), and a tagline of qualities ("Free and Open Source") is refused. The accent must
+// be a colour (saturation at least 0.35), not a grey. A screenshot needs a crop at most half the picture's width, so
+// its words read on a phone; or the picture is `{"demo": "drag-snap", "line": n}`, the kit's drawing of a thing
+// dragged to an edge and snapping into place, in the brand's colours, for a line that promises that action.
 // Every text has a source; the name is at most 40 characters, the opening (a short word or number from the product's
 // own pages) at most 24, a line at most 90. Colours are opaque hex and the ink must read on the canvas (4.5:1). A font
 // needs its file, films/glimpse/assets/fonts/<family>.ttf|.otf|.woff2; a logo its file, films/glimpse/assets/logo.svg
@@ -57,6 +65,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, wri
 import { mkdir, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { run as runKit } from "./sfx-kit.mjs";
 
 const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--story] [--dir <account>] | glimpse [--dir <account>]";
@@ -321,6 +330,52 @@ async function newFilm(account, slug, story = false) {
 // ---------------------------------------------------------------- glimpse
 
 const LIMITS = { name: 40, opening: 24, line: 90 };
+const AREAS = ["docs", "site", "prices", "interface", "look", "marketing", "history", "public", "profiles", "competitors"];
+const STUB = /not (yet )?read in this pass|not read yet|\bTODO\b|\bTBD\b|placeholder|notes not yet written/i;
+const DEMOS = ["drag-snap"];
+const QUALITY = new Set("free open source simple fast easy powerful modern lightweight best beautiful secure private and the a an for your you with of to in on open-source native tiny smart".split(" "));
+/** The deep read's notes: the newest marketing/onboarding/<date>/, each area's note read for real; their text. */
+function readNotes(account) {
+  const root = join(account, "marketing/onboarding");
+  const dates = isDir(root) ? readdirSync(root).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && isDir(join(root, d))).sort() : [];
+  if (!dates.length) throw new Error("no marketing/onboarding/<date>/: the first look is made from the deep read's notes, so read first (onboarding.md → 1)");
+  const dir = join(root, dates[dates.length - 1]);
+  const bad = [];
+  for (const a of AREAS) {
+    const t = readOptional(join(dir, `${a}.md`));
+    if (t === null) bad.push(`${a}.md missing`);
+    else if (STUB.test(t)) bad.push(`${a}.md is a stub`);
+    else if (t.split(/\s+/).filter(Boolean).length < 40) bad.push(`${a}.md has under 40 words`);
+    else if (!/^## Not found/m.test(t)) bad.push(`${a}.md has no "## Not found"`);
+  }
+  if (bad.length) throw new Error(`the deep read is not done (${bad.join("; ")}): write every area's note from what you read, with sources, before the first look (onboarding.md → 1)`);
+  const text = readdirSync(dir).filter((f) => f.endsWith(".md")).map((f) => readFileSync(join(dir, f), "utf8")).join("\n");
+  const progress = readOptional(join(dir, "progress.md")) ?? "";
+  if (/^git_commit:\s*on\b/m.test(progress) && isDir(join(account, ".git"))) {
+    const rel = relative(account, dir);
+    const st = spawnSync("git", ["-C", account, "status", "--porcelain", "--", rel], { encoding: "utf8" });
+    const tracked = spawnSync("git", ["-C", account, "ls-files", "--", join(rel, "look.md")], { encoding: "utf8" });
+    if (st.status !== 0 || st.stdout.trim() || !tracked.stdout.trim()) throw new Error(`the deep read's notes in ${rel}/ are not committed (git_commit: on): Save step 1 first (SKILL.md → Rules → Save), then the first look`);
+  }
+  return text;
+}
+/** The places a source names: its URLs (scheme and "read <date>" left out) and its file paths (with the line). */
+const locators = (src) => [
+  ...[...src.matchAll(/https?:\/\/([^\s,;)]+)/g)].map((m) => m[1].replace(/\/+$/, "")),
+  ...[...src.replace(/https?:\/\/[^\s,;)]+/g, " ").matchAll(/[\w.-]+(?:\/[\w.@-]+)*\.[A-Za-z]{1,10}(?::\d+(?:-\d+)?)?/g)].map((m) => m[0]).filter((x) => !/^\d/.test(x)),
+];
+function sourcedInNotes(src, where, notes) {
+  if (/^the person\b/i.test(src.trim())) return;
+  const locs = locators(src);
+  const missing = locs.filter((l) => !notes.includes(l));
+  if (!locs.length || missing.length) throw new Error(`${where}'s source ${JSON.stringify(src)} is not in the deep read's notes${missing.length ? ` (${missing.join(", ")} not found there)` : ""}: every fact in the first look comes from a note`);
+}
+const saturation = (hex) => {
+  const h = hex.length === 4 ? hex.slice(1).split("").map((c) => c + c).join("") : hex.slice(1);
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+  return max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1));
+};
 const FRAMES = ["window", "phone", "none"];
 const PATHLIKE = /https?:\/\/|[\w.~-]*\/[\w.~-]+|\.(md|mdx|json|ya?ml|png|jpe?g|gif|svg|webp|mp4|webm|mov|swift|tsx?|jsx?|mjs|css|scss|html?|xcstrings|strings|plist|txt|icon)\b|:\d+\b/i;
 function shown(value, where) {
@@ -367,21 +422,37 @@ function glimpse(account) {
   } catch (e) {
     throw new Error(`films/glimpse/glimpse.json is not JSON: ${e.message}`);
   }
+  const notes = readNotes(account);
   said(spec.name, "name", LIMITS.name, false);
-  if (spec.opening != null) said(spec.opening, "opening", LIMITS.opening);
+  if (spec.opening != null) {
+    said(spec.opening, "opening", LIMITS.opening);
+    const kind = spec.opening.kind;
+    if (kind !== "action" && kind !== "number") throw new Error(`opening.kind is "action" (a line of what the product does) or "number" (a figure from their pages)`);
+    if (kind === "number" && !/\d/.test(spec.opening.text)) throw new Error("opening.kind is number, but the opening has no figure in it");
+    const words = spec.opening.text.toLowerCase().match(/[a-z-]+/g) ?? [];
+    if (kind === "action" && (words.every((w) => QUALITY.has(w)) || /^the\b.*\bfor\b/i.test(spec.opening.text))) throw new Error(`the opening ${JSON.stringify(spec.opening.text)} is a tagline of qualities, not an action or a number: open on a line of what the product does ("Pick your snap areas"), or a figure; or leave the opening out`);
+  }
   if (!Array.isArray(spec.lines) || spec.lines.length < 2 || spec.lines.length > 4) throw new Error("lines must hold 2 to 4 of the product's own lines");
   spec.lines.forEach((l, i) => said(l, `lines[${i}]`, LIMITS.line));
   const drawn = { colors: "neutral", font: "Inter", logo: "the name" };
+  for (const [w, v] of [["name", spec.name], ["opening", spec.opening], ...spec.lines.map((l, i) => [`lines[${i}]`, l])]) if (v) sourcedInNotes(v.source, w, notes);
   const pictures = spec.pictures ?? [];
   if (!Array.isArray(pictures) || pictures.length > 2) throw new Error("pictures must be a list of at most 2");
   pictures.forEach((pic, i) => {
     const at = `pictures[${i}]`;
+    if (pic && pic.demo != null) {
+      if (!DEMOS.includes(pic.demo)) throw new Error(`${at}.demo is one of ${DEMOS.join(", ")}`);
+      if (!(Number.isInteger(pic.line) && pic.line >= 0 && pic.line < spec.lines.length)) throw new Error(`${at} is a demo: its line is the index of the line whose action it draws`);
+      return;
+    }
     if (!pic || typeof pic.file !== "string" || !pic.file.trim()) throw new Error(`${at}.file is empty`);
     if (typeof pic.source !== "string" || !pic.source.trim()) throw new Error(`${at} has no source: where in their files or pages the picture is`);
     if (!/^assets\/pictures\/[^/]+\.(png|jpe?g|webp|mp4|webm|mov)$/i.test(pic.file)) throw new Error(`${at}.file must be assets/pictures/<name>.png, .jpg, .webp, or a clip .mp4, .webm or .mov, got ${JSON.stringify(pic.file)}`);
     if (/icon|logo/i.test(pic.file) || /\bapp ?icon\b|appiconset|\.icon\b|\blogo\b/i.test(pic.source)) throw new Error(`${at} is an icon or a logo: that is the name's world (logo), not a picture of the product at work; take a screenshot or a demo instead, or leave pictures out`);
     shown(pic.caption, `${at}.caption`);
     if (pic.line != null && !(Number.isInteger(pic.line) && pic.line >= 0 && pic.line < spec.lines.length)) throw new Error(`${at}.line is the index of one of the lines, 0 to ${spec.lines.length - 1}`);
+    sourcedInNotes(pic.source, at, notes);
+    if (!/\.(mp4|webm|mov)$/i.test(pic.file) && !(fractions(pic.crop, 4) && pic.crop[2] <= 0.5)) throw new Error(`${at} is a screenshot: crop it to the region that shows the line, at most half its width ([x, y, w, h] with w ≤ 0.5), so its words read on a phone; or draw the action instead ({"demo": "drag-snap", "line": n})`);
     if (/\.(mp4|webm|mov)$/i.test(pic.file)) {
       const c = pic.clip;
       if (!(Array.isArray(c) && c.length === 2 && c.every((x) => typeof x === "number" && x >= 0) && c[1] > c[0] && c[1] - c[0] <= 5)) throw new Error(`${at} is a clip: clip is [from, to] in seconds, at most 5 s of it`);
@@ -399,17 +470,22 @@ function glimpse(account) {
     if (typeof spec.colors.source !== "string" || !spec.colors.source.trim()) throw new Error("colors has no source: where the files set them");
     const c = contrast(spec.colors.ink, spec.colors.canvas);
     if (c < 4.5) throw new Error(`colors.ink on colors.canvas reads at ${c.toFixed(1)}:1, under 4.5:1: take the brand's text colour and background, or leave colors out for the neutral palette`);
+    const sat = saturation(spec.colors.accent);
+    if (sat < 0.35) throw new Error(`colors.accent ${spec.colors.accent} is a grey (saturation ${sat.toFixed(2)}): the accent is the most saturated colour of the logo or the brand, not a gradient stop of a background; when unsure, show both in the say-back and ask`);
+    sourcedInNotes(spec.colors.source, "colors", notes);
     drawn.colors = "the brand's";
   }
   if (spec.font != null) {
     if (typeof spec.font.family !== "string" || !spec.font.family.trim()) throw new Error("font.family is empty");
     if (typeof spec.font.source !== "string" || !spec.font.source.trim()) throw new Error("font has no source");
+    sourcedInNotes(spec.font.source, "font", notes);
     const found = FONT_EXT.map((e) => `assets/fonts/${spec.font.family}.${e}`).find((f) => existsSync(join(dir, f)));
     if (!found) throw new Error(`font "${spec.font.family}" has no file: copy it from their files to films/glimpse/assets/fonts/${spec.font.family}.ttf (or .otf, .woff2), or leave font out for Inter`);
     drawn.font = spec.font.family;
   }
   if (spec.logo != null) {
     if (typeof spec.logo.source !== "string" || !spec.logo.source.trim()) throw new Error("logo has no source");
+    sourcedInNotes(spec.logo.source, "logo", notes);
     if (!["svg", "png"].some((e) => existsSync(join(dir, `assets/logo.${e}`)))) throw new Error("logo has no file: copy it from their files to films/glimpse/assets/logo.svg (or .png), or leave logo out");
     drawn.logo = "their logo";
   }
@@ -442,6 +518,13 @@ function writeGlimpseSound(account, spec, pictures) {
       ? { sound: "kit/whoosh", at, align: "sync", under: 14, _: `the pan into the ${w} world` }
       : { sound: "tone/riser-1", at, align: "sync", under: 15, _: `the build into the ${w} world, peaking as it lands` },
   );
+  const pics = spec.pictures ?? [];
+  let k = 0;
+  for (const [w, at] of worlds) {
+    if (w !== "picture") continue;
+    const pic = pics[k++];
+    if (pic?.demo) for (const [j, snap] of clock.demos[pic.demo].snaps.entries()) hits.push({ sound: j === 0 ? "tone/blip-1" : "tone/blip-2", at: round(at + snap), under: 14, _: `the dragged window snaps into place (${j === 0 ? "the right half" : "the top-left quarter"})` });
+  }
   const words = spec.lines[0].text.split(/\s+/).filter(Boolean).length;
   hits.push({ sound: "tone/confirm", at: round(start("name") + 0.55), under: 8, _: "the name lands, letter by letter" });
   hits.push({ sound: "tone/resolve", at: round(start("promise") + (12 + words * 3 + 24) / 60), under: 8, _: "the promise's last word lands and its rule draws" });

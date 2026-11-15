@@ -66,7 +66,9 @@ Read everything that describes the product, then its public side, one note per a
   such an area fails the step, and you read it before step 2. `look` opens the files themselves: the logo or app icon
   (its path, and what it shows), the colours as hex values with the file and line that set them (an app icon's two
   or three main colours, read from the image, count, with the icon's path as source), the font files and their
-  licences. `prices` reads the live pricing page when the files do not hold the prices. Step 2 says back only when
+  licences. **The accent is the most saturated colour of the logo or the brand** (a blue, a green, an orange), never
+  a gradient stop of a background or a grey; when two colours could be it, the say-back shows both and asks.
+  `prices` reads the live pricing page when the files do not hold the prices. Step 2 says back only when
   every area has read its places or names the places it looked in and found nothing.
 - Never opened, never quoted: `.env*`, keys, tokens, credentials. Skipped: `node_modules`, build output, `.git`.
   Nothing of theirs is run, installed or signed into (the film project's `npm install`, started at the opening on
@@ -78,10 +80,18 @@ Read everything that describes the product, then its public side, one note per a
 - **A folder with nothing in it** (no README, no docs, no site source): first ask, in one message, for the site's
   address and the brand's handles on each platform. Then read areas 8–10 only.
 
+**Then Save** (`SKILL.md` → Rules → Save; committed when the folder's answer was to commit): the ten notes are on disk
+before anything is made from them. The first look is made only from saved notes, and `film.mjs glimpse` refuses
+otherwise: a missing, short or stub note, a source the notes do not hold, or uncommitted notes when `git_commit` is on.
+Speed comes from the readers working at once, never from reading less.
+
 ## 2. Say it back, and show it
 
 While the readers work and the first look renders, say nothing: no "still reading" or "the readers are working"
-lines. The next thing the person reads is the message below, whole.
+lines. The next thing the person reads is the message below, whole. **No message to the person names a path of a
+tool or a binary** (the skill's folder, `node_modules`, a shell's or a test's path): files of theirs by their place in
+their folder (`films/glimpse/out/glimpse-draft.mp4`), and a command they must run themselves as the folder to run it
+in and the command (`in films/project: npm run draft -- Glimpse`).
 
 **The first look.** With the film project set up (the opening's films yes), make it before the message, from the
 notes only: write `films/glimpse/glimpse.json` (`<skill>/tools/film.mjs` → glimpse: the product's name; two to four
