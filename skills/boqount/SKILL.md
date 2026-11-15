@@ -153,13 +153,15 @@ the holder in its report when someone holds it.
      <paths>` (exact paths; never a directory, never `-a`: work in progress stays uncommitted);
   2. only with `git_commit: on` and `git_push: on`, steps 3–7;
   3. `git pull --rebase --autostash`;
-  4. a `marketing/log.md` conflict keeps both entries in date order; any other conflict: `git rebase --abort`,
-     stop, report;
+  4. a `marketing/log.md` conflict keeps both entries in date order; a `marketing/ledger.csv` or `marketing/budget.csv`
+     conflict where both sides only added rows keeps every row of both (a changed or removed row is not that case);
+     any other conflict: `git rebase --abort`, stop, report. Edit those two files a line at a time, never by reading
+     and writing the whole table back: a rewrite changes other people's rows (their line endings, their quoting);
   5. immediately before the push, as its own text: "Pushing <n> commit(s) to <remote>/<branch> as <git user.name>.";
   6. `git push`, to the current branch's upstream; a rejected push pulls once more, then pushes;
   7. never `--force`;
   8. at the run's end (step 13, or a writing mode's last Save), whatever `git_commit` says:
-     `node <skill>/tools/account-lock.mjs release`.
+     `node <skill>/tools/account-lock.mjs release` (`release --soft` for a run alongside).
 - **The lock.** When several people run this account from their own machines, sharing it through one remote,
   `marketing/lock.md` on that remote says who runs it now, and only `<skill>/tools/account-lock.mjs` writes it (a push
   of its own, so it needs no Save and no "Pushing" line). An account that is not shared needs none: outside a
@@ -169,7 +171,23 @@ the holder in its report when someone holds it.
   6 h) is stale and `claim` takes it over, naming whose it was (`replaced`): say so in the report and the log. A run
   still going near `until` claims again (it renews). Freeing someone else's fresh lock (`release --force`) is the
   human's step, never yours. With the remote unreachable, `claim` fails (exit 1): the run goes no further than
-  `status` would.
+  `status` would. On `"ok":false`, the report also offers the human the other way: going alongside (next rule) in a
+  scope they name. Only the human picks going alongside and its scope; you never pick them.
+- **The soft lock (running alongside).** For when the holder works for long and the people agree between themselves
+  what each does. `node <skill>/tools/account-lock.mjs claim --soft --scope "<scope>"` adds this run's line under
+  `## Alongside` in `lock.md`; it never waits for the hard lock, and is refused (`"ok":false`, `clash`) only when
+  someone else's fresh line has the same scope: stop and report it. Its answer names the holder (`hard`) and the
+  other lines (`alongside`): say them in the report. A scope is one thing in the human's words: `post <slug>`,
+  `film <slug>`, `screens`, `research`. A run alongside:
+  - does only its scope: the mode that matches it (`post`, `screens`, `research`, `status`) or the film's production;
+    never the day, its steps for posts it did not name, or `config`;
+  - never writes `marketing/state.md`, `marketing/queue.md` or `marketing/config.md` (the holder's): what they need
+    goes in its log entry, tagged `alongside: <scope>`, and in its report;
+  - writes its scope's records, films and media, adds its rows to `ledger.csv` and `budget.csv` and its log entry,
+    and saves by the same Save;
+  - publishes only a post its scope names, and only after `posting.md` → Start's schedule read shows that post is
+    not already out or scheduled;
+  - claims again (`--soft`, same scope) before each publish and at each Save.
 - **Writes** stay in `marketing/` and `brand/<slug>/`, plus the working folder `production.md` names for a post
   being made. Derived media go to `marketing/media/`; upload replies (signed URLs) go to `.boqo-upload/` only. Material
   that is not the brand's is never committed: its folder is git-ignored, its `SOURCES.md` excepted (`film.md` →
@@ -213,6 +231,7 @@ written in the config's `language`; with it empty, in the language the person wr
 | "Nothing is scheduled before approval, so the queue and the log are enough" | Each planned post gets its record and its ledger rows at step 7 |
 | "I'll write the status once it's all done" | Write and commit each status before its call (`posting.md`) |
 | "Their lock is surely left over, I'll free it" | A fresh lock is theirs: stop and report it. Only a lock past its `until` is taken over, and only by `claim` |
+| "The holder will be busy for hours, I'll go alongside and run the day" | Going alongside is the human's call, in the scope they name, and the day stays the holder's |
 | "`list_schedule` shows it" (no `from`) | Read from 48 hours back, or a post already out is posted twice |
 | "The user is in a hurry: all three today" | At most 2 a day on a channel, in the windows. The rest go to later days |
 | "Before I write anything, I'll read the brand kit, the hook bank and the strategy" | Six things. The hook bank comes through the strategy line; `research.md` never |

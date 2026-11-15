@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 
 import { tmpdir, hostname } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseLock, formatLock, decideClaim, decideRelease, run } from "../skills/boqount/tools/account-lock-lib.mjs";
+import { parseLock, formatLock, parseAlongside, decideClaim, decideRelease, decideSoftClaim, decideSoftRelease, run } from "../skills/boqount/tools/account-lock-lib.mjs";
 
 const cli = fileURLToPath(new URL("../skills/boqount/tools/account-lock.mjs", import.meta.url));
 const HOST = hostname().replace(/\.local$/, "");
@@ -163,4 +163,41 @@ test("the CLI prints one JSON line; a refused claim exits 3", () => {
   assert.equal(rb.status, 3);
   assert.equal(JSON.parse(rb.stdout).holder, "anna");
   assert.equal(spawnSync(process.execPath, [cli, "nonsense"], { cwd: a, encoding: "utf8" }).status, 2);
+});
+
+// The soft lock: a run alongside the holder, in a scope a person names.
+test("soft claims: a scope is needed, a same-scope entry of someone else refuses, ours renews", () => {
+  const me = { who: "anna", host: "mac-a" };
+  assert.equal(decideSoftClaim([], me, NOW, 6, " ").ok, false);
+  const boris = { holder: "boris", host: "mac-b", since: NOW.toISOString(), until: new Date(NOW.getTime() + 3600_000).toISOString(), scope: "post  Spring-Sale" };
+  const clash = decideSoftClaim([boris], me, NOW, 6, "post spring-sale");
+  assert.equal(clash.ok, false);
+  assert.equal(clash.clash.holder, "boris");
+  const other = decideSoftClaim([boris], me, NOW, 6, "film dry-spell");
+  assert.equal(other.ok, true);
+  assert.equal(other.alongside.length, 2);
+  const again = decideSoftClaim(other.alongside, me, new Date(NOW.getTime() + 60_000), 6, "screens");
+  assert.equal(again.renewed, true);
+  assert.equal(again.entry.since, other.entry.since);
+  assert.equal(again.entry.scope, "screens");
+  const stale = { ...boris, until: new Date(NOW.getTime() - 1).toISOString() };
+  assert.equal(decideSoftClaim([stale], me, NOW, 6, "post spring-sale").ok, true, "a stale entry does not refuse");
+  assert.deepEqual(decideSoftRelease(other.alongside, me, NOW).alongside.map((e) => e.holder), ["boris"]);
+});
+
+test("soft and hard: a soft claim never waits for the hard lock, and the hard lock keeps the Alongside lines", () => {
+  const { a, b, rootB } = repo();
+  assert.equal(run(["claim", "--who", "anna"], { cwd: a, ...at }).code, 0);
+  const s = run(["claim", "--soft", "--scope", "post spring-sale", "--who", "boris"], { cwd: b, ...at });
+  assert.equal(s.code, 0, JSON.stringify(s.out));
+  assert.equal(s.out.hard.holder, "anna");
+  assert.equal(run(["claim", "--soft", "--scope", "Post Spring-Sale", "--who", "carla"], { cwd: b, ...at }).code, 3);
+  assert.equal(run(["claim", "--who", "anna"], { cwd: a, ...at }).code, 0, "the holder renews");
+  assert.equal(run(["release", "--who", "anna"], { cwd: a, ...at }).code, 0);
+  g(rootB, "pull", "-q", "--rebase");
+  const text = readFileSync(join(b, "marketing/lock.md"), "utf8");
+  assert.equal(parseLock(text).holder, "");
+  assert.deepEqual(parseAlongside(text).map((e) => [e.holder, e.scope]), [["boris", "post spring-sale"]]);
+  assert.equal(run(["release", "--soft", "--who", "boris"], { cwd: b, ...at }).code, 0);
+  assert.deepEqual(run(["status", "--who", "anna"], { cwd: a, ...at }).out.alongside, []);
 });

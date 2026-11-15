@@ -5,6 +5,9 @@
 //   node <skill>/tools/account-lock.mjs status              {"needed":true,"held":bool,"holder":..,"host":..,"since":..,"until":..,"stale":bool,"mine":bool}
 //   node <skill>/tools/account-lock.mjs claim [--hours 6]   {"ok":true,...}, or exit 3 with {"ok":false,"holder":..,"host":..,"until":..}
 //   node <skill>/tools/account-lock.mjs release [--force]   frees the lock if it is ours (--force: the human's step only)
+//   node <skill>/tools/account-lock.mjs claim --soft --scope "<what>" [--hours 6]   a run alongside the holder, in its
+//            own scope (exit 3 with {"ok":false,"clash":..} when someone else's fresh entry has the same scope)
+//   node <skill>/tools/account-lock.mjs release --soft     frees our entry under "## Alongside"
 //   options: --who <login> (default: `gh api user --jq .login`, else git user.name), --remote <name> and --branch <name>
 //            (default: the current branch's upstream), --now <ISO> (tests)
 //

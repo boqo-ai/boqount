@@ -154,3 +154,10 @@ test("the opportunity story's ten parts are named in the same order in the check
   const rows = [...story.matchAll(/^\| (\d+) \| \*\*([^*]+)\*\*/gm)].map(([, n, part]) => `${n} ${part}`);
   assert.equal(rows.length, 10, "story.md has ten numbered parts");
 });
+
+test("SKILL.md: going alongside is the human's pick, and a run alongside leaves the holder's files alone", () => {
+  const flat = readFileSync(join(main, "SKILL.md"), "utf8").replace(/[ \t]*\n[ \t]*/g, " ");
+  for (const s of ["account-lock.mjs claim --soft --scope", "Only the human picks going alongside and its scope",
+    "never writes `marketing/state.md`, `marketing/queue.md`", "publishes only a post its scope names",
+    "only added rows keeps every row of both", "release --soft"]) assert.ok(flat.includes(s), s);
+});
