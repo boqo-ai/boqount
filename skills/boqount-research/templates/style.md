@@ -42,6 +42,8 @@ motion: <snappy | smooth | bouncy>
 
 - **What the picture is made of:** <drawn shapes, the product's screens, photographs, stills and short shots of real
   things, a character, …>. Source: <…>
+- **Generated look:** <none | one of `<skill>/gen.md`'s looks (lucid, live-action, comic, vibe, integrated VFX,
+  explainer props), only with a fal key, and what a film in it costs as an order of size>. Source: <…>
 - **Illustrative first, here:** the picture shows the thing the line names. <The things this brand's lines talk
   about, and how each is shown: a place, a screen, an object in a hand.> Source: <…>
 - **Pace:** <how long a beat holds; how the camera moves>. Source: <…>

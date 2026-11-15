@@ -171,6 +171,13 @@ owed` once the human confirms the platform shows its AI label on the test post, 
      into `state.md` → Open questions.
 
    Otherwise a label line is no reason to hold.
+
+   **A generated look** (`gen.md`): a photoreal generated picture or footage is `AI label: yes (generated realistic
+   picture)`; a record without that line, or a file whose provenance metadata was stripped, is `HOLD: ai-label`. A
+   `vibe` film (`vibe.md` → Lines it must not cross) with blood, cuts, branding on skin, knives or harm, a masked group
+   entering a dark space as its opening, a promised power or effect, or anyone not an adult on screen is
+   `HOLD: material`; marked `Ad: yes`, it is also held until the record says its mark was checked against hate-symbol
+   databases and its caption's wording read by someone with legal training (`HOLD: material (legal read owed)`).
 5. **Music:** a source's own sound under its own shot is judged by item 6's rule, and is the one exception. Any other
    music is licensed, or the platform's own library.
 6. **Other people and outside material** (`film.md` → Outside material). Never, whatever the person says: another

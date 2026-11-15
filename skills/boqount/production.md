@@ -24,6 +24,9 @@ slideshow's files go to `marketing/media/<slug>/`.
 - **A post is a video file.** A carousel goes out only as a `slideshow` (its slides are made by `carousel.md`).
 - A trend is an idea for a `film`: it carries the trend's mechanism, never its original subject or its sound (A
   trend, below).
+- **A film in a generated look** (`gen.md`: lucid, live-action, comic, vibe, integrated VFX, explainer props) is a
+  `film` whose picture is partly generated on the person's own fal key. Only when `brand/<slug>/style.md` names that
+  look and the key is there (`gen.md` → No key); its whole series is quoted and approved before the first call.
 - **A flagship film** is a `film` with the record's `Flagship: yes` (A flagship film, below): opt-in, about one a
   week at most.
 - **One product story per film.** A `product` or `offer` film tells one function of the product; a line about another
@@ -126,11 +129,13 @@ kept or not.
 | ElevenLabs | text to speech (`eleven.mjs tts`, `tts-lines`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
 | ElevenLabs | sound effects: the library's takes (`soundlib.mjs gen`, through `eleven.mjs sfx`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
 | ElevenLabs | music (`eleven.mjs music`) | <read at estimate time> | https://elevenlabs.io/pricing/api | <date> |
+| fal | generated key frames, video segments, cut-outs, tracking, lip-sync (`gen.mjs run`; `gen.md`) | per image or per second of video, read with `gen.mjs price <endpoint>` | fal's pricing, read by `gen.mjs price` | <date> |
 | boqo | `create_clips` (a boqo channel only) | credits: the balance and what is left of this connection's daily cap, read with `get_account`; the card's cost is the difference after it | boqo's `get_account` | <date> |
 
 The kit's sounds and a film's tonal set are made on this machine and cost $0. The library costs once, when its takes
 are generated (`soundlib.mjs gen` says how many seconds it would ask for before it asks anything), and $0 a film after
-that. Without an ElevenLabs key, every film's sound is the kit and the tonal set, at $0.
+that. Without an ElevenLabs key, every film's sound is the kit and the tonal set, at $0. Without a fal key, no film
+is planned in a generated look (`gen.md` → No key).
 
 ## A film from scratch
 
