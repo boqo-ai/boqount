@@ -7,6 +7,9 @@
 //   ../<film>/media/                           → public/media/<film>/
 //   ../<film>/audio/mix.wav, vo.wav            → public/audio/<film>/
 //   ../<film>/audio/cues.json                  → src/films/<film>/cues.json   (for each film that has a scene folder)
+//   ../glimpse/glimpse.json                    → src/films/glimpse/spec.json  (the first look's words and colours)
+//   ../glimpse/assets/fonts/*.ttf|otf|woff2    → public/fonts/                (its face, before the brand folder exists)
+//   ../glimpse/assets/logo.svg|.png            → public/glimpse/
 // <account> is the folder that holds films/, two levels above this project; <slug> is the `brand:` line of
 // <account>/marketing/config.md. With no config, no slug or no brand folder, nothing of the brand is copied and
 // nothing fails. A file is written only when it changed, so Studio does not reload; a copied file whose source is
@@ -62,9 +65,15 @@ const brand = slug ? join(account, 'brand', slug) : null;
 // fonts: Inter, and the brand's own faces (a brand face may not take the name of a shipped file)
 const FONT = /\.(ttf|otf|woff2)$/i;
 const shipped = new Set(filesIn(join(root, 'shared/fonts')));
-const brandFonts = brand ? filesIn(join(brand, 'fonts')).filter((f) => !f.includes('/') && FONT.test(f) && !shipped.has(f)) : [];
+const glimpse = join(films, 'glimpse');
+const faceFiles = (dir) => filesIn(dir).filter((f) => !f.includes('/') && FONT.test(f) && !shipped.has(f));
+const brandOwn = brand ? faceFiles(join(brand, 'fonts')) : [];
+// the first look's faces come before the brand folder exists; the brand's own win where both have a file
+const glimpseFonts = faceFiles(join(glimpse, 'assets/fonts')).filter((f) => !brandOwn.includes(f));
+const brandFonts = [...brandOwn, ...glimpseFonts];
 for (const f of shipped) if (copy(join(root, 'shared/fonts', f), join(pub, 'fonts', f))) done.push(`fonts/${f}`);
-for (const f of brandFonts) if (copy(join(brand, 'fonts', f), join(pub, 'fonts', f))) done.push(`fonts/${f}`);
+for (const f of brandOwn) if (copy(join(brand, 'fonts', f), join(pub, 'fonts', f))) done.push(`fonts/${f}`);
+for (const f of glimpseFonts) if (copy(join(glimpse, 'assets/fonts', f), join(pub, 'fonts', f))) done.push(`fonts/${f}`);
 for (const f of filesIn(join(pub, 'fonts'))) if (!shipped.has(f) && !brandFonts.includes(f)) rmSync(join(pub, 'fonts', f));
 
 // a family named in the tokens with no file is drawn in Inter: say so, on one line
@@ -82,6 +91,18 @@ for (const ext of ['svg', 'png']) {
   if (src && existsSync(src)) {
     if (copy(src, dst)) done.push(`brand/logo.${ext}`);
   } else if (existsSync(dst)) rmSync(dst);
+}
+
+// the first look: its logo and its words
+for (const ext of ['svg', 'png']) {
+  const src = join(glimpse, `assets/logo.${ext}`);
+  const dst = join(pub, 'glimpse', `logo.${ext}`);
+  if (existsSync(src)) {
+    if (copy(src, dst)) done.push(`glimpse/logo.${ext}`);
+  } else if (existsSync(dst)) rmSync(dst);
+}
+if (existsSync(join(glimpse, 'glimpse.json')) && existsSync(join(root, 'src/films/glimpse'))) {
+  if (copy(join(glimpse, 'glimpse.json'), join(root, 'src/films/glimpse/spec.json'))) done.push('src/films/glimpse/spec.json');
 }
 
 // the brand's media, for every film

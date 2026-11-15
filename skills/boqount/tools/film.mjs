@@ -4,6 +4,7 @@
 //   node <skill>/tools/film.mjs init  [--dir <account>] [--from <films-dir>]   copy <skill>/films/ to <account>/films/ (never over an existing films/project), generate films/sfx/, apply the theme; prints the one command left as {"next": {"cwd", "command": [...]}}
 //   node <skill>/tools/film.mjs theme [--dir <account>]                        brand/<slug>/style.md's ```tokens block → films/project/src/lib/tokens.json
 //   node <skill>/tools/film.mjs new <slug> [--story] [--dir <account>]         films/<slug>/ (script, storyboard, audio skeletons), the scenes in films/project/src/films/<slug>/, registered in src/films/index.ts
+//   node <skill>/tools/film.mjs glimpse [--dir <account>]                      checks films/glimpse/glimpse.json (the first look, onboarding.md → 2. Say it back, and show it) and prints the render command as "next"
 //
 // --dir defaults to the current folder: the account's files live where the agent was started, not beside this tool.
 // --from defaults to the skill's own films/ folder, found relative to this file (../films).
@@ -26,6 +27,16 @@
 // headings (the starter is a story film). The starter is only the worked example: new reads its script and storyboard
 // for their headings when it is there, and works without it.
 //
+// glimpse checks films/glimpse/glimpse.json, which the agent writes from the deep read's notes, and writes nothing:
+//   {"name": {"text", "source"}, "opening": {"text", "source"} | null, "lines": [{"text", "source"}, …2 to 4],
+//    "colors": {"canvas", "ink", "accent", "source"} | null, "font": {"family", "source"} | null, "logo": {"source"} | null}
+// Every text has a source; the name is at most 40 characters, the opening (a short word or number from the product's
+// own pages) at most 24, a line at most 90. Colours are opaque hex and the ink must read on the canvas (4.5:1). A font
+// needs its file, films/glimpse/assets/fonts/<family>.ttf|.otf|.woff2; a logo its file, films/glimpse/assets/logo.svg
+// or .png. With no colours the first look is drawn in a neutral palette, with no font in Inter, with no logo with the
+// name as the mark. Its answer names the command that renders it (films/glimpse/out/glimpse-draft.mp4, about half a
+// minute on a laptop once the project is installed) and the one that makes its stills.
+//
 // Prints one JSON line and exits 0, or exits 1 with {"error": …}. The tests are tests/film.test.mjs.
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync, copyFileSync, realpathSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -33,10 +44,10 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { run as runKit } from "./sfx-kit.mjs";
 
-const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--story] [--dir <account>]";
+const USAGE = "usage: film.mjs init [--dir <account>] [--from <films-dir>] | theme [--dir <account>] | new <slug> [--story] [--dir <account>] | glimpse [--dir <account>]";
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 // Folders under films/ that are not a film's: a slug may not take their name.
-const RESERVED_SLUGS = ["project", "sfx", "starter"];
+const RESERVED_SLUGS = ["project", "sfx", "starter", "glimpse", "sounds"];
 const COLOR_KEYS = ["canvas", "panel", "ink", "muted", "accent", "accent2", "danger"];
 const FONT_KEYS = ["font_display", "font_text"];
 const TOKEN_KEYS = [...COLOR_KEYS, ...FONT_KEYS, "radius", "motion"];
@@ -61,7 +72,7 @@ const readOptional = (path) => (existsSync(path) ? readFileSync(path, "utf8") : 
 
 function parseArgs(argv) {
   const [command, ...rest] = argv;
-  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir", "--story"] }[command];
+  const allowed = { init: ["--dir", "--from"], theme: ["--dir"], new: ["--dir", "--story"], glimpse: ["--dir"] }[command];
   if (!allowed) throw new Error(USAGE);
   const flags = {};
   const positional = [];
@@ -292,6 +303,80 @@ async function newFilm(account, slug, story = false) {
   return { command: "new", slug, id, format: story ? "story" : "loop", film: `films/${slug}`, scenes: `films/project/src/films/${slug}`, registered: true };
 }
 
+// ---------------------------------------------------------------- glimpse
+
+const LIMITS = { name: 40, opening: 24, line: 90 };
+const FONT_EXT = ["ttf", "otf", "woff2"];
+
+function luminance(hex) {
+  const h = hex.length === 4 ? hex.slice(1).split("").map((c) => c + c).join("") : hex.slice(1);
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const c = parseInt(h.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+/** WCAG contrast ratio of two hex colours. */
+export function contrast(a, b) {
+  const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m);
+  return (x + 0.05) / (y + 0.05);
+}
+
+function said(value, where, limit) {
+  if (!value || typeof value !== "object") throw new Error(`${where} must be {"text", "source"}`);
+  if (typeof value.text !== "string" || !value.text.trim()) throw new Error(`${where}.text is empty`);
+  if (typeof value.source !== "string" || !value.source.trim()) throw new Error(`${where} has no source: a word on screen comes from the product's own files or pages, with where`);
+  if (value.text.length > limit) throw new Error(`${where}.text is ${value.text.length} characters, at most ${limit}: pick a shorter phrase of theirs, never a rewrite`);
+}
+
+function glimpse(account) {
+  if (!existsSync(tokensPath(account))) throw needInit(account);
+  const dir = join(account, "films/glimpse");
+  const file = join(dir, "glimpse.json");
+  const text = readOptional(file);
+  if (text === null) throw new Error("no films/glimpse/glimpse.json: write it from the deep read's notes first (onboarding.md → 2. Say it back, and show it)");
+  let spec;
+  try {
+    spec = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`films/glimpse/glimpse.json is not JSON: ${e.message}`);
+  }
+  said(spec.name, "name", LIMITS.name);
+  if (spec.opening != null) said(spec.opening, "opening", LIMITS.opening);
+  if (!Array.isArray(spec.lines) || spec.lines.length < 2 || spec.lines.length > 4) throw new Error("lines must hold 2 to 4 of the product's own lines");
+  spec.lines.forEach((l, i) => said(l, `lines[${i}]`, LIMITS.line));
+  const drawn = { colors: "neutral", font: "Inter", logo: "the name" };
+  if (spec.colors != null) {
+    for (const k of ["canvas", "ink", "accent"]) {
+      const v = spec.colors[k];
+      if (typeof v !== "string" || !HEX.test(v)) throw new Error(`colors.${k} must be an opaque hex colour such as #3f8f5b, got ${JSON.stringify(v)}`);
+    }
+    if (typeof spec.colors.source !== "string" || !spec.colors.source.trim()) throw new Error("colors has no source: where the files set them");
+    const c = contrast(spec.colors.ink, spec.colors.canvas);
+    if (c < 4.5) throw new Error(`colors.ink on colors.canvas reads at ${c.toFixed(1)}:1, under 4.5:1: take the brand's text colour and background, or leave colors out for the neutral palette`);
+    drawn.colors = "the brand's";
+  }
+  if (spec.font != null) {
+    if (typeof spec.font.family !== "string" || !spec.font.family.trim()) throw new Error("font.family is empty");
+    if (typeof spec.font.source !== "string" || !spec.font.source.trim()) throw new Error("font has no source");
+    const found = FONT_EXT.map((e) => `assets/fonts/${spec.font.family}.${e}`).find((f) => existsSync(join(dir, f)));
+    if (!found) throw new Error(`font "${spec.font.family}" has no file: copy it from their files to films/glimpse/assets/fonts/${spec.font.family}.ttf (or .otf, .woff2), or leave font out for Inter`);
+    drawn.font = spec.font.family;
+  }
+  if (spec.logo != null) {
+    if (typeof spec.logo.source !== "string" || !spec.logo.source.trim()) throw new Error("logo has no source");
+    if (!["svg", "png"].some((e) => existsSync(join(dir, `assets/logo.${e}`)))) throw new Error("logo has no file: copy it from their files to films/glimpse/assets/logo.svg (or .png), or leave logo out");
+    drawn.logo = "their logo";
+  }
+  return {
+    command: "glimpse",
+    drawn,
+    next: { cwd: join(account, "films/project"), command: ["npm", "run", "draft", "--", "Glimpse"] },
+    out: "films/glimpse/out/glimpse-draft.mp4",
+    stills: ["<skill>/tools/stills.sh", "films/glimpse/out/glimpse-draft.mp4", "films/glimpse/out/stills", "--every", "1"],
+  };
+}
+
 // ---------------------------------------------------------------- the command
 
 /** `deps`: { cwd, films } (the folder the command runs in; the skill's films/ folder). Returns { code, line }. */
@@ -304,6 +389,7 @@ export async function run(argv, deps) {
       return ok(await init(account, from));
     }
     if (command === "new") return ok(await newFilm(account, slug, flags["--story"] === true));
+    if (command === "glimpse") return ok(glimpse(account));
     if (!existsSync(tokensPath(account))) throw needInit(account);
     return ok({ command: "theme", ...applyTheme(account, readTheme(account)) });
   } catch (e) {

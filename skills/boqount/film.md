@@ -82,11 +82,18 @@ The record (status `planned`, its Layer and its cost estimate) exists before any
 Remotion's licence is free for individuals and companies of up to three people and paid for larger companies: tell
 the person to check its current terms before the first film.
 
-**Once per account,** only on the person's yes after the requirements are named (`onboarding.md`, step 9):
-`node <skill>/tools/film.mjs init`, then the command it prints as `next` (`npm install` in `films/project`). Outside
+**Once per account,** only on the person's yes after the requirements are named (at onboarding's opening, so the
+install runs during the deep read; else `onboarding.md`, step 9): `node <skill>/tools/film.mjs init`, then the
+command it prints as `next` (`npm install` in `films/project`). Outside
 onboarding, a day that needs a film and finds no `films/project` asks once and makes another kind meanwhile. `init` copies the project and the starter film (`films/starter`: a worked example to read, never to
 post), generates the sound kit in `films/sfx/`, and applies the style's tokens. After `brand/<slug>/style.md` → Tokens
 changes: `node <skill>/tools/film.mjs theme`.
+
+**The first look** (`films/glimpse/`, composition `Glimpse`) is onboarding's draft of the brand moving, made from the
+deep read's notes before any kit or style exists (`onboarding.md` → 2. Say it back, and show it): `films/glimpse/glimpse.json` holds its words,
+colours, face and logo, each with a source, `node <skill>/tools/film.mjs glimpse` checks it and prints its render, and
+it draws in its own palette, not the style's tokens. It is never a post and never posted; `glimpse` is not a slug a
+film may take.
 
 **Per film:** `node <skill>/tools/film.mjs new <slug>` makes `films/<slug>/` (`script.txt`, `STORYBOARD.md`,
 `audio/`; `media/` and `out/` come later) and the scenes in `films/project/src/films/<slug>/`, from a neutral template

@@ -462,3 +462,90 @@ test("the CLI prints one JSON line, exits 1 with an error line, and finds the sk
   const shipped = fail(["init", "--dir", account(), "--from", join(tmpdir(), "boqount-no-such-films")]);
   assert.match(JSON.parse(shipped.stdout).error, /boqount-no-such-films/);
 });
+
+// ---------------------------------------------------------------- glimpse (the first look, onboarding.md → 2)
+
+const GLIMPSE = {
+  name: { text: "Quillfern", source: "README.md:1" },
+  opening: { text: "One message", source: "site/index.html:12" },
+  lines: [
+    { text: "Water reminders for every plant you own.", source: "site/index.html:14" },
+    { text: "One reminder on the day a plant needs water.", source: "README.md:25" },
+  ],
+  colors: { canvas: "#17140f", ink: "#f4eee2", accent: "#6cc59a", source: "src/theme.css:3-5" },
+  font: null,
+  logo: null,
+};
+async function withGlimpse(spec, files = {}) {
+  const { dir } = await initialized();
+  const put = (path, text) => {
+    mkdirSync(join(dir, path, ".."), { recursive: true });
+    writeFileSync(join(dir, path), text);
+  };
+  if (spec !== undefined) put("films/glimpse/glimpse.json", typeof spec === "string" ? spec : JSON.stringify(spec));
+  for (const [path, text] of Object.entries(files)) put(path, text);
+  return { dir, r: await film(["glimpse", "--dir", dir]) };
+}
+
+test("glimpse checks the first look's spec, writes nothing, and names the render and the stills", async () => {
+  const { dir, r } = await withGlimpse(GLIMPSE);
+  assert.equal(r.code, 0, JSON.stringify(r.out));
+  assert.deepEqual(r.out.next.command, ["npm", "run", "draft", "--", "Glimpse"]);
+  assert.equal(r.out.next.cwd, join(dir, "films/project"));
+  assert.equal(r.out.out, "films/glimpse/out/glimpse-draft.mp4");
+  assert.deepEqual(r.out.drawn, { colors: "the brand's", font: "Inter", logo: "the name" });
+  assert.deepEqual(readdirSync(join(dir, "films/glimpse")), ["glimpse.json"]);
+});
+
+test("glimpse refuses a word with no source, a rewrite that is too long, and too few or too many lines", async () => {
+  const cases = [
+    [{ ...GLIMPSE, name: { text: "Quillfern", source: "" } }, /name has no source/],
+    [{ ...GLIMPSE, opening: { text: "Water reminders for every plant", source: "x" } }, /opening\.text is 31 characters, at most 24/],
+    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0]] }, /2 to 4/],
+    [{ ...GLIMPSE, lines: [...GLIMPSE.lines, ...GLIMPSE.lines, GLIMPSE.lines[0]] }, /2 to 4/],
+    [{ ...GLIMPSE, lines: [GLIMPSE.lines[0], { text: "Fast.", source: " " }] }, /lines\[1\] has no source/],
+  ];
+  for (const [spec, re] of cases) {
+    const { r } = await withGlimpse(spec);
+    assert.equal(r.code, 1);
+    assert.match(r.out.error, re);
+  }
+});
+
+test("glimpse refuses colours that are not hex or whose ink does not read on the canvas, and takes none as neutral", async () => {
+  let { r } = await withGlimpse({ ...GLIMPSE, colors: { ...GLIMPSE.colors, accent: "green" } });
+  assert.match(r.out.error, /colors\.accent must be an opaque hex/);
+  ({ r } = await withGlimpse({ ...GLIMPSE, colors: { canvas: "#ffffff", ink: "#dddddd", accent: "#00aa00", source: "a.css" } }));
+  assert.match(r.out.error, /under 4\.5:1/);
+  ({ r } = await withGlimpse({ ...GLIMPSE, colors: null, opening: null }));
+  assert.equal(r.code, 0);
+  assert.equal(r.out.drawn.colors, "neutral");
+});
+
+test("glimpse needs the file of a named font or a logo, and takes them when they are there", async () => {
+  const spec = { ...GLIMPSE, font: { family: "Space Grotesk", source: "src/fonts/" }, logo: { source: "public/logo.svg" } };
+  let { r } = await withGlimpse(spec);
+  assert.match(r.out.error, /font "Space Grotesk" has no file: copy it/);
+  ({ r } = await withGlimpse(spec, { "films/glimpse/assets/fonts/Space Grotesk.woff2": "x" }));
+  assert.match(r.out.error, /logo has no file/);
+  ({ r } = await withGlimpse(spec, { "films/glimpse/assets/fonts/Space Grotesk.woff2": "x", "films/glimpse/assets/logo.svg": "<svg/>" }));
+  assert.equal(r.code, 0, JSON.stringify(r.out));
+  assert.deepEqual(r.out.drawn, { colors: "the brand's", font: "Space Grotesk", logo: "their logo" });
+});
+
+test("glimpse without its spec, with a spec that is not JSON, or without the project says what to do first", async () => {
+  let { r } = await withGlimpse(undefined);
+  assert.match(r.out.error, /no films\/glimpse\/glimpse\.json: write it from the deep read's notes/);
+  ({ r } = await withGlimpse("{ nope"));
+  assert.match(r.out.error, /is not JSON/);
+  const bare = account();
+  const r2 = await film(["glimpse", "--dir", bare]);
+  assert.match(r2.out.error, /run film\.mjs init first/);
+});
+
+test("new refuses glimpse as a slug: it is the first look's folder", async () => {
+  const { dir } = await initialized();
+  const r = await film(["new", "glimpse", "--dir", dir]);
+  assert.equal(r.code, 1);
+  assert.match(r.out.error, /glimpse is a folder of the film project/);
+});
