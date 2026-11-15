@@ -8,7 +8,7 @@ import {F, L, T, alpha, mixColor} from '../../lib/theme';
 import {Camera} from '../../kit/Camera';
 import {Odo} from '../../kit/Fx';
 import {SourceLine} from '../../kit/Kit';
-import {Backdrop, Board, Pot, type Kind} from './draw';
+import {Backdrop, Board, Foliage, Motes, Pot, Surface, type Kind} from './draw';
 import {WORLD, cue} from './timeline';
 
 /** The frame point the camera's looked-at world point lands on: the middle of the picture's part of the frame. */
@@ -24,7 +24,7 @@ const READ = 'Nov 2026';
 
 /** Ten summer trips as bars of their length; the one week mark across them. Nine pass it. */
 const TRIPS = [0.92, 0.78, 1.0, 0.84, 0.42, 0.88, 0.96, 0.8, 0.9, 0.86];
-const BAR = {x0: 240, w: 56, gap: 22, base: 940, max: 250};
+const BAR = {x0: 96, w: 72, gap: 24, base: 940, max: 360};
 const WEEK_Y = BAR.base - 0.62 * BAR.max;
 
 export const W1Number: React.FC = () => {
@@ -40,10 +40,12 @@ export const W1Number: React.FC = () => {
   return (
     <>
       <Backdrop a={T.accent2} b={T.accent} />
-      <Camera keys={[at(0, 540, 760, 1), at(cue('twist', 0), 540, 760, 1.02), at(WORLD.number[1], 540, 820, 1.08)]} aim={[540, 760]}>
-        <Board y={BAR.base} x0={0} x1={1080} />
+      <Camera keys={[at(0, 540, 960, 1), at(cue('twist', 0), 540, 960, 1.02), at(WORLD.number[1], 540, 1010, 1.06)]} aim={[540, 960]}>
+        <Surface y={1500} />
+        <Board y={BAR.base} x0={60} x1={1020} />
+        {/* the plants that stay: big, on the table, in front of the trips */}
         {[0, 1, 2, 3, 4].map((i) => (
-          <Pot key={i} x={190 + i * 175} y={BAR.base + 4} s={0.5} kind={(['fern', 'leafy', 'cactus', 'snake', 'leafy'] as Kind[])[i]} style={{opacity: stay, translate: `0 ${(1 - stay) * 40}px`}} />
+          <Pot key={i} x={150 + i * 195} y={1530 + (i % 2) * 40} s={0.95} kind={(['fern', 'leafy', 'cactus', 'snake', 'leafy'] as Kind[])[i]} style={{opacity: Math.min(1, stay * 1.4), translate: `0 ${(1 - stay) * 140}px`}} />
         ))}
         {TRIPS.map((h, i) => {
           const hh = h * BAR.max * grow(i);
@@ -63,14 +65,17 @@ export const W1Number: React.FC = () => {
             />
           );
         })}
-        <div style={{position: 'absolute', left: 120, width: 880, top: WEEK_Y, height: 0, borderTop: `4px dashed ${alpha(T.ink, 0.6)}`, opacity: mark}} />
-        <div style={{position: 'absolute', left: 120, top: WEEK_Y - 52, fontFamily: F.text, fontWeight: 700, fontSize: 36, color: T.ink, whiteSpace: 'nowrap', opacity: mark}}>1 week</div>
+        <div style={{position: 'absolute', left: 70, width: 940, top: WEEK_Y, height: 0, borderTop: `4px dashed ${alpha(T.ink, 0.6)}`, opacity: mark}} />
+        {/* over the one short trip, between its neighbours */}
+        <div style={{position: 'absolute', left: BAR.x0 + 4 * (BAR.w + BAR.gap) + BAR.w / 2, translate: '-50% 0', top: WEEK_Y - 52, fontFamily: F.text, fontWeight: 700, fontSize: 36, color: T.ink, whiteSpace: 'nowrap', opacity: mark}}>1 week</div>
       </Camera>
-      <div style={{position: 'absolute', top: 290, left: L.left, right: L.W - L.right, display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 24}}>
+      <Motes />
+      <Foliage drift={-lerp(f, [0, WORLD.number[1]], [0, 30])} />
+      <div style={{position: 'absolute', top: 280, left: L.left, right: L.W - L.right, display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 24}}>
         <Odo value={v} size={210} color={T.accent2} weight={800} />
         <span style={{fontFamily: F.display, fontWeight: 800, fontSize: 120, letterSpacing: '-0.035em', color: T.ink}}>in 10</span>
       </div>
-      <SourceLine who={SURVEY} date={READ} top={530} at={4} size={36} />
+      <SourceLine who={SURVEY} date={READ} top={505} at={4} size={36} />
     </>
   );
 };
@@ -91,24 +96,31 @@ export const W2Shelf: React.FC = () => {
   return (
     <>
       <Backdrop a={T.accent2} b={T.accent} />
-      <Camera keys={[at(a, 540, 700, 1), at(WORLD.shelf[1], 540, 720, 1.05)]} aim={[540, 700]}>
-        {[598, 770, 942].map((y) => (
+      <Camera keys={[at(a, 540, 960, 1.04), at(WORLD.shelf[1], 540, 990, 1)]} aim={[540, 960]}>
+        <Surface y={1560} />
+        {[690, 940].map((y) => (
           <Board key={y} y={y} x0={60} x1={1020} />
         ))}
         {SHELF.map((kind, i) => {
-          const x = 195 + (i % 4) * 230;
-          const y = 602 + Math.floor(i / 4) * 172;
+          // two shelves of four, then four big on the table in front: the whole home, top to bottom
+          const row = Math.floor(i / 4);
+          const s = [0.6, 0.6, 1.0][row];
+          const x = row < 2 ? 195 + (i % 4) * 230 : 150 + (i % 4) * 260;
+          const y = [694, 944, 1590][row];
           const t0 = i === 0 ? a : mix(count0, count1, i / 12);
           const pop = p(f, t0, 12, EXPO);
           const tag = p(f, six + (i % 6) * 3, 12, EXPO);
+          const d = 40 * (s / 0.6);
           return (
             <React.Fragment key={i}>
-              <Pot x={x} y={y} s={0.42} kind={kind} style={{opacity: Math.min(1, pop * 2), scale: `${mix(0.6, 1, pop)}`, transformOrigin: '50% 100%'}} />
-              {tag > 0 && <div style={{position: 'absolute', left: x + 46, top: y - 74 - (1 - tag) * 40, width: 40, height: 40, borderRadius: 999, background: SCHEDULE[i % 6], boxShadow: `0 0 0 5px ${alpha(T.canvas, 0.8)}`, opacity: tag}} />}
+              <Pot x={x} y={y} s={s} kind={kind} style={{opacity: Math.min(1, pop * 2), scale: `${mix(0.6, 1, pop)}`, transformOrigin: '50% 100%'}} />
+              {tag > 0 && <div style={{position: 'absolute', left: x + 66 * (s / 0.6), top: y - 106 * (s / 0.6) - (1 - tag) * 40, width: d, height: d, borderRadius: 999, background: SCHEDULE[i % 6], boxShadow: `0 0 0 5px ${alpha(T.canvas, 0.8)}`, opacity: tag}} />}
             </React.Fragment>
           );
         })}
       </Camera>
+      <Motes />
+      <Foliage drift={lerp(f, [a, WORLD.shelf[1]], [0, -20])} />
       <div style={{position: 'absolute', top: 290, left: L.left, right: L.W - L.right, display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 56, fontFamily: F.display, fontWeight: 800, letterSpacing: '-0.03em'}}>
         <span style={{display: 'inline-flex', alignItems: 'baseline', gap: 16}}>
           <Odo value={n} size={110} color={T.ink} weight={800} />
@@ -140,17 +152,17 @@ export const W3Soil: React.FC = () => {
   const dry = lerp(f, [cue('late', 3), cue('late', 6)], [0.15, 0.9]);
   const crack = p(f, cue('late', 6), 40);
   const days = lerp(f, [cue('late', 9), cue('late', 12) + 10], [0, 4], (t) => t);
-  // the soil's centre on screen: the pot at s 1.6 stands on y 940, its soil 112 viewBox px under its top edge
+  // the soil's centre on screen: the pot at s 2.6 stands on y 1250, its soil 112 viewBox px under its top edge
   const sx = 540;
-  const sy = 940 - (320 - 208) * 1.6;
+  const sy = 1250 - (320 - 208) * 2.6;
   return (
     <>
       <Backdrop a={T.accent2} b={T.danger} hi={0.26} />
       {/* a low sun from the right, one beam across the pot */}
       <div style={{position: 'absolute', left: 260, top: 180, width: 900, height: 1000, background: `linear-gradient(115deg, ${alpha(T.accent2, 0)} 30%, ${alpha(T.accent2, 0.1)} 48%, ${alpha(T.accent2, 0)} 66%)`}} />
-      <Camera keys={[at(a, 540, 700, 1), at(cue('late', 0), 540, 700, 1.02), at(cue('late', 8), sx, sy - 60, 1.28), at(WORLD.soil[1], sx, sy - 50, 1.32)]} aim={[540, 640]}>
-        <Board y={944} x0={0} x1={1080} />
-        <Pot x={540} y={940} s={1.6} kind="leafy" dry={dry} />
+      <Camera keys={[at(a, 540, 700, 1), at(cue('late', 0), 540, 700, 1.03), at(cue('late', 8), sx, sy - 40, 1.3), at(WORLD.soil[1], sx, sy - 30, 1.34)]} aim={[540, 700]}>
+        <Surface y={1240} />
+        <Pot x={540} y={1250} s={2.6} kind="leafy" dry={dry} />
         <svg width={420} height={60} viewBox="-210 -30 420 60" style={{position: 'absolute', left: sx - 210, top: sy - 30, overflow: 'visible'}}>
           {CRACKS.map((c, i) => (
             <line key={i} x1={c.x0 * 0.6} y1={c.y0} x2={mix(c.x0, c.x1, crack) * 0.6} y2={mix(c.y0, c.y1, crack)} stroke={alpha('#000000', 0.55)} strokeWidth={3} strokeLinecap="round" opacity={crack > 0 ? 1 : 0} />
@@ -158,13 +170,15 @@ export const W3Soil: React.FC = () => {
         </svg>
         {/* it cannot say it: an empty speech bubble rises from the leaves and closes, unsaid */}
         {bubble > 0 && (
-          <div style={{position: 'absolute', left: 600, top: 470 - bubble * 30, width: 230, height: 130, borderRadius: 60, background: D_BUBBLE, opacity: bubble, scale: `${mix(0.4, 1, bubble)}`, transformOrigin: '10% 100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 22}}>
+          <div style={{position: 'absolute', left: 680, top: 500 - bubble * 30, width: 260, height: 146, borderRadius: 60, background: D_BUBBLE, opacity: bubble, scale: `${mix(0.4, 1, bubble)}`, transformOrigin: '10% 100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 22}}>
             {[0, 1, 2].map((k) => (
               <div key={k} style={{width: 22, height: 22, borderRadius: 99, background: T.muted, opacity: lerp(f, [say + k * 8, say + k * 8 + 6], [0.2, 1])}} />
             ))}
           </div>
         )}
       </Camera>
+      <Motes color={T.accent2} />
+      <Foliage dry={dry * 0.6} />
       {/* the style's device: days since water, top right, rolling as the days pass */}
       <div style={{position: 'absolute', top: 290, right: L.W - L.right, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, fontFamily: F.text}}>
         <span style={{fontSize: 36, fontWeight: 600, color: T.muted}}>days since water</span>

@@ -8,3 +8,5 @@ sfx/
 # or as a library): only what it asks for is kept. soundlib.mjs gen and build make the rest again.
 sounds/*
 !sounds/spec.json
+# A film's tonal set: mix.mjs makes it again from the sheet's "tone" key.
+*/audio/tone/

@@ -21,9 +21,9 @@
 //
 // Where a sound is: `"sound": "<group>/<name>"` from the account's library (<library>/library.json, default
 // <audio-dir>/../../sounds), `"sound": "kit/<name>"` from the synthesized kit (--sfx, default <audio-dir>/../../sfx),
-// `"sound": "tone/<name>"` from the film's tonal set (<audio-dir>/tone); `"sfx": "<name>"` is a film's own file,
-// looked up as mix.mjs does (<audio-dir>/sfx, then the kit). Every sound missing anywhere is named in one error and
-// nothing is mixed.
+// `"sound": "tone/<name>"` from the film's tonal set (<audio-dir>/tone, made from the sheet's `"tone"` key when it is
+// missing); `"sfx": "<name>"` is a film's own file, looked up as mix.mjs does (<audio-dir>/sfx, then the kit).
+// Every sound missing anywhere is named in one error and nothing is mixed.
 //
 // Four lessons are built in, each with its test (tests/mix2.test.mjs):
 // - every sum starts with a silence as long as the film: ffmpeg's amix takes its timeline from its first input, and
@@ -39,6 +39,7 @@ import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSyn
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { NAME, ID, SR, decode, ebur128, ffmpeg, sounds, windows400 } from "./sound-lib.mjs";
+import { tone as makeTone } from "./soundlib.mjs";
 
 const USAGE = "usage: mix2.mjs <audio-dir> [--sfx <dir>] [--library <dir>]";
 /** A voice quieter than this, in dBFS true peak, is no voice: a silent vo.wav made as a stand-in. */
@@ -61,9 +62,18 @@ export function main(argv) {
   if (positional.length !== 1 || positional[0].startsWith("--")) throw new Usage();
   const dir = resolve(positional[0]);
   const kitDir = resolve(flags.sfx ?? join(dir, "../../sfx"));
-  const lib = sounds({ audio: dir, kit: kitDir, ...(flags.library ? { library: resolve(flags.library) } : {}) });
   const cues = JSON.parse(readFileSync(join(dir, "cues.json"), "utf8"));
   const plan = JSON.parse(readFileSync(join(dir, "sfx-cues.json"), "utf8"));
+  // `"tone": "<root> <minor|major>"`: the film's tonal set, synthesized here ($0, the same key always gives the same
+  // sounds) when audio/tone/ has none yet, so a sheet that uses tone/<name> mixes on any machine without a step first.
+  if (plan.tone !== undefined) {
+    const [root, mode = "minor", ...rest] = String(plan.tone).trim().split(/\s+/);
+    if (rest.length) throw new Error(`tone must be "<root> <minor|major>", got ${JSON.stringify(plan.tone)}`);
+    const manifest = join(dir, "tone/tone.json");
+    const key = existsSync(manifest) ? JSON.parse(readFileSync(manifest, "utf8")).key : null;
+    if (key !== `${root} ${mode}`) makeTone([dir, root, mode]);
+  }
+  const lib = sounds({ audio: dir, kit: kitDir, ...(flags.library ? { library: resolve(flags.library) } : {}) });
   if (plan.version !== 2) throw new Error("sfx-cues.json is not a version-2 sheet: mix it with mix.mjs");
   if (!Array.isArray(plan.hits)) throw new Error("sfx-cues.json: hits must be a list");
   const loop = plan.loop === true;
@@ -213,9 +223,12 @@ export function main(argv) {
       const fi = opt(b.fadeIn, 0.3, `${p}.fadeIn`);
       const fo = opt(b.fadeOut, 0.3, `${p}.fadeOut`);
       const ms = Math.round(b.start * 1000);
+      // `pitch` (semitones) moves a pitched background, such as the tonal set's pad, to the chord of its world.
+      const st = opt(b.pitch, 0, `${p}.pitch`);
+      const shift = st ? `asetrate=${Math.round(SR * Math.pow(2, st / 12))},aresample=${SR},` : "";
       bedBus.inputs.push("-stream_loop", "-1", "-i", b.file);
       const eq = [b.hp !== undefined ? `highpass=f=${num(b.hp, `${p}.hp`)}` : "", b.lp !== undefined ? `lowpass=f=${num(b.lp, `${p}.lp`)}` : ""].filter(Boolean).map((x) => `${x},`).join("");
-      bedBus.f.push(`[${n}:a]aresample=${SR},aformat=channel_layouts=stereo,atrim=${from}:${(from + len).toFixed(3)},asetpts=PTS-STARTPTS,${eq}volume=${b.db.toFixed(2)}dB,afade=t=in:d=${fi},afade=t=out:st=${(len - fo).toFixed(3)}:d=${fo},adelay=${ms}|${ms}[b${n}]`);
+      bedBus.f.push(`[${n}:a]aresample=${SR},aformat=channel_layouts=stereo,${shift}atrim=${from}:${(from + len).toFixed(3)},asetpts=PTS-STARTPTS,${eq}volume=${b.db.toFixed(2)}dB,afade=t=in:d=${fi},afade=t=out:st=${(len - fo).toFixed(3)}:d=${fo},adelay=${ms}|${ms}[b${n}]`);
       labels.push(`[b${n}]`);
     });
     bedBus.f.push(`${anchor(bedBus.f)}${labels.join("")}amix=inputs=${labels.length + 1}:normalize=0:duration=first,equalizer=f=2200:t=o:w=1.6:g=-5[bedsum]`);
