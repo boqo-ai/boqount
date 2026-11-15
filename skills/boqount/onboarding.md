@@ -12,7 +12,9 @@ The eleven steps run in this order. A step waits for the person only where it sa
 brand moving within the first minutes** (step 2's first look): everything before it is fast, and nothing they could
 answer later is asked before it.
 
-**Before anything is written, open with the promise, then one message of two questions.** First, in two sentences:
+**Before anything is written, open with the promise, then one message of two questions.** Say nothing yet about
+what the project is: no guess from a folder name, a commit subject or a README's first line; what it is comes from
+the deep read and is said back at step 2. First, in two sentences:
 what the next minutes give them (you read their project, say back what you understood, and show it to them as a
 short first film in their own colours, logo and words; then you ask only what no file told you) and roughly how long
 (a few minutes, most of it the reading). Then the two questions, each answerable with a yes:
@@ -93,7 +95,12 @@ tool or a binary** (the skill's folder, `node_modules`, a shell's or a test's pa
 their folder (`films/glimpse/out/glimpse-draft.mp4`), and a command they must run themselves as the folder to run it
 in and the command (`in films/project: npm run draft -- Glimpse`).
 
-**The first look.** With the film project set up (the opening's films yes), make it before the message, from the
+**First the words, then the film.** As soon as step 1 is saved, send the say-back below in text; then make the first
+look and send it when it is rendered, as its own short message. The words never wait for the render, and a render
+that fails (no browser, no disk, no permission) only means the film comes later: say what blocked it and the one
+command that makes it (as the folder and the command), never instead of the say-back.
+
+**The first look.** With the film project set up (the opening's films yes), make it right after the say-back, from the
 notes only: write `films/glimpse/glimpse.json` (`<skill>/tools/film.mjs` → glimpse: the product's name; two to four
 of its own lines, the first its promise, quoted exactly, each at most 90 characters; the opening, at most 24
 characters, chosen by `film.md` → The first look; each line and the opening with its `source` (for the record) and its
@@ -120,21 +127,25 @@ page of theirs says it; nothing on screen is invented, and what the notes do not
 neutral palette; no logo: the name is the mark). It is a draft and says so on screen ("first look · draft"): never a
 post, never posted or uploaded.
 
-Then one short message, from the notes only, with the first look first:
+**The say-back is assembled from the notes, not retold.** Each line takes its facts from the note named on it, in
+that note's words, with the note's source: what `prices.md` lists is what "What it costs" says (every plan it names,
+a paid one included); an area whose note found nothing says "not in your files". A summary that drops or contradicts
+a note's line is wrong, however it reads. One short message:
 
 ```
-Your first look: films/glimpse/out/glimpse-draft.mp4 (16 s with sound, a draft from your own files: <colours: yours | neutral>, <logo: yours | your name>, <n> of your pictures)
-What it is: <one sentence> (<source>)
-Who buys it: <…> (<source>) | not in your files: step 3 proposes an answer
-What it costs: <plans and prices> (<source>)
+What it is: <from docs.md and site.md, quoted> (<source>)
+Who buys it: <from the notes> (<source>) | not in your files: step 3 proposes an answer
+What it costs: <every plan and price prices.md lists> (<source>)
 How it sounds: <a line quoted from its own copy> (<source>)
-Your look: <the hex colours> (<source>), <the logo's path> (<source>), <the face> (<source>)
-What is wrong here, in the words or in the film?
+Your look: <the hex colours> (<source>), <the logo's place in your folder> (<source>), <the face> (<source>)
+Next: your first look, a 16 s film from these notes, rendering now.
+What is wrong here?
 ```
 
-Without the film project (a no at the opening, or its install still running or failed), the message is the same
-without its first line, the `Your look` line naming the colours and the logo's path, and one line saying the first
-look follows once the project is set up (when it is, make it then). The person's corrections go into the notes as
+Then, when the render is done, a second message: `Your first look: films/glimpse/out/glimpse-draft.mp4 (16 s with
+sound, a draft from your own files: <colours: yours | neutral>, <logo: yours | your name>, <n> of your pictures). What
+is wrong in it?`. Without the film project (a no at the opening, or its install still running or failed), the `Next`
+line says the first look follows once the project is set up (when it is, make it then). The person's corrections go into the notes as
 facts whose source is `the person, <date>`, and a correction of the words, colours or logo is made in the first look
 too (its JSON, then the render again). Nothing is written from the notes before this answer.
 

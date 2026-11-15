@@ -310,48 +310,50 @@ const DragSnap: React.FC<{line: number; n: number}> = ({line, n}) => {
   const head = useSet(said.text, W, 3, 76, 50, 820);
   const headH = head.lines.length * head.size * 1.12;
   // the screen
-  const sw = 940;
-  const sh = 600;
+  // the best moment of the film gets the frame: the full width and about half the height, reaching into the lower
+  // band (a picture may; words may not)
+  const sw = 1024;
+  const sh = 960;
   const sx = (L.W - sw) / 2;
-  const sy = L.top + 30 + headH + 110;
-  const bar = 34;
+  const sy = L.top + 30 + headH + 90;
+  const bar = 40;
   const inner = {x: sx + 16, y: sy + bar + 10, w: sw - 32, h: sh - bar - 26};
   const settle = p(f, start, 40, EXPO);
-  const zoom = lerp(f, [start, start + 230], [1, 1.05], [INOUT]);
+  const zoom = lerp(f, [start, start + 260], [1, 1.03], [INOUT]);
   // window 1: centre → right half
-  const w1 = {w: 430, h: 300};
-  const from1 = {x: inner.x + inner.w / 2 - w1.w / 2 - 80, y: inner.y + 120};
+  const w1 = {w: inner.w * 0.46, h: inner.h * 0.42};
+  const from1 = {x: inner.x + inner.w / 2 - w1.w / 2 - inner.w * 0.08, y: inner.y + inner.h * 0.2};
   const drag1 = p(f, start + 30, 60, INOUT);
   const snap1 = p(f, start + SNAPS[0], 16, EXPO);
-  const grab1: [number, number] = [from1.x + w1.w - 70, from1.y + 18];
+  const grab1: [number, number] = [from1.x + w1.w - 70, from1.y + 24];
   const edge1: [number, number] = [inner.x + inner.w - 6, inner.y + inner.h * 0.45];
   const [c1x, c1y] = curve(grab1, edge1, 60, drag1);
   const half = {x: inner.x + inner.w / 2 + 4, y: inner.y, w: inner.w / 2 - 4, h: inner.h};
   const g1 = w1.w - 70;
-  const pos1 = snap1 > 0 ? {x: mix(c1x - g1, half.x, snap1), y: mix(c1y - 18, half.y, snap1), w: mix(w1.w, half.w, snap1), h: mix(w1.h, half.h, snap1)} : {x: c1x - g1, y: c1y - 18, w: w1.w, h: w1.h};
+  const pos1 = snap1 > 0 ? {x: mix(c1x - g1, half.x, snap1), y: mix(c1y - 24, half.y, snap1), w: mix(w1.w, half.w, snap1), h: mix(w1.h, half.h, snap1)} : {x: c1x - g1, y: c1y - 24, w: w1.w, h: w1.h};
   const foot1 = clamp01((t - 70) / 14) * (1 - snap1);
   // window 2: lower left → top-left quarter
-  const w2 = {w: 380, h: 250};
-  const from2 = {x: inner.x + 40, y: inner.y + inner.h - w2.h - 20};
+  const w2 = {w: inner.w * 0.4, h: inner.h * 0.34};
+  const from2 = {x: inner.x + 40, y: inner.y + inner.h - w2.h - 40};
   const drag2 = p(f, start + 112, 56, INOUT);
   const snap2 = p(f, start + SNAPS[1], 16, EXPO);
-  const grab2: [number, number] = [from2.x + 60, from2.y + 18];
+  const grab2: [number, number] = [from2.x + 60, from2.y + 24];
   const edge2: [number, number] = [inner.x + 4, inner.y + 4];
   const [c2x, c2y] = curve(grab2, edge2, -50, drag2);
   const quarter = {x: inner.x, y: inner.y, w: inner.w / 2 - 4, h: inner.h / 2 - 4};
-  const pos2 = snap2 > 0 ? {x: mix(c2x - 60, quarter.x, snap2), y: mix(c2y - 18, quarter.y, snap2), w: mix(w2.w, quarter.w, snap2), h: mix(w2.h, quarter.h, snap2)} : {x: c2x - 60, y: c2y - 18, w: w2.w, h: w2.h};
+  const pos2 = snap2 > 0 ? {x: mix(c2x - 60, quarter.x, snap2), y: mix(c2y - 24, quarter.y, snap2), w: mix(w2.w, quarter.w, snap2), h: mix(w2.h, quarter.h, snap2)} : {x: c2x - 60, y: c2y - 24, w: w2.w, h: w2.h};
   const foot2 = clamp01((t - 150) / 14) * (1 - snap2);
   const cur = t < 112 ? {x: c1x, y: c1y, press: t > 28 && t < SNAPS[0] ? 1 : 0} : {x: c2x, y: c2y, press: t > 110 && t < SNAPS[1] ? 1 : 0};
   const Win: React.FC<{r: {x: number; y: number; w: number; h: number}; title: string; tone: string}> = ({r, title, tone}) => (
     <div style={{position: 'absolute', left: r.x, top: r.y, width: r.w, height: r.h, borderRadius: 18, background: mixHex(C.canvas, C.ink, 0.1), border: `2px solid ${rgba(C.ink, 0.14)}`, boxShadow: `0 24px 60px ${rgba(C.deep, 0.6)}`, overflow: 'hidden'}}>
-      <div style={{height: 40, display: 'flex', alignItems: 'center', gap: 9, paddingLeft: 16, background: rgba(C.ink, 0.06)}}>
+      <div style={{height: 54, display: 'flex', alignItems: 'center', gap: 11, paddingLeft: 20, background: rgba(C.ink, 0.06)}}>
         {['#FF5F57', '#FEBC2E', '#28C840'].map((c) => (
-          <div key={c} style={{width: 13, height: 13, borderRadius: 7, background: c}} />
+          <div key={c} style={{width: 17, height: 17, borderRadius: 9, background: c}} />
         ))}
-        <div style={{marginLeft: 12, fontFamily: TEXT, fontSize: 22, fontWeight: 600, color: C.muted, whiteSpace: 'nowrap'}}>{title}</div>
+        <div style={{marginLeft: 14, fontFamily: TEXT, fontSize: 30, fontWeight: 600, color: C.muted, whiteSpace: 'nowrap'}}>{title}</div>
       </div>
       {[0.8, 0.6, 0.7, 0.45].map((w, i) => (
-        <div key={i} style={{margin: '18px 20px 0', height: 14, width: `${w * 100}%`, borderRadius: 7, background: i === 0 ? tone : rgba(C.ink, 0.12)}} />
+        <div key={i} style={{margin: '24px 26px 0', height: 18, width: `${w * 100}%`, borderRadius: 7, background: i === 0 ? tone : rgba(C.ink, 0.12)}} />
       ))}
     </div>
   );
@@ -371,7 +373,7 @@ const DragSnap: React.FC<{line: number; n: number}> = ({line, n}) => {
         <Foot r={quarter} o={foot2} />
         <Win r={pos2} title="Notes" tone={rgba(C.ink, 0.3)} />
         <Win r={pos1} title={SPEC.name.text} tone={C.mark} />
-        <Cursor x={cur.x} y={cur.y} press={cur.press} size={58} />
+        <Cursor x={cur.x} y={cur.y} press={cur.press} size={76} />
       </div>
     </AbsoluteFill>
   );
@@ -560,7 +562,7 @@ const Promise_: React.FC = () => {
   const said = SPEC.lines[0];
   const set = useSet(said.text, W / 1.08, 5, 140, 72, 850);
   const h = set.lines.length * set.size * 1.12;
-  const top = (L.top + L.bottom) / 2 - h / 2;
+  const top = Math.max((L.top + L.bottom) / 2 - h / 2 + 70, L.top + 230);
   const at = start + 12;
   const nt = p(f, start + 4, 30, EXPO);
   const words = said.text.split(/\s+/).length;
@@ -571,9 +573,9 @@ const Promise_: React.FC = () => {
     <AbsoluteFill>
       <Backdrop glow={[540, 900]} />
       <AbsoluteFill style={{transform: `scale(${zoom})`}}>
-        <div style={{position: 'absolute', left: L.left, width: W, top: top - 120, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 22, opacity: nt, transform: `translateY(${(1 - nt) * 30}px)`}}>
-          {logo && <Img src={staticFile(logo)} style={{height: 72, width: 'auto'}} />}
-          <div style={{fontFamily: FACE, fontWeight: 800, fontSize: 56, color: C.ink, letterSpacing: '-0.02em'}}>{SPEC.name.text}</div>
+        <div style={{position: 'absolute', left: L.left, width: W, top: Math.max(L.top + 40, top - 190), display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 28, opacity: nt, transform: `translateY(${(1 - nt) * 30}px)`}}>
+          {logo && <Img src={staticFile(logo)} style={{height: 130, width: 'auto', filter: `drop-shadow(0 20px 40px ${rgba(C.deep, 0.7)})`}} />}
+          <div style={{fontFamily: FACE, fontWeight: 900, fontSize: 96, color: C.ink, letterSpacing: '-0.02em'}}>{SPEC.name.text}</div>
         </div>
         <Rise set={set} top={top} at={at} step={3} weight={850} key0={lastWord(said)} />
         <div style={{position: 'absolute', left: L.W / 2 - 200, top: top + h + 8, width: 400, height: 12, borderRadius: 6, background: C.mark, transform: `scaleX(${p(f, done, 40, EXPO)})`}} />

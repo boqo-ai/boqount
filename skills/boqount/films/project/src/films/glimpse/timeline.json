@@ -1,5 +1,5 @@
 {
-  "_": "The first look's worlds and when each starts, in seconds, by how many pictures the spec has (0, 1 or 2). Film.tsx draws from it and film.mjs glimpse writes the sound sheet from it, so the picture and the sound share one clock. A demo's events (demos) are shared the same way.",
+  "_": "The first look's worlds and when each starts, in seconds, by how many pictures the spec has (0, 1 or 2). Film.tsx draws from it and film.mjs glimpse writes the sound sheet from it, so the picture and the sound share one clock. The film ends on its strongest worlds: the pictures (a drawn action above all) and then the name with its promise. A demo's events (demos) are shared the same way.",
   "duration": 16,
   "variants": {
     "0": [
@@ -27,19 +27,19 @@
       ],
       [
         "name",
-        3
-      ],
-      [
-        "picture",
-        6
+        2.8
       ],
       [
         "things",
-        10.4
+        5.6
+      ],
+      [
+        "picture",
+        9.0
       ],
       [
         "promise",
-        13
+        13.4
       ]
     ],
     "2": [

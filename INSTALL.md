@@ -61,6 +61,8 @@ Windows WSL or Git Bash).
    onboarding in the folder the person started you in. It opens with what the next minutes give them (their project
    read and said back, then shown as a short first film in their own colours, logo and words) and roughly how long,
    then asks two yes-questions, about the folder and about setting up the films: say the promise, then ask them.
+   Say nothing about what their project is before onboarding has read it: no guess from the folder's name, a commit
+   or a README's first line.
 
 ## If something fails
 
