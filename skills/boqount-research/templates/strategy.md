@@ -12,7 +12,8 @@ The sections below are these ten, in this order.
 
 Be the account <who the audience is> would follow if <the product> were not in it, so <the brand> is the name they
 hold when the need comes. <One or two sentences more: what that means for this brand, in its audience's words.>
-No organic post asks for anything; the call lives on the profile (`brand/<slug>/brand-book.md` → CTA). A post is
+A `niche` post asks for nothing; a film that shows the product ends on one comment call with its code word
+(`brand/<slug>/brand-book.md` → CTA); every other call lives on the profile. A post is
 judged on its type's main metric against its norm. Sign-ups are read for a period, three ways, never per post
 (Metrics and norms → Sign-ups). The direction is reviewed on <YYYY-MM-DD> (Metrics and norms → Review).
 - Evidence: <brand-book → Positioning (its date)>; <the human's word on the direction, quoted, with its date>; <our
@@ -36,13 +37,23 @@ layer suggests the type; the human picks the type at the gate.
 ## Rubrics
 
 A rubric is a series (layer `niche`) or a product function (layers `product` and `offer`). The ledger's `rubric` is
-its slug. No rubric has a code word or a link of its own: no organic post asks for anything (brand-book → CTA). Each
-series' name, opening line and numbering are also in `brand/<slug>/style.md` → Language; a change goes into both.
+its slug. A series has no code word and no link of its own: a `niche` post asks for nothing. A product function has
+one code word (Code words, below): its films end on the comment call with it (brand-book → CTA). Each series' name,
+opening line and numbering are also in `brand/<slug>/style.md` → Language; a change goes into both.
 
 | Rubric | Layer and type | What it is | Format | Fixed opening line | Episodes | Evidence |
 |---|---|---|---|---|---|---|
 | `<series-slug>` | niche, reach | The series "<name>": <what one episode is> | <chain explainer \| dated news \| data story> | "<the line every episode opens on, with its slots>" | <how they are numbered, and where the number shows> | <…> |
-| `<function-slug>` | product, awareness or trust; offer, sale | <the product function at work> | the arc (`<skill>/hooks.md` → The arc) | the film's own hook | — | <…> |
+| `<function-slug>` | product, awareness or trust; offer, sale | <the product function at work> | the opportunity story (`<skill>/story.md`) | the film's own hook | — | <…> |
+
+### Code words
+
+One per product function. Its films end on "Comment <code>, and I'll send you the link." Its reply route and link are
+its row in `brand/<slug>/accounts.md` → DM automation; with no confirmed row, its films are held.
+
+| Rubric | Code word | Campaign |
+|---|---|---|
+| `<function-slug>` | <CODE> | `<function-slug>` (the rubric's own, shared by every post of it) |
 
 ## Format catalog
 
@@ -52,8 +63,8 @@ series' name, opening line and numbering are also in `brand/<slug>/style.md` →
 
 ## Hook bank
 
-Drafts for `<skill>/check.md`, each with its number proved on screen. No hook, and no line written after it, carries a
-call or a code word.
+Drafts for `<skill>/check.md`, each with its number proved on screen. No hook carries a call or a code word; only a
+`product` or `offer` film's last line does.
 
 | Hook | Layer | Type | Evidence |
 |---|---|---|---|
@@ -133,7 +144,8 @@ Beside the type's main metric, every film is read for: views at 72 hours (`views
 A sign-up is not tied to an organic post. It is read for a period, three ways (`<skill>/measure.md` → Attribution):
 - **The profile link:** <the link, per channel (`brand/<slug>/accounts.md` → Links), and its tag when it has one;
   with none, its sign-ups stand in the untagged total>.
-- **Campaigns:** <each campaign an ad post or a DM rule carries | none>.
+- **Campaigns:** <each code word's campaign (one per product function: Rubrics → Code words), and each campaign an
+  ad post carries | none>.
 - **"How did you hear about us?":** <where the answers come from: the human, or `unavailable` with the last reading
   and its date>.
 
@@ -157,13 +169,15 @@ approval of the date and the stop rule. Until then: `proposed <date>, awaiting a
 - No fake engagement in any form: no mutual likes, pods, view farms or bought metrics (cite the platform's rule and the law that applies, for example FTC 16 CFR 465 in the US).
 - No false claim. No realistic AI without its label. No other person's face, name or channel without their written
   permission, and no leaked or pre-release material.
-- No call in an organic post: nothing in the voice, on the picture or in the caption asks for a comment, a code
-  word, a follow, a click or a visit, and no post ends on a logo or a link. The one exception is a post the human
+- No call in a `niche` post: nothing in the voice, on the picture or in the caption asks for a comment, a code word,
+  a follow, a click or a visit, and no post ends on a logo or a link. The one exception is a niche post the human
   will promote with bought views, on their word for that post: it carries only the brand book's call line
-  (brand-book → CTA).
+  (brand-book → CTA). A `product` or `offer` film asks once, at its end, for a comment with its code word, and for
+  nothing else.
 - No product in a `niche` film: not in a line, on a frame or in the caption.
-- No per-post link: a post's Link is the profile link, shown in no post; the ledger's `code_word` and `utm_campaign`
-  stay empty, except on an ad post.
+- No per-post link: a `niche` post's Link is the profile link, shown in no post, and its ledger `code_word` and
+  `utm_campaign` stay empty, except on an ad post; a `product` or `offer` post carries its rubric's code word, link
+  and campaign.
 - No material that is not the brand's without the human's word for that source (brand-book → Do and don't).
 - No batch posting to catch up on missed days.
 - No sale post while the funnel is broken.

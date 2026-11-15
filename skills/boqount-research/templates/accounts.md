@@ -13,15 +13,17 @@ One section per channel in the config's `channels`. Its boqo account id lives in
 
 ## DM automation
 
-Optional: only when the human runs one. No organic post asks for it; it answers whoever writes, and an ad post that
-carries a code word needs that code's confirmed row here.
+Who answers a comment that asks for the link. A `product` or `offer` film ends on "Comment <code>, and I'll send you
+the link.", so each code word needs a row here, confirmed by the human, on each channel its films go to; with none,
+those films are held (`<skill>/check.md` item 3). Who replies is an automation the human runs, or the human, by hand,
+for every comment that asks. A `niche` ad post that carries a code word needs its row too.
 
 - <your DM automation (ManyChat, for example), the channels it answers on, which fields hold the link and the text,
-  and what its buttons accept>
+  and what its buttons accept | none: the human replies by hand>
 
-| Code | Rubric | Link | Confirmed |
-|---|---|---|---|
-| <CODE> | <rubric, or the ad> | <the link it sends> | <YYYY-MM-DD> by the human |
+| Code | Rubric | Channel | Link | Who replies | Confirmed |
+|---|---|---|---|---|---|
+| <CODE> | <rubric, or the ad> | <channel> | <the link it sends> | <the automation's name \| the human, by hand> | <YYYY-MM-DD> by the human |
 
 ## Links
 

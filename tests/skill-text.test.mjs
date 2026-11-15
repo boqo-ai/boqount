@@ -122,3 +122,35 @@ for (const path of [...own, ...["ledger.csv", "account.csv", "budget.csv", "sign
     assert.deepEqual(lines.map(({ n, text }) => `${n}: ${text.trim().slice(0, 80)}`), []);
   });
 }
+
+// ---------------------------------------------------------------- the comment call and the opportunity story
+
+const examples = fileURLToPath(new URL("../examples", import.meta.url));
+const exampleFiles = (function walk(dir) {
+  return readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    return statSync(path).isDirectory() ? walk(path) : name.endsWith(".md") ? [path] : [];
+  });
+})(examples);
+
+test("the comment call is written one of its two ways everywhere: the voice's and the caption's", () => {
+  const voice = /^Comment (<code>|[A-Z]{2,12}), and I'll send you the link\.$/;
+  const caption = /^Comment (<CODE>|[A-Z]{2,12}) and I'll send you the link\.$/;
+  const wrong = [];
+  for (const path of [...files, ...exampleFiles]) {
+    const flat = readFileSync(path, "utf8").replace(/[ \t]*\n[ \t]*/g, " ");
+    for (const [call] of flat.matchAll(/Comment [<A-Z][^."]*?link\./g)) if (!voice.test(call) && !caption.test(call)) wrong.push(`${relative(skills, path)}: ${call}`);
+  }
+  assert.deepEqual(wrong, []);
+});
+
+test("the opportunity story's ten parts are named in the same order in the check and the record template", () => {
+  const parts = "hook · proof · catch · who is left · where you come in · what most do · turn · the product at work · payoff · call";
+  for (const name of ["check.md", "templates/publication.md"]) {
+    const flat = readFileSync(join(main, name), "utf8").replace(/[ \t]*\n[ \t]*/g, " ");
+    assert.ok(flat.includes(parts), `${name} does not name the ten parts in order`);
+  }
+  const story = readFileSync(join(main, "story.md"), "utf8");
+  const rows = [...story.matchAll(/^\| (\d+) \| \*\*([^*]+)\*\*/gm)].map(([, n, part]) => `${n} ${part}`);
+  assert.equal(rows.length, 10, "story.md has ten numbered parts");
+});

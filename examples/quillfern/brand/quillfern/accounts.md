@@ -18,12 +18,22 @@ v1, approved 2026-11-11 by the human. Every handle and link here is invented for
 
 ## DM automation
 
-None: the person runs no DM automation (the person, 2026-11-09).
+No automation: the person replies by hand to every comment that carries a code word, on both channels (the person,
+2026-11-14), sending the code's link in a direct message to each person who commented it.
+
+| Code | Rubric | Channel | Link | Who replies | Confirmed |
+|---|---|---|---|---|---|
+| FERN | reminders | instagram | https://quillfern.example/start?utm_source=instagram&utm_medium=dm&utm_campaign=reminders | the human, by hand | 2026-11-14 by the human |
+| FERN | reminders | tiktok | https://quillfern.example/start?utm_source=tiktok&utm_medium=dm&utm_campaign=reminders | the human, by hand | 2026-11-14 by the human |
+| HOME | household | instagram | https://quillfern.example/start?utm_source=instagram&utm_medium=dm&utm_campaign=household | the human, by hand | 2026-11-14 by the human |
+| HOME | household | tiktok | https://quillfern.example/start?utm_source=tiktok&utm_medium=dm&utm_campaign=household | the human, by hand | 2026-11-14 by the human |
 
 ## Links
 
 - **The profile link:** https://quillfern.example/start on both channels, no tag: the site's analytics read none
-  (the person, 2026-11-09). It is every post's record Link, shown in no post, and the measured path of sign-ups.
+  (the person, 2026-11-09). It is every `niche` post's record Link, shown in no post, and the measured path of
+  sign-ups. The code words' links carry a campaign; whether the app's admin page shows it is not known yet (the
+  person types the sign-ups by campaign only once it does).
 - **The ad link form:** none yet; no ad has been asked for.
 - quillfern.example/start ends on the sign-up page; no funnel check has run yet.
 

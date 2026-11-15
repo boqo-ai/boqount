@@ -20,8 +20,8 @@ The agent copies the skill to your machine and starts onboarding in the folder y
    colours, earlier marketing, recent changes, and your public profiles.
 3. It says back what it understood, with a source for each point, and asks what is wrong.
 4. It asks only what no file could tell it: what the account sells and to whom, what is off limits, which channels,
-   the budget, how many posts you want to approve before it may post alone, how you count sign-ups, your time zone
-   and when to post.
+   the budget, how many posts you want to approve before it may post alone, how you count sign-ups, who answers a
+   comment that asks for the link (a DM automation you run, or you by hand), your time zone and when to post.
 5. It drafts a brand kit from all that for your approval.
 6. It researches a strategy with you: the account's goal, named series, a twelve-week calendar, benchmarks from
    sources. It shows you two or three style directions on real examples and asks which one, and what in it.
@@ -43,21 +43,26 @@ It posts at most twice a day on a channel, only in the time windows you set, wit
 
 ## What it makes
 
-- **Films from scratch:** short vertical films, 27 to 30 seconds, that loop, drawn in code in a Remotion project in
-  your folder, in your brand's style, with on-screen words and a synthesized sound kit. Every film follows one rule:
-  one travelling camera through one world, each step shown happening rather than labelled, and something new for the
-  eye about every second. The agent judges a film from its stills and the file's own words; it does not watch it at
-  speed or listen to it, and every approval message says so.
+- **Films from scratch,** drawn in code in a Remotion project in your folder, in your brand's style, with on-screen
+  words and a synthesized sound kit, in two shapes:
+  - **episodes of your niche series,** 27 to 30 seconds, that loop and never show the product: one travelling camera
+    through one world, each step shown happening rather than labelled, something new for the eye about every second;
+  - **films that show your product,** 60 to 85 seconds, in the "opportunity story" format: a sourced number about
+    something everyone knows on the first frame, an opening the viewer can step into, the product named only near the
+    end, scenes that change on their words, captions that carry it with the sound off, and one last line, "Comment
+    <code>, and I'll send you the link." This format comes from a single reference film, so the skill treats it as a
+    test until two of your own films in it have been measured.
+
+  The agent judges a film from its stills and the file's own words; it does not watch it at speed or listen to it,
+  and every approval message says so.
 - **Clips** cut from your own long video (needs the optional account below).
 - **Your own files**, checked and captioned.
 - **Slideshows** made from stills you already have.
 
-The skill ships a starter film for an invented plant-care app: a 12-second demonstration of the project, not a post
-(a film for posting runs 27 to 30 seconds). It opens on "Your plant / is thirsty." over a wilting plant on a
-windowsill, the soil cracking and a phone beside it counting the days since the last water. A leaf falls; the phone's
-reminder slides in; a finger taps Done, a drop arcs into the pot, and the plant lifts and puts out a new leaf. Then
-the days roll by again until the plant is thirsty, which is where the film began. One drawn world, one camera, no
-cuts, no voice, and nothing at the end asks the viewer for anything.
+The skill ships a starter film for an invented plant-care app, made in the opportunity-story format: a
+demonstration of the project, never a post. It opens on a number already counting, changes world on its words, keeps
+its captions in one band, names the app only near the end, and closes on the comment arriving and its reply:
+"Comment FERN, and I'll send you the link." A niche episode starts from the project's looping template instead.
 
 ## What it needs
 
@@ -99,8 +104,10 @@ The agent checks these and tells you what is missing. It installs nothing withou
 - Post without your approval while it is calibrating. After the number of approved posts you set, it may post alone,
   with the same checks, and it stops itself when the numbers drop or a link breaks. You can pause it at any time.
 - Buy ads or views.
-- Ask for anything in a post (no "comment below", no "link in bio", no code word), except that a post you mark as
-  promoted with bought views carries your brand book's call line. The call lives on your profile.
+- Ask for anything in a post beyond one comment call: a film that shows your product ends on "Comment <code>, and
+  I'll send you the link.", and only once you have confirmed who sends that link (your DM automation, or you by
+  hand). Niche episodes ask for nothing; one you mark as promoted with bought views carries your brand book's call
+  line. Never "follow", never "link in bio". Every other call lives on your profile.
 - Write to GitHub, push, or install anything without your word.
 - Print a key.
 

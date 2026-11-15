@@ -2,18 +2,20 @@
 
 ## Overview
 
-A film is a short vertical film that loops, 27–30 s, made from nothing in the account's film project
-(`films/project`, rendered from code with Remotion), in the brand's own style (`brand/<slug>/style.md`). Its file is
+A film is a short vertical film made from nothing in the account's film project (`films/project`, rendered from code
+with Remotion), in the brand's own style (`brand/<slug>/style.md`). A `niche` film loops and runs 27–30 s; a
+`product` or `offer` film is the opportunity story (`story.md`), 60–85 s, and does not loop. Its file is
 the feed file, `films/<slug>/out/<slug>-feed.mp4`, which enters the check (`check.md`) and the gate like any other.
 Production decides that the day makes a film and writes its record first (`production.md` → Choosing what to make);
 this file is how the film is made.
 
 Two things carry a film: a hook that bites (`hooks.md`) and motion where every scene is its own idea (`motion.md`).
-The words follow `script.md`. Read each when its step comes.
+The words follow `script.md`; a `product` or `offer` film follows `story.md` too. Read each when its step comes.
 
 ## The locked format
 
-Every film has all six. A film missing one is not finished.
+Every `niche` film has all six. A `product` or `offer` film has items 2 and 6, and the opportunity story's hook and
+picture (`story.md`) in place of items 1 and 3 to 5. A film missing one is not finished.
 
 1. **A hook aimed past the niche:** an impossible ratio in nouns everyone owns, the niche's pain in line 2
    (`hooks.md` → Reach past the niche); in a `niche` film, its format's first part.
@@ -29,7 +31,8 @@ Every film has all six. A film missing one is not finished.
    by a platform's re-encode and stalls the loop; the project's clock and `mix.mjs` round the same way, so keep the
    length in `cues.json`'s `duration` and nowhere else.
 
-And it asks for nothing: it ends on its payoff or its urgency line, then the seam (`hooks.md` → The arc).
+A `niche` film asks for nothing: it ends on its payoff, then the seam. A `product` or `offer` film ends on its one
+call (`hooks.md` → The arc).
 
 ## Steps
 
@@ -37,17 +40,19 @@ The record (status `planned`, its Layer and its cost estimate) exists before any
 
 1. **The film's folders:** `node <skill>/tools/film.mjs new <slug>` (The project). Its id is the slug in PascalCase.
 2. **Hooks.** Read `brand/<slug>/style.md` → Language first. From the strategy line (a Hook bank row, or the series'
-   fixed opening line for a `niche` film), write three hooks (frame 0 text and first line), each with its seam line
-   (`hooks.md`). Read each against `check.md`'s hook rule; the strongest that passes is the film's, and all three go
+   fixed opening line for a `niche` film), write three hooks (frame 0 text and first line): for a `niche` film each with
+   its seam line (`hooks.md`), for an opportunity story each a sourced number and its twist (`story.md`). Read each against `check.md`'s hook rule; the strongest that passes is the film's, and all three go
    in the record's Hook table.
 3. **The script** by `script.md`, in `films/<slug>/script.txt`, after reading `brand/<slug>/style.md` → Language: its
-   layer's parts (`hooks.md` → The arc), the seam as the last numbered line, the `Structure:` line (`script.md` →
+   layer's parts (`hooks.md` → The arc), the seam (a `niche` film) or the call (an opportunity story) as the last
+   numbered line, the `Structure:` line (`script.md` →
    Mechanics), the word count and the length. A chain explainer that cannot fit 30 s says so in the header; the
    approval message asks for up to 45 s, and the build is the 30 s cut until the person allows it.
 4. **The storyboard,** `films/<slug>/STORYBOARD.md`, after reading `brand/<slug>/style.md` → Look and → Devices:
    first the locked-format points, the carried object, the three
-   full-frame hits and the seam (which object of the last scene becomes which object of frame 0); then one row per
-   line by `motion.md` → Scene recipe. Every row names the thing its line talks about and what on screen shows it
+   full-frame hits and the seam (which object of the last scene becomes which object of frame 0); for an opportunity
+   story instead, its worlds (one per part, with the word each change lands on and its two colours), the caption band
+   and the last scene's call (`story.md` → The picture); then one row per line by `motion.md` → Scene recipe. Every row names the thing its line talks about and what on screen shows it
    (`motion.md` → Illustrative first); its camera (`push in on <thing>`, `pull out to <the whole>`, or `hold`) and its
    demonstration (`motion.md` → Rich motion); what it inherits and what it hands on; each still by its file and each
    shot as `<file> <from>–<to> s` (Outside material). An episode of a series carries its series mark
@@ -57,14 +62,16 @@ The record (status `planned`, its Layer and its cost estimate) exists before any
 5. **Gate 1, on the script** (The gates). Nothing is built before it.
 6. **The sound:** the voice when the film has one (The voice), then the cues, the hits and the mix (Sound).
 7. **Build** the scenes in `films/project/src/films/<slug>/` with the kit (`motion.md` → The kit). `npm run lint`, then
-   a still at every cue and at the seam (Stills); fix; then `npm run draft -- <Id>` and its sheets.
+   a still at every cue and at the seam or the last scene (Stills); fix; then `npm run draft -- <Id>` and its sheets.
 8. **Render:** `npm run render -- <Id>`, then `npm run feed -- <Id>`. Check the feed file (The project → The file).
 9. **Gate 2, on the feed file's stills** (The gates). Every finding is fixed, or rejected with a measurement or a
    reason; a fix is rendered and looked at again.
 10. **The caption,** for each channel, after reading `brand/<slug>/style.md` → Language: line 1 restates the hook (as a loss; a `niche` film's restates its hook), one
     line of the film's proof, at most 5 hashtags, within the platform's limit (`posting.md` → How a post goes out).
-    It asks for nothing; a `niche` film's caption names no product; a film with outside material has its credit as
-    the caption's last line of words, and the hashtag line, if there is one, comes after it. `check.md` judges it.
+    A `niche` film's caption asks for nothing and names no product; a `product` or `offer` film's caption ends its own
+    words on the film's one call, `Comment <CODE> and I'll send you the link.` (`story.md`). Then, in this order: any
+    source line, the credit line of a film with outside material (on a line of its own), and the hashtag line, if there
+    is one. `check.md` judges it.
 11. **Update the record** (`production.md` → A film from scratch): the feed file, the actual cost and hours, the AI
     label line. The film then enters at the check.
 
@@ -82,7 +89,10 @@ changes: `node <skill>/tools/film.mjs theme`.
 
 **Per film:** `node <skill>/tools/film.mjs new <slug>` makes `films/<slug>/` (`script.txt`, `STORYBOARD.md`,
 `audio/`; `media/` and `out/` come later) and the scenes in `films/project/src/films/<slug>/`, from a neutral template
-whose hook layer, seam and clock are already wired (`timeline.ts`, `Hook.tsx`, `Scenes.tsx`).
+whose hook layer, seam and clock are already wired (`timeline.ts`, `Hook.tsx`, `Scenes.tsx`). That template,
+`_template`, is a `niche` film's. A `product` or `offer` film's scenes start from `films/project/src/films/_story/`
+instead: the captions (`Captions`), the world changes (`WorldChange`) and no loop machinery (`story.md` → Build and
+checks).
 
 **What the films read** (`npm run sync` copies it; every script runs it first): the brand's fonts from
 `brand/<slug>/fonts/`, its logo `brand/<slug>/logo.svg` or `.png`, its media from `brand/<slug>/media/`, the film's
@@ -153,14 +163,19 @@ words. **Every approval message says so**, and names what the gates left open (i
 message) and what to watch for.
 
 - **One frame:** `npm run still -- <Id> --frame=<n>`, with `--safe` for the platforms' bands. While building: a still
-  at every cue, at the hits, and at the last two frames and the first two (the loop).
+  at every cue, at the hits, and at the last two frames and the first two (the loop; in an opportunity story, every
+  world change instead).
 - **A file:** `<skill>/tools/stills.sh <film.mp4> <out-dir> [cues.json] [--every <s>] [--offset <s>]` writes
   `probe.txt`, sheets of stills every 0.5 s, and one still per cue word.
 - **Gate 2's stills**, from the feed file:
   `<skill>/tools/stills.sh films/<slug>/out/<slug>-feed.mp4 films/<slug>/out/gate2 films/<slug>/audio/cues.json --every 1.5`.
 - **What the builder checks on the stills:** nothing that must be read in the top 14 %, the bottom 35 % or within
   6 % of a side (`--safe` stills: `motion.md` → Layout); the frame still full; text at its size; the loop's step no
-  bigger than its neighbours'; no single-frame pop.
+  bigger than its neighbours' (a `niche` film); no single-frame pop; nothing flashes (`motion.md` → Nothing flashes:
+  where a run of moments passes, stills of every frame across it, each run read for a large area going dark and
+  bright and back).
+- **Real labels, read again.** Before a film shows a panel of the product, its page or app is read again and the
+  labels on screen are the ones read, with the date (`motion.md` → Real labels).
 - **The film's own checks, reported.** Before the approval message, every check (the lint, the probe, the loop, the
   safe stills, the file's words) is reported with the command that was run and what it printed, never as a bare
   "passed". The report says plainly that the film was not watched at speed or heard.
@@ -296,15 +311,27 @@ beat), under the film's own voice or text.
 - **An ad cut** carries a source only on the person's word for ad use too (`check.md` item 6).
 - **Never, whatever the person says:** another person's face, name or channel without their written permission;
   leaked or pre-release material.
+- **No footage stands for what cannot have happened yet.** A shot of a thing shows that thing as it was: footage of
+  something before its release never stands for its launch, and a trailer never stands for play.
 
 Anything not named and sourced, a source's sound the person's word does not cover or that runs beyond its own shot,
 or a longer run is `HOLD: material` (`check.md`).
 
+## A reference
+
+A film modelled on another film (a reference the person shows, a trend) takes its skeleton and its devices: the order
+of its parts, how its hook works, how its scenes change. Never its words, its pictures, its colours, its product or
+its numbers: its first number is replaced by a newer one from a source of the film's own, and its look is the brand's
+(`brand/<slug>/style.md`). A scene that redraws the reference's own picture (its set, its background, its signature
+graphic) is sent back. The reference is named in the record's Source, never in the film or the caption.
+
 ## Never
 
-- A call in a film not marked `Ad: yes`: in the voice, on screen, in the caption, or a last second that is a logo or
-  a link.
-- A cut, a whip-cut or a push between scenes.
+- A call in a `niche` film not marked `Ad: yes`: in the voice, on screen, in the caption, or a last second that is a
+  logo or a link. In a `product` or `offer` film, any call but its one last line, or that call without a confirmed
+  reply route (`check.md` item 3).
+- In a `niche` film, a cut, a whip-cut or a push between scenes. In an opportunity story, a change of world anywhere
+  but on a word, longer than 0.4 s, or as a full-frame flash.
 - Any file but the feed file as the post's file: never the draft, never the 120-sample render.
 - A colour literal in a scene, or a stand-in logo: the tokens, and the brand's own logo file or none.
 - Material that is not the brand's without the person's word and its `SOURCES.md` row.
@@ -317,7 +344,10 @@ or a longer run is `HOLD: material` (`check.md`).
 | Thought | Reality |
 |---|---|
 | "The stills look right, so the film works" | Nobody watched it at speed or heard it. The approval message says so |
-| "A quick 'follow for more' at the end" | No call. The film ends on its payoff or its first picture, then the seam |
+| "A quick 'follow for more' at the end" | No follow call, ever. A `niche` film ends on its payoff, then the seam; an opportunity story on its one comment call |
+| "There's no DM automation yet, but the call is what converts" | No confirmed reply route, no call: the film is held (`check.md` item 3), and the person is asked to set one up or to reply by hand |
+| "The reference's look is what made it work: draw its floor" | Its skeleton and devices only; the look is the brand's (A reference) |
+| "The film is 70 s, so it needs a seam and a loop" | An opportunity story does not loop. It ends on the call, held about 1 s |
 | "Voice-free, so there is no seam" | The seam moves on screen: an unfinished last line that frame 0 finishes |
 | "The draft is fine to post" | Only `npm run feed`'s file. The 120-sample render plays as slow motion |
 | "A cut is cleaner here" | Carry an object across, and move the one camera (`motion.md` → Rich motion) |

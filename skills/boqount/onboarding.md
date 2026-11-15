@@ -81,6 +81,7 @@ these two?"), never asked open.
 | What is off limits: topics, claims, names, tracks | brand-book → Do and don't |
 | Which channels (Instagram, TikTok, YouTube) and handles | `channels`; `accounts.md` |
 | Material they have the rights to (footage, photos, recordings), and where it is | assets → Material with rights |
+| Who answers a comment that asks for the link: a DM automation they run (which tool, on which channels), or they themselves, by hand, every time. Said plainly: a film that shows the product ends on "Comment <code>, and I'll send you the link.", and without someone to send it, no such film goes out | `accounts.md` → DM automation (who replies); the code words come at step 4 |
 | The budget: a day's and a month's limit, in money | `budget_usd_day`, `budget_usd_month` (`credits_day` is asked at step 5, and only when a channel is connected to boqo) |
 | How autonomous: how many approved posts before the skill may post alone | `calibration_posts` |
 | How sign-ups are read, one plain sentence per way: they type each week's sign-ups into a file (`manual`); a command of theirs prints them (`command`, and the command); they are not read (`none`) | `signups_source`, `signups_command` |
@@ -90,7 +91,12 @@ these two?"), never asked open.
 The slug is the brand's name in lowercase, with hyphens (`quillfern`). Draft `brand/<slug>/brand-book.md`,
 `assets.md` and `accounts.md` from the research skill's templates (`boqount-research/templates/`), from steps 1–3
 only. Every fact keeps its source; a section with none says `none found (<what was read>)`. The CTA section holds the
-call line the profile (step 10) and an ad post use; no other post carries it.
+call line the profile (step 10) and a `niche` ad post use, and the comment call of the films that show the product,
+with one code word per product function (short, one word, easy to type); `accounts.md` → DM automation gets one row
+per code word and channel, its link and who replies. A row is confirmed only on the person's word that their
+automation (or they themselves) answers that code word with that link; until then its `confirmed` cell stays empty,
+and the films that need it are held. Each label of the product's screens a film may show goes into `assets.md` → Interface labels, read
+at the product itself, with the date.
 
 One approval message: the kit section by section, each fact with its source. Their edits go in; their yes sets each
 file's banner to `v0, approved <date> by the human`, and Save as `brand: <slug> kit v0 approved`. The research launch

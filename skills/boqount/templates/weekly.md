@@ -39,7 +39,7 @@ Reach and followers are each channel's: one set of rows per channel. Sign-ups, a
 
 ## Sales
 
-The 28 days to <to> (`account-state kpi` → `sales`; the campaigns reply, <read time>). Sign-ups are read for the period, not per post: an organic post has none of its own.
+The 28 days to <to> (`account-state kpi` → `sales`; the campaigns reply, <read time>). Sign-ups are read for the period, not per post: no post has any of its own (a code word's are its rubric's).
 
 - What sold: <buyers> buyers | nothing yet | unavailable: <why>
 - The account's sign-ups, three ways: profile link <n> sign-ups (<tag> | untagged) · campaigns an ad post or a DM rule carries <campaign: n; …> | none · "how did you hear about us?" <counts by answer, read <date>> | unavailable: nobody has read the answers (last reading <date> | none)

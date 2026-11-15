@@ -16,7 +16,8 @@ named below are the ones a real edition would write.
 Be the account people with a shelf of houseplants would follow if Quillfern were not in it, so Quillfern is the name
 they hold when a plant dries out. For this brand that means the plants' side of things: why a pot drowns, what a
 radiator does to a fern, what the light does in December, said plainly and with a little dry humour.
-No organic post asks for anything; the call lives on the profile (`brand/quillfern/brand-book.md` → CTA). A post is
+A niche post asks for nothing; a product film ends on one comment call, answered by the person by hand
+(`brand/quillfern/brand-book.md` → CTA); every other call lives on the profile. A post is
 judged on its type's main metric against its norm. Sign-ups are read for a period, three ways, never per post
 (Metrics and norms → Sign-ups). The direction is reviewed on 2027-01-11 (Metrics and norms → Review).
 - Evidence: brand-book → Positioning (2026-11-09); the person: "teach people about their plants, sell the app on
@@ -46,16 +47,27 @@ layer suggests the type; the human picks the type at the gate.
 ## Rubrics
 
 A rubric is a series (layer `niche`) or a product function (layers `product` and `offer`). The ledger's `rubric` is
-its slug. No rubric has a code word or a link of its own: no organic post asks for anything (brand-book → CTA). Each
-series' name, opening line and numbering are also in `brand/quillfern/style.md` → Language; a change goes into both.
+its slug. A series has no code word and no link of its own: a `niche` post asks for nothing. A product function has
+one code word (Code words, below): its films end on the comment call with it (brand-book → CTA). Each series' name,
+opening line and numbering are also in `brand/quillfern/style.md` → Language; a change goes into both.
 
 | Rubric | Layer and type | What it is | Format | Fixed opening line | Episodes | Evidence |
 |---|---|---|---|---|---|---|
 | `windowsill-physics` | niche, reach | The series "Windowsill Physics": one thing a pot, a window or a radiator does to a plant, followed to its end | chain explainer | "If you <do the simple thing>, you've got a <thing>." | "No. <n>", top left from frame 0 | `notes-formats.md` §2 (read 2026-11-10) |
 | `one-number` | niche, reach | The series "One Number": one odd number about a houseplant, proved on screen | data story | "One number about your <plant or pot>: <number>." | "#<n>", bottom right from frame 0 | `notes-formats.md` §3 (read 2026-11-10) |
 | `the-turn` | niche, reach | The series "The Turn": what the season changes for a plant indoors, on its date | dated news | "From <date>, your plants <what changes>." | "Turn <n>", top left from frame 0 | `notes-calendar.md` §1 (read 2026-11-10) |
-| `reminders` | product, awareness or trust | The reminder at work: the day a plant needs water, and the tap on Done | the arc (`<skill>/hooks.md` → The arc) | the film's own hook | — | `README.md:14-15` (read 2026-11-09) |
-| `household` | product, awareness | One count shared by everyone who waters | the arc (`<skill>/hooks.md` → The arc) | the film's own hook | — | `README.md:21` (read 2026-11-09) |
+| `reminders` | product, awareness or trust | The reminder at work: the day a plant needs water, and the tap on Done | the opportunity story (`<skill>/story.md`) | the film's own hook | — | `README.md:14-15` (read 2026-11-09) |
+| `household` | product, awareness | One count shared by everyone who waters | the opportunity story (`<skill>/story.md`) | the film's own hook | — | `README.md:21` (read 2026-11-09) |
+
+### Code words
+
+One per product function. Its films end on "Comment <code>, and I'll send you the link." Its reply route and link are
+its row in `brand/quillfern/accounts.md` → DM automation; with no confirmed row, its films are held.
+
+| Rubric | Code word | Campaign |
+|---|---|---|
+| `reminders` | FERN | `reminders` |
+| `household` | HOME | `household` |
 
 ## Format catalog
 
@@ -63,19 +75,19 @@ series' name, opening line and numbering are also in `brand/quillfern/style.md` 
 |---|---|---|---|---|
 | Chain explainer, 27–30 s, one drawn windowsill | niche | film | $0 voice-free, about 3 hours | `notes-formats.md` §2 (read 2026-11-10) |
 | Data story, 27–30 s | niche | film | $0 voice-free, about 3 hours | `notes-formats.md` §3 (read 2026-11-10) |
-| The product arc, 27–30 s, the phone on the sill | product | film | $0 voice-free, about 3 hours | `notes-formats.md` §4 (read 2026-11-10) |
+| The opportunity story, 60–85 s, ten worlds ending on the comment call (being tested: one reference, no verdicts yet) | product | film | $0 voice-free, about 6 hours | `<skill>/story.md`; `notes-formats.md` §4 (read 2026-11-10) |
 
 ## Hook bank
 
-Drafts for `<skill>/check.md`, each with its number proved on screen. No hook, and no line written after it, carries a
-call or a code word.
+Drafts for `<skill>/check.md`, each with its number proved on screen. No hook carries a call or a code word; only a
+`product` or `offer` film's last line does.
 
 | Hook | Layer | Type | Evidence |
 |---|---|---|---|
 | "If you water a pot with no hole, you've got a pond." | niche (windowsill-physics, episode 1) | reach | `notes-formats.md` §2: chain openings on a thing the viewer owns (read 2026-11-10) |
 | "One number about your plant: 97 of every 100 drops it drinks leave through its leaves." | niche (one-number, episode 1) | reach | https://studies.example/transpiration, "about 97% of the water taken up is lost through the leaves", read 2026-11-10 |
 | "From 21 December, your plants get more light every day." | niche (the-turn, episode 1) | reach | `notes-calendar.md` §1, the solstice on 2026-12-21 (https://almanac.example/2026, read 2026-11-10) |
-| "You're losing a plant a year. / To a watering you forgot." | product | awareness | https://quillfern.example/journal/survey-2026, "owners with no reminder lost one plant a year on average, most to a forgotten watering", read 2026-11-09 |
+| "Nine in ten summer trips last a week or longer. / Your plants aren't coming." | product (reminders) | awareness | https://travel.example/trips-2026, "9 in 10 summer holiday trips last seven nights or more", read 2026-11-10; the catch, "a fern lasts about a week without water": https://studies.example/fern-water, read 2026-11-10 |
 
 ## Calendar
 
@@ -141,7 +153,8 @@ Beside the type's main metric, every film is read for views at 72 hours (`views_
 
 - **The profile link:** https://quillfern.example/start on both channels, no tag; its sign-ups stand in the
   untagged total.
-- **Campaigns:** none.
+- **Campaigns:** `reminders` (FERN) and `household` (HOME), in the code words' links; the person types sign-ups by
+  campaign once the app's admin page shows it, and until then they stand in the untagged total.
 - **"How did you hear about us?":** the person reads the answers from the app's sign-up form each Monday.
 
 Per month: the profile link's sign-ups and the answers. An organic `sale` post has no sign-up figure of its own.
@@ -164,13 +177,13 @@ Per month: the profile link's sign-ups and the answers. An organic `sale` post h
 - No fake engagement in any form: no mutual likes, pods, view farms or bought metrics (cite the platform's rule and the law that applies, for example FTC 16 CFR 465 in the US).
 - No false claim. No realistic AI without its label. No other person's face, name or channel without their written
   permission, and no leaked or pre-release material.
-- No call in an organic post: nothing in the voice, on the picture or in the caption asks for a comment, a code
-  word, a follow, a click or a visit, and no post ends on a logo or a link. The one exception is a post the human
+- No call in a `niche` post: nothing in the voice, on the picture or in the caption asks for a comment, a code word,
+  a follow, a click or a visit, and no post ends on a logo or a link. The one exception is a niche post the human
   will promote with bought views, on their word for that post: it carries only the brand book's call line
-  (brand-book → CTA).
+  (brand-book → CTA). A product film asks once, at its end, for a comment with its code word, and for nothing else.
 - No product in a `niche` film: not in a line, on a frame or in the caption.
-- No per-post link: a post's Link is the profile link, shown in no post; the ledger's `code_word` and `utm_campaign`
-  stay empty, except on an ad post.
+- No per-post link: a `niche` post's Link is the profile link, shown in no post, and its ledger `code_word` and
+  `utm_campaign` stay empty, except on an ad post; a product post carries its rubric's code word, link and campaign.
 - No material that is not the brand's without the human's word for that source (brand-book → Do and don't).
 - No batch posting to catch up on missed days.
 - No sale post while the funnel is broken.

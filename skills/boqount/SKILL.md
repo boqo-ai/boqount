@@ -21,8 +21,10 @@ a number without a date are not used.**
 **The account builds the brand: what it posts today decides how people feel about the brand later.** A post is brand
 content: the viewer chooses to watch it, its subject is not the product, and its first job is a relationship. The
 account's goal (`strategy.md` → The account's goal) is to be the account its audience would follow if the product
-were not in it. **No post asks for anything** (`check.md`): the call lives on the profile (the bio and its link, pinned
-posts, the brand's own pinned comment), which the person sets. The KPIs (reach, followers, conversion, sales) keep
+were not in it. **A `niche` post asks for nothing; a film that shows the product ends on one comment call**
+(`check.md` item 3): `Comment <code>, and I'll send you the link.`, only when the person has confirmed who answers
+that comment (their DM automation, or themselves by hand). Every other call lives on the profile (the bio and its
+link, pinned posts, the brand's own pinned comment), which the person sets. The KPIs (reach, followers, conversion, sales) keep
 their targets from industry standards and are judged every week by `account-state kpi` (`kpi.md`); selling is read
 for the account, never asked for in a post.
 
@@ -106,7 +108,10 @@ Any file named here or below that does not exist yet: run its fallback and name 
    - write its record from `templates/publication.md` (the template is the format: open no other post's record)
      with status `planned`, a proposed type, its layer (`niche` with its series and episode, `product` or `offer`:
      `hooks.md` → The arc), its kind (`film`, `clips`, `file`, `slideshow`), hypothesis, expectation and cost
-     estimate. No code word; the Link is the profile link (`brand/<slug>/accounts.md` → Links), shown in no post;
+     estimate. A `product` or `offer` post carries its rubric's code word and that code's DM row's link
+     (`brand/<slug>/brand-book.md` → CTA), and its Hypothesis says `the format is being tested` (`story.md`); a
+     `niche` post has no code word, and its Link is the profile link (`brand/<slug>/accounts.md` → Links), shown in no
+     post;
    - add one ledger row for each channel it goes to (status `planned`, the kind in `tier`) and set the queue row's
      `for` date; a row taken at `idea` moves to `script`, in the same save as the record and the ledger rows;
    - then run `node <skill>/tools/account-state.mjs mode`: an error naming a ledger line means that row is wrong (every
@@ -182,9 +187,11 @@ written in the config's `language`; with it empty, in the language the person wr
 | "This is clearly a bug worth an issue" (`issues_repo` empty) | No GitHub write without `issues_repo`. An `Owed:` line and an alarm |
 | "I'll push so nothing is lost" (`git_push: off`) | Commit, never push. Outside a repository, the files are the save |
 | "I changed one word and took the hashtags from 3 to 5" | The approved caption is posted byte-identical. A change is shown and approved again first |
-| "A call just this once: this post really needs a 'comment below' or a 'link in bio'" | No post asks for anything. Only an `Ad: yes` post, on the person's word for that post, carries the brand book's call line. The call lives on the profile |
+| "A call just this once: this post really needs a 'comment below' or a 'link in bio'" | A `niche` post asks for nothing; only an `Ad: yes` niche post, on the person's word for that post, carries the brand book's call line. A `product` or `offer` film has its one comment call and no other |
+| "The comment call converts, so the niche episode gets one too" | A `niche` post asks for nothing. The call is the opportunity story's, at its end |
+| "No DM automation, but they'll see the comments" | No confirmed reply route for the code word, no call: the post is held (`check.md` item 3) until the person sets one up or says they will reply by hand |
 | "The product fits so naturally into this niche episode" | A `niche` post names the product in no line, on no frame and not in the caption. With the product in it, it is a `product` post (`hooks.md` → The arc) |
-| "The last second shows the logo and the link, so they know where to go" | The last second is the payoff, or the first picture again. A logo or a link there is a call |
+| "The last second shows the logo and the link, so they know where to go" | A `niche` film's last second is the payoff, or the first picture again; an opportunity story's is the call shown as a comment and its reply. A logo card or a link there is a call |
 | "Once I get the answer, I'll send the captions" | The approval message holds every part now (`gate.md`) |
 | "Nothing is scheduled before approval, so the queue and the log are enough" | Each planned post gets its record and its ledger rows at step 7 |
 | "I'll write the status once it's all done" | Write and commit each status before its call (`posting.md`) |

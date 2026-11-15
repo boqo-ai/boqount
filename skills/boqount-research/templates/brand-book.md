@@ -46,18 +46,28 @@ Each rule with its source.>
 
 ## CTA
 
-No organic post asks for anything: no line, picture or caption asks for a comment, a code word, a follow, a click or
-a visit, and no post ends on a logo or a link. The call lives on the profile. Setting it is the human's step: the
-agent drafts the words and says what to pin.
+**A film that shows the product ends on one comment call. Any other post asks for nothing.** Setting the profile is
+the human's step: the agent drafts the words and says what to pin.
 
+- **The comment call** (`product` and `offer` films, `<skill>/story.md`): the film's last line, "Comment <code>, and
+  I'll send you the link.", and the last sentence of the caption's own words, "Comment <CODE> and I'll send you the
+  link." CODE is the code word of the film's rubric (`marketing/strategy.md` → Rubrics → Code words), and the call
+  goes out only with that code's row confirmed in `accounts.md` → DM automation: someone, an automation or the
+  human by hand, sends the link to everyone who comments it. Nothing else in such a film asks for a follow, a click
+  or a visit; no logo card and no link on screen.
+- **Every other post (`niche`):** nothing asks for a comment, a code word, a follow, a click or a visit, in the voice,
+  on screen or in the caption, and its last second is its payoff or its first picture again.
+- **The payoff words:** <the brand's own words for the result a product film promises, if it has them, with their
+  source | none: each film names the viewer's gain plainly>.
 - **The bio:** <per channel, the words that say what the brand does>. Source: <…>
 - **The link:** <per channel, the profile link beside the bio, as `accounts.md` → Links holds it, with its tag when it
   has one>.
 - **Pinned posts:** <which posts, and what each one says>.
 - **The brand's own pinned comment:** <under which posts (those with the product in them), and what it says>.
-- **The call line for an ad post:** "<the one call line>". Only a post the human will promote with bought views
-  carries it, on their word for that post (the record's `Ad: yes (<their words, date>)`), and it carries exactly
-  this line. <Its code word, when it has one, and its row in `accounts.md` → DM automation | no code word.>
+- **The call line for a `niche` ad post:** "<the one call line>". Only a niche post the human will promote with
+  bought views carries it, on their word for that post (the record's `Ad: yes (<their words, date>)`), and it
+  carries exactly this line. <Its code word, when it has one, and its row in `accounts.md` → DM automation | no code
+  word.>
 
 ## Visual
 

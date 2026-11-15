@@ -23,34 +23,33 @@ above it). A part missing, or the parts in another order, is not a finished scri
 | Layer | What the film is | Its usual type |
 |---|---|---|
 | `niche` | The viewer's world with no product in it: one episode of a named, numbered series | `reach` |
-| `product` | The viewer's problem, with the product in the middle | `awareness` or `trust` |
-| `offer` | The product arc, carrying a real offer and its real date | `sale` |
+| `product` | An opening in the viewer's world, with the product at work near the end: the opportunity story (`story.md`) | `awareness` or `trust` |
+| `offer` | The opportunity story, carrying a real offer and its real date | `sale` |
 
 The type stays the person's choice at the gate; the layer suggests it.
 
-**Every layer ends the same way.** The last line of content is the payoff, or the urgency line where the layer has
-one. After it comes only the seam (Rules → Every film loops). The voice, the screen and the caption ask for nothing:
-no comment, code word, follow, click or visit, and no last second that is a logo or a link. The film's last second is
-its payoff, or its first picture again. The call lives on the profile (`brand/<slug>/brand-book.md` → CTA).
+**A `niche` film ends on its payoff.** The last line of content is the payoff; after it comes only the seam (Rules →
+Every niche film loops). The voice, the screen and the caption ask for nothing: no comment, code word, follow, click
+or visit, and no last second that is a logo or a link. The film's last second is its payoff, or its first picture
+again. The call lives on the profile (`brand/<slug>/brand-book.md` → CTA).
 
-**An ad cut** (the record's `Ad: yes`, the person's word for that post) is the one film that carries the brand book's
-call line, exactly as written there: after the payoff (after the urgency line, where there is one), before the seam.
-Marking a record `Ad: yes` changes nothing by itself: `check.md` item 3 (A post that becomes an ad) says what does.
+**A `product` or `offer` film ends on its one call.** It is the opportunity story (`story.md`): ten parts, 60 to 85 s,
+scenes that change, no loop, and as its last line `Comment <code>, and I'll send you the link.` with its rubric's code
+word, whose reply route the person has confirmed (`brand/<slug>/accounts.md` → DM automation). With no confirmed
+route, the film is held (`check.md` item 3), never sent out with a call nobody answers.
 
-### `product`: five parts, then the seam
+**An ad cut** (the record's `Ad: yes`, the person's word for that post) of a `niche` film is the one niche film that
+carries the brand book's call line, exactly as written there: after the payoff, before the seam. A `product` or
+`offer` film already carries its call; `Ad: yes` adds nothing to it. Marking a record `Ad: yes` changes nothing by
+itself: `check.md` item 3 (A post that becomes an ad) says what does.
 
-| # | Part | What it is | Example (Quillfern) |
-|---|---|---|---|
-| 1 | **Warm-up** | The size of what is coming, said plainly. One real number when you hold its source (the source goes on screen); with none, the dated moment itself | "Summer is here. / Your plants drink twice as fast." |
-| 2 | **Stake** | What the viewer wins, keeps or is missing, in the second person and in their own words | "Two weeks away. One fern left." |
-| 3 | **Bridge** | The product, here and never earlier: what takes them from where they are to that result, in one to three lines | "Quillfern knows what each plant drinks. / It tells you the day." |
-| 4 | **Payoff** | The result, named as the viewer's gain | "You come home to every plant alive." |
-| 5 | **Urgency** | One line that names a moment to act before | "Before you pack for the holidays." |
-| | **Seam** | One unfinished line that the film's first line completes | "Because by August…" |
+### `product`: the opportunity story
 
-- **The warm-up and the stake are the hook.** The hook rules (Rules) hold across both.
-- **The audience's words carry it, not arithmetic.** One number in the hook. No sums and no chain of figures in the
-  voice ("ten minutes to check, five to water" is the shape to drop).
+`story.md`, all of it: the hook (a number about an event everyone knows, then the twist), proof, catch, who is left,
+where you come in, what most do, turn, the product at work, payoff, call. The product is named first in part 8.
+
+- **The audience's words carry it, not arithmetic.** The hook's number and the proof's are the film's sums; no chain
+  of figures in the voice after them.
 - **The payoff's promise waits for the payoff.** Said in the first lines it reads as an advert, and viewers name it as
   the line where they swipe.
 - **A stake in money states no amount**, and no line says the viewer will earn or save a sum the brand book does not
@@ -72,12 +71,15 @@ product did not exist? Each series has a name, a fixed opening line and an episo
 - **The hook is the format's first part.** Second person, no product and no request hold in every format. The one
   real number is the date in dated news and the number in a data story; a chain explainer's opening is its fixed
   sentence and needs none.
-- **Length** is 27 to 30 s, as for every film. A chain explainer that needs more, up to 45 s, is a question in its
+- **In dated news, the source is said aloud** (at the end, "Source: <who>") only when every line before it comes
+  from that source; otherwise each fact carries its own `SourceLine` on screen and none is said. A line says no more
+  than its source does: "announced" where the source announces, never "introduced" or "launched".
+- **Length** is 27 to 30 s, as for every `niche` film. A chain explainer that needs more, up to 45 s, is a question in its
   approval message (`gate.md`): the person allows it for that film, or the film is the 30 s cut.
 
-### `offer`: the product arc, on a real date
+### `offer`: the opportunity story, on a real date
 
-The five parts and the seam, with the offer and its real date at the payoff or at the urgency. A line that says where
+The ten parts of `story.md`, with the offer and its real date at the payoff, then the call. A line that says where
 the offer is ("it's on our profile") needs the person's word for that post.
 
 ## Formulas
@@ -98,14 +100,16 @@ the offer is ("it's on our profile") needs the person's word for that post.
 - **Second person, present tense.** "You're losing", "You'll fail"; never "Plant owners often…".
 - **One number with a unit, and the number is real arithmetic** the film later proves on screen. The proof is the
   part worth saving.
-- **The product is not in the hook.** It enters at the bridge; in a `niche` film, never.
-- **No request in the hook**, nor anywhere in the film (The arc).
+- **The product is not in the hook.** It enters in part 8 of the opportunity story; in a `niche` film, never.
+- **No request in the hook**, nor anywhere in a `niche` film. A `product` or `offer` film's one request is its last
+  line (The arc).
 - **Every hook has all four** (second person, one real number, no product, no request), whichever formula it follows;
-  a chain explainer's opening has its three. `check.md` judges it.
+  a chain explainer's opening has its three. The opportunity story's hook has its own three (a real number with its
+  source, no product, no request) and need not say "you" (`story.md`). `check.md` judges it.
 - **The second line twists or sharpens the first** ("To a watering you forgot." makes the loss the viewer's doing).
 - **Close the loop:** the payoff answers the hook in the viewer's gain.
-- **Every film loops in the voice, not only in the picture.** After the last line of content, one short **seam line**
-  is left unfinished, and the hook's first words finish it as the film restarts ("A week later… / Your plant is
+- **Every niche film loops in the voice, not only in the picture.** After the last line of content, one short **seam
+  line** is left unfinished, and the hook's first words finish it as the film restarts ("A week later… / Your plant is
   thirsty."). Whoever stays to the end gets the other half on the replay, so they watch the hook twice. Write the hook
   so it reads as a grammatical ending, and write the seam with the hook.
   - **Voiced:** in `vo-plan.json` the seam line carries `next` = the hook's text and the hook carries `prev` = the

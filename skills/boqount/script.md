@@ -15,14 +15,19 @@ The script is `films/<slug>/script.txt`.
    viewer knows what the days are. The arithmetic shown on screen adds up.
 5. **Every sentence has a subject the viewer already knows.** "It", "this", "that" only when the noun was said in
    the line before. No process without an actor ("Watering? Another chore." Whose?).
-6. **The order is its layer's parts** (`hooks.md` → The arc), and the script's `Structure:` line names them. The last
-   line of content is the payoff or the urgency line; the seam follows it. No line asks the viewer for anything; an
-   ad cut carries only the brand book's call line, where The arc puts it.
+6. **The order is its layer's parts** (`hooks.md` → The arc), and the script's `Structure:` line names them. A `niche`
+   film's last line of content is the payoff and the seam follows it; no line asks the viewer for anything (an ad cut
+   carries only the brand book's call line, where The arc puts it). A `product` or `offer` film is the ten parts of
+   `story.md`, its last line the one call, with no seam.
 7. **Short lines.** Most under 8 words, none over 15. One idea per line: split a line rather than lengthen it.
 8. **Claims are true of the product today** (`brand/<slug>/brand-book.md` → Facts). A number framed as an example may
    be illustrative; a capability may not.
-9. **Length from the words, never a guess:** seconds ≈ words ÷ 2.7, spoken or read on screen. A 27–30 s film is about 75 words, ten or eleven lines. Too long: cut lines, never speed the voice past tempo
-   1.15.
+9. **Length from the words, never a guess:** seconds ≈ words ÷ 2.7, spoken or read on screen. A 27–30 s `niche` film
+   is about 75 words, ten or eleven lines; a 60–85 s opportunity story is 160 to 230 words. Too long: cut lines, never
+   speed the voice past tempo 1.15.
+10. **Softened where nobody can know.** A line about what other people do or will do says "plenty", "many" or "can",
+    never a count nobody holds; a line about an outside fact says no more than its source ("announced", not
+    "launched").
 
 ## Checklist before voicing
 
@@ -34,9 +39,10 @@ The script is `films/<slug>/script.txt`.
 - [ ] The parts are the layer's, in order, and the `Structure:` line names them; a `niche` script names the product
   nowhere.
 - [ ] The payoff names what the viewer gains.
-- [ ] No line asks for anything (an ad cut: only its call line). The last line of content is the payoff or the
-  urgency, then the seam.
-- [ ] The words fit the length: words ÷ 2.7 ≤ 30 s (or the 45 s a chain explainer asks for).
+- [ ] `niche`: no line asks for anything (an ad cut: only its call line), and the last line of content is the payoff,
+  then the seam. `product` or `offer`: the product is first named in part 8, and the one call is the last line.
+- [ ] The words fit the length: words ÷ 2.7 ≤ 30 s for `niche` (or the 45 s a chain explainer asks for); 60 to 85 s
+  for the opportunity story.
 - [ ] The script passed Gate 1 (`film.md` → The gates) before any voice or scene work: every scene built on a line
   that later changes is rework.
 
@@ -44,8 +50,8 @@ The script is `films/<slug>/script.txt`.
 
 - **`script.txt`'s shape** (the starter's is the example): a header with the film's name and one line on what it is,
   the frame 0 text, for `niche` the series and the episode number on one line, then the one structure line,
-  `Structure: Layer: <niche | product | offer> — <part> <lines>, …`; then the numbered lines, the seam last, marked as
-  finished by line 1; then the word count and the length estimate.
+  `Structure: Layer: <niche | product | offer> — <part> <lines>, …`; then the numbered lines (a `niche` film's seam
+  last, marked as finished by line 1; an opportunity story's call last); then the word count and the length estimate.
 - **Numbers are words in the voice and digits on screen:** `"text": "three days"` in `vo-plan.json`, `"display":
   "3 days"` for the screen.
 - **A name the voice may misread** is written in `text` the way it should sound (a name in capitals may be spelled
