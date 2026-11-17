@@ -208,9 +208,12 @@ Through boqo, once for each boqo channel of the post: every channel's row has it
 
 A row with a `boqo_project_id` never calls `create_upload` again: its file is already in boqo, so it goes on from
 `uploaded` (A canceled post, below). The exceptions first move its project to `abandoned:` in `note`: an expired
-upload (Reconcile), and a post that became an ad (A canceled post).
+upload (Reconcile), and a post that became an ad (A canceled post). Every `abandoned:` write ends that project in boqo
+first (An abandoned upload).
 
-1. `node <skill>/tools/boqo-upload.mjs probe <file>`: `contentType`, `sizeBytes`, `passthrough`, `loopSafe`.
+1. `node <skill>/tools/boqo-upload.mjs probe <file>`: `contentType`, `sizeBytes`, `passthrough`, `loopSafe`. Run it
+   now, on the file as it is: a probe from before a re-render is stale, and `create_upload` with an old `sizeBytes` is
+   refused at the PUT.
 2. `node <skill>/tools/boqo-upload.mjs name "<caption line>"` gives `{filename}`: that is `upload_name`. Write `uploading`
    with it. The caption line is the one The caption names below; never a slug, a date or a file name.
 3. `create_upload {filename: <upload_name>, contentType, sizeBytes, kind:"post"}`.
@@ -219,6 +222,19 @@ upload (Reconcile), and a post that became an ad (A canceled post).
 5. `node <skill>/tools/boqo-upload.mjs put <file> --reply .boqo-upload/<slug>-<channel>.json`.
 6. `complete_upload {projectId}`.
 7. Write `uploaded`, then delete the reply file.
+
+## An abandoned upload
+
+A project this skill will not complete never stays behind in boqo's In Progress. Before any `abandoned: <projectId>`
+goes into `note` (an expired or missing reply, a PUT refused and started over, a re-cut, a handover):
+
+1. `get_project {projectId}`. Only a `queued` project is deleted: it never received the file. A `processing` or
+   `ready` one holds the file and is left as it is.
+2. `delete_project {items: [{projectId}]}`. The person's standing word: this skill deletes its own abandoned upload
+   without asking. It goes to Recently Deleted and can be restored there. Never any other project.
+3. Write `abandoned: <projectId> (deleted)`, and delete its reply file. A refusal or an MCP error writes
+   `abandoned: <projectId> (not deleted: <reason>)` and is one line in the report: boqo itself ends an upload that
+   never sent a byte after 2 hours.
 
 ## The caption
 
@@ -402,7 +418,7 @@ Then:
 - **`uploading`, `status` `queued`, reply still valid** (`expiresAt` ahead): run the PUT again, then
   `complete_upload`.
 - **`uploading`, `status` `queued`, with an expired or missing reply:** the row keeps the old `projectId` in `note` as
-  `abandoned: <projectId>`, and a new upload starts at `uploading`.
+  `abandoned: <projectId>` (An abandoned upload deletes it first), and a new upload starts at `uploading`.
 
 Tell the user in at most two lines per row: `found <post id>, <time on the account's clock>; set <status>`, or
 `found nothing; <what happens next>`.
@@ -410,7 +426,7 @@ Tell the user in at most two lines per row: `found <post id>, <time on the accou
 ## Failures
 
 - **PUT 4xx, a refusal of `complete_upload`, or `needs_approval`** (a connection cap): status `failed`, the reason in
-  `note`. Tell the user. The agent-captions refusal is not this: see The caption.
+  `note`. Tell the user. An upload that starts over after it is abandoned first (An abandoned upload). The agent-captions refusal is not this: see The caption.
 - **A refusal of `create_upload`** (no `projectId` in the reply): nothing exists in boqo yet. Status `failed`, the reason
   in `note`. On the human's word, it returns to `approved` and starts The upload again, after any fix the refusal asks for.
 - **A refusal of `post_video`** ("That time has passed", a reconnect, Defaults), or a `failed` row from Reconcile's

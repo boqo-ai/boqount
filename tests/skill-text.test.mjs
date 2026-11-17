@@ -190,6 +190,8 @@ const HOLDS = {
   "production.md": ["**Every post has a layer**"],
   "gate.md": ["Nothing else counts as approval: not silence, not an earlier \"post them all\", not your own judgement."],
   "measure.md": ["A `sale` post goes out only on green", "holds every `sale` post, on every channel, whatever its status"],
+  // An abandoned upload never sits in boqo's In Progress, and a project holding the file is never deleted as one.
+  "posting.md": ["`delete_project {items: [{projectId}]}`", "Only a `queued` project is deleted"],
 };
 // What must never come back.
 const FORBIDDEN = {
