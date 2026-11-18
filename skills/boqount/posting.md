@@ -496,12 +496,16 @@ film (2026-11-17), approved by the human at a full-speed watch.
 - **The limits:** the M variants of one film count as one post toward `max_posts_per_day` (a trial reel is shown to
   non-followers only), go out on one Instagram account, a minute apart, inside one window. Trial reels are Instagram's;
   the other channels get the winner.
-- **Posting:** one `post_video` item per variant to the Instagram account, each with the tool's trial-reel option
-  (read the schema at Start). boqo's `post_video` does not take it yet (read 2026-11-17): until it
-  does, a variant cannot go through boqo as a trial reel.
+- **Posting:** each variant file goes up with `create_upload` → `complete_upload`, and `get_project` is polled until
+  every one is ready: a send of several trial reels is refused while any is not. Then one `post_video` call with one
+  item per variant, in the order they go (item 1 first), all to the one Instagram account, each with the same
+  `trialReel` (`manual` or `auto`) and the same `when` (a time or `now`, never the queue), each with its own approved
+  caption and no `uniqueize`. Read the schema at Start; up to 20 items. On an account that has not had a trial reel
+  through boqo, only item 1 goes; the rest are held until the person answers boqo's check in the web app. The started
+  reply's `note` says how many wait, and the report names it.
 - **Measuring:** each variant at 24 and 72 hours. The winner (most views at 72 h; a tie goes to likes, then
   comments) is the film's hook verdict for the playbook, and the next plan may post it to the feed.
-  Until then, on a channel that may go by hand (never under `publish_via: boqo-only`), the variants go By hand: one
+  When the variants go by hand instead, on a channel that may (never under `publish_via: boqo-only`): one
   hand-over message per variant, its "what to set" line saying "post it as a trial reel" (in the Instagram app:
   Trial reel, on), each with the time a minute after the last.
 
