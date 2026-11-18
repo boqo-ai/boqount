@@ -11,6 +11,7 @@ timezone:
 windows:
 # windows@youtube: 12:00-14:00
 max_posts_per_day: 2
+variants: 1
 budget_usd_day: 10
 budget_usd_month:
 credits_day: 0
@@ -46,6 +47,8 @@ link_must_not_have:
   `account_id@<channel>` for every one but the first (the plain `account_id`), for example `account_id@tiktok: <its id>`,
   only for a listed channel that has an id. A line with an empty value is not read. With several channels the tools'
   per-channel commands take `--channel <name>`.
+- `variants`: each film as one Reel (`1`), or as `3` to `20` Instagram trial-reel variants of it that differ in the
+  hook (`posting.md` → Trial-reel variants). Asked at setup; every film's first question proposes it again.
 - `boqo_server`: the name of the MCP server whose boqo tools this skill may use (`posting.md` → Start).
 - `windows`: `HH:MM-HH:MM` ranges on the account's clock, for example `09:00-11:00, 18:00-20:00`.
 - `budget_usd_month`: empty means days in the month times `budget_usd_day`.

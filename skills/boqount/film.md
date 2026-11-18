@@ -52,7 +52,8 @@ call (`hooks.md` → The arc).
 The record (status `planned`, its Layer and its cost estimate) exists before any file under `films/`.
 
 0. **Ask about a meme, a trend or a reference** before any hook, on every film (`reference.md` → Ask first, on every film); study what comes
-   back (`reference.md`) before step 2.
+   back (`reference.md`) before step 2. The same question asks one Reel or 3 to 20 trial-reel variants of it, with
+   `config.md` → `variants` proposed (`posting.md` → Trial-reel variants).
 1. **The film's folders:** `node <skill>/tools/film.mjs new <slug>`, with `--story` for a `product` or `offer` film
    (The project). Its id is the slug in PascalCase.
 2. **Hooks.** Read `brand/<slug>/style.md` → Language first. From the strategy line (a Hook bank row, or the series'

@@ -100,7 +100,7 @@ export function parseInstant(iso) {
 
 // ---------------------------------------------------------------- config
 
-const NUMBER_KEYS = ["max_posts_per_day", "budget_usd_day", "budget_usd_month", "credits_day", "calibration_posts", "research_every_weeks", "sales_goal_28d"];
+const NUMBER_KEYS = ["variants", "max_posts_per_day", "budget_usd_day", "budget_usd_month", "credits_day", "calibration_posts", "research_every_weeks", "sales_goal_28d"];
 const STRING_KEYS = ["brand", "account_id", "boqo_server", "timezone", "paused_by", "resumed_at", "seed_research", "caption_via_filename", "live_page", "tracker", "language", "issues_repo", "signups_command", "dm_command", "link_must_have", "link_must_not_have"];
 
 /** The platforms an account can post to. A config's `channels` lists some of them; the first owns rows that name no channel. */
@@ -197,6 +197,11 @@ export function parseConfig(md) {
     if (v === "") continue; // not set, whatever the channel: a listed one takes the plain key, an unlisted one is not read
     if (!c.channels.includes(ch)) throw new Error(`config ${k}: ${JSON.stringify(ch)} is not in channels (${c.channels.join(", ")})`);
     c.per[ch][key] = key === "windows" ? parseWindows(v, k) : key === "max_posts_per_day" ? postsPerDay(Number(v), k, v) : v;
+  }
+  // A film as one Reel (1), or as 3 to 20 Instagram trial-reel variants of one film (posting.md → Trial-reel variants).
+  if (c.variants === null) c.variants = 1;
+  else if (!Number.isInteger(c.variants) || !(c.variants === 1 || (c.variants >= 3 && c.variants <= 20))) {
+    throw new Error(`config variants must be 1 or 3 to 20 (trial-reel variants of one film), got ${JSON.stringify(raw.variants)}`);
   }
   return c;
 }

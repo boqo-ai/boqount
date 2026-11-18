@@ -156,7 +156,8 @@ can be made: the handles on each channel ("@quillfern on Instagram and TikTok?")
 the rights to, the time zone ("America/New_York, from your files?"); at most three. Then everything else as one
 numbered list of proposals, each answerable with a yes, ending on "Say yes to all, or name the numbers to change":
 from the notes where they have one, else a sensible default you name ("2. posting 18:00–21:00 your time: yes?",
-"3. code word FERN for the reminders: yes?", "4. you approve the first 10 posts yourself: yes?"). A question is never
+"3. code word FERN for the reminders: yes?", "4. you approve the first 10 posts yourself: yes?", "5. each film as one Reel, not 3 to 20 trial-reel
+variants: yes?"). A question is never
 asked open when a proposal can be made, and "yes to all" is a complete answer to the list. There is no second round, unless an answer opened a question that did not exist
 before (then that one question alone). The code words of step 4 and the posting windows of step 6 are proposed here
 too, so those steps only write what was agreed.
@@ -170,6 +171,7 @@ too, so those steps only write what was agreed.
 | Who answers a comment that asks for the link: a DM automation they run (which tool, on which channels), or they themselves, by hand, every time. Said plainly: a film that shows the product ends on "Comment <code>, and I'll send you the link.", and without someone to send it, no such film goes out | `accounts.md` → DM automation (who replies); the code words come at step 4. If their automation can be driven by a command they already have, its line goes in `config.md` → `dm_command` (`measure.md` → Your DM automation); never write one for them |
 | The budget: a day's and a month's limit, in money | `budget_usd_day`, `budget_usd_month` (`credits_day` is asked at step 5, and only when a channel is connected to boqo) |
 | How autonomous: how many approved posts before the skill may post alone | `calibration_posts` |
+| Each film as one Reel, or as 3 to 20 Instagram trial-reel variants that differ in the hook (`posting.md` → Trial-reel variants) | `variants` |
 | How sign-ups are read, one plain sentence per way: they type each week's sign-ups into a file (`manual`); a command of theirs prints them (`command`, and the command); they are not read (`none`) | `signups_source`, `signups_command` |
 
 ## 4. The brand kit

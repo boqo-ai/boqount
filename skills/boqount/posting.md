@@ -471,6 +471,40 @@ Tell the user in at most two lines per row: `found <post id>, <time on the accou
   copy on its public page and check the loop still closes (the last frame meets the first, the sound starts at
   zero). With no permalink yet this stays owed in the log. A broken loop is a problem report (Failures).
 
+## Trial-reel variants (3 to 20 of one film)
+
+The human, 2026-11-17: the skills offer, in the first questions, either one video or 3 to 20 variations of it («те
+пользователь либо выбирает одно видео, либо как мы здесь сделали 5»). Built first on five GTA VI trial reels of one
+film (2026-11-17), approved by the human at a full-speed watch.
+
+- **Asked where it is decided:** `config.md` → `variants` holds the account's default (`1`, or `3` to `20`), asked at
+  setup. Every film's first question (the one about a meme, a trend or a reference) also asks "one Reel, or N
+  trial-reel variants?", with the config's value proposed; the answer is the film's, and goes in its record.
+- **What varies, and what does not:** line 1 (the hook, and frame 0), line 2 (its re-hook) and the hook's motion.
+  Everything after line 2 is the same film word for word: one take per shared line, one storyboard, one build. A
+  variant is never a different script; a different angle is a different film.
+- **Gate 1:** the viewers read variant 1 whole; the fact-checker reads every variant's two lines as well.
+- **The build:** one project for all of them. A render prop picks the variant (`--props='{"v":N}'`); each variant has
+  its own audio folder (the plan, the takes of its lines 1–2, the shared takes copied in, its cues, its mix) and its own
+  captions; the scenes cue by line id, so every shared line lands in every variant, and only the hook's world switches
+  on the variant. Gate 2 reads variant 1's grid and every variant's frame 0 and hook stills. Render two at a time (a
+  render's intermediate is large).
+- **The cost:** the variants' line-1 and line-2 takes, one render each, one post's credits each. The record's estimate
+  says so before anything is made.
+- **The records:** one record and one ledger row per variant, slug `<film>-v<N>`, `variable: hook`, and in `note`
+  `variant N of M of <film>`; the captions differ only in line 1.
+- **The limits:** the M variants of one film count as one post toward `max_posts_per_day` (a trial reel is shown to
+  non-followers only), go out on one Instagram account, a minute apart, inside one window. Trial reels are Instagram's;
+  the other channels get the winner.
+- **Posting:** one `post_video` item per variant to the Instagram account, each with the tool's trial-reel option
+  (read the schema at Start). boqo's `post_video` does not take it yet (read 2026-11-17): until it
+  does, a variant cannot go through boqo as a trial reel.
+- **Measuring:** each variant at 24 and 72 hours. The winner (most views at 72 h; a tie goes to likes, then
+  comments) is the film's hook verdict for the playbook, and the next plan may post it to the feed.
+  Until then, on a channel that may go by hand (never under `publish_via: boqo-only`), the variants go By hand: one
+  hand-over message per variant, its "what to set" line saying "post it as a trial reel" (in the Instagram app:
+  Trial reel, on), each with the time a minute after the last.
+
 ## Never
 
 - a post the human did not approve (calibration) or the checks did not pass (auto);

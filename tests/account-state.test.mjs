@@ -1807,3 +1807,11 @@ test("a ledger without an ad column answers as before", () => {
   assert.deepEqual(norms(rows.map((r) => ({ ...r, ad: "" })), {}, NOW24), norms(rows, {}, NOW24));
   assert.deepEqual(verdict(rows[0], { value: 100 }, [0.8, 1.25]), { verdict: "within", data: "full" });
 });
+
+test("parseConfig reads variants: 1 when empty, 3 to 20 trial-reel variants, nothing else", () => {
+  assert.equal(cfg({}).variants, 1);
+  assert.equal(cfg({ variants: "1" }).variants, 1);
+  assert.equal(cfg({ variants: "5" }).variants, 5);
+  assert.equal(cfg({ variants: "20" }).variants, 20);
+  for (const bad of ["2", "21", "0", "4.5"]) assert.throws(() => cfg({ variants: bad }), /variants must be 1 or 3 to 20/);
+});
