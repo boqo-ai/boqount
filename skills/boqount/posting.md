@@ -473,9 +473,7 @@ Tell the user in at most two lines per row: `found <post id>, <time on the accou
 
 ## Trial-reel variants (3 to 20 of one film)
 
-The human, 2026-11-17: the skills offer, in the first questions, either one video or 3 to 20 variations of it («те
-пользователь либо выбирает одно видео, либо как мы здесь сделали 5»). Built first on five GTA VI trial reels of one
-film (2026-11-17), approved by the human at a full-speed watch.
+The skill offers, in the first questions, either one video or 3 to 20 variations of it that differ only in the hook.
 
 - **Asked where it is decided:** `config.md` → `variants` holds the account's default (`1`, or `3` to `20`), asked at
   setup. Every film's first question (the one about a meme, a trend or a reference) also asks "one Reel, or N
